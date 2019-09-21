@@ -1,0 +1,6 @@
+- name: Disable IPv6
+  sysctl:
+    key: net.ipv6.conf.all.disable_ipv6
+    value: '1'
+    sysctl_file: /etc/sysctl.d/20-disable_ipv6.conf
+    sysctl_set: yes

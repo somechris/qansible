@@ -12,3 +12,7 @@
     - role: common-packages
       tags:
         - 'common-packages'
+
+    - role: network-tuner
+      tags:
+        - 'network-tuner'
