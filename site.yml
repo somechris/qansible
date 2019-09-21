@@ -1,2 +1,2 @@
-- include: rolebooks/common-early.yml
+- import_playbook: rolebooks/common-early.yml
 
