@@ -305,12 +305,6 @@ lint_yaml() {
         warn "$YAML_FILE_RELS has a cruly brace followed by 'role:' in line $LINE_NUMBER ('$LINE'). Do not use one-line dicts for role definitions"
     done < <(grep -n '\{.*role:' "$YAML_FILE_RELS" || true)
 
-    # Guard against numbers formatted as strings
-    while IFS=: read LINE_NO VAR REST
-    do
-        warn "Pure number represented as string for variable '$VAR' (see $YAML_FILE_RELS, line $LINE_NO). Please format it as number."
-    done < <( grep -n "[$VAR_CHARS]*[$VAR_END_CHARS][ 	]*"':.*\(["'\'']\)[0-9]\+\1' "$YAML_FILE_RELS" )
-
     while IFS=: read FILE LINE_NO LINE
     do
         warn "$YAML_FILE_RELS has a '=' before a ':' in line $LINE_NO. This should probably be a ':'. The full line is: $LINE"
