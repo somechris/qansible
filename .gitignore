@@ -1,0 +1,30 @@
+# Local overrides for common config (E.g.: ldap user names)
+/common.inc.local
+
+/production.old
+/development
+/private
+/private-production
+/ssh
+/ssh-development
+# Rendered template for ssh production config
+/ssh-production/config
+
+# Vagrant
+/Vagrantfile
+/.vagrant
+
+# .local_roles is used to exclude adhoc roles from linting
+/.local_roles
+
+# Environments automatically created by tox
+/.tox
+
+# Virtualenv that Jenkins uses to bring in tox
+/.virtualenv
+
+# Ansible now writes .retry files in the current directory
+/*.retry
+
+# Local development Subversion repository
+/svn-development

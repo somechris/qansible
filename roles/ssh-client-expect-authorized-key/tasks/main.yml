@@ -1,0 +1,6 @@
+- name: Updating key collector
+  set_fact:
+    ssh_client_expect_authorized_key_collector: '{{ssh_client_expect_authorized_key_collector | default({}) | update_dict(ssh_client_expect_authorized_key_expectation, merge_lists=True)}}'
+  changed_when: False
+  tags:
+    - always

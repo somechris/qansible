@@ -1,0 +1,6 @@
+dependencies:
+  - role: motd
+    service_name: 'User: {{emergency_user_name}} (Emergency)'
+
+  - role: ssh-client-expect-authorized-key
+    ssh_client_expect_authorized_key_expectation: '{{ { emergency_user_name: (emergency_user_authorized_keys.values() | merge_list_of_lists) } }}'

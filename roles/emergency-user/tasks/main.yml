@@ -1,0 +1,46 @@
+- name: Make sure the emergency group exists
+  group:
+    state: present
+    name: '{{emergency_user_name}}'
+    gid: 8000
+
+- name: Make sure the sudo group exists
+  group:
+    state: present
+    name: sudo
+
+- name: Make sure the emergency user exists
+  user:
+    state: present
+    name: '{{emergency_user_name}}'
+    comment: Emergency Production User,,,
+    group: '{{emergency_user_name}}'
+    groups: 'sudo'
+    createhome: yes
+    home: '/home/{{emergency_user_name}}'
+    shell: /bin/bash
+    uid: 8000
+
+- name: Setup sudo config
+  template:
+    dest: '/etc/sudoers.d/50-emergency'
+    src: sudoers.j2
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Create ssh config directory
+  file:
+    state: directory
+    dest: '/home/{{emergency_user_name}}/.ssh'
+    owner: '{{emergency_user_name}}'
+    group: '{{emergency_user_name}}'
+    mode: 0500
+
+- name: Create ssh config authorized keys
+  template:
+    dest: '/home/{{emergency_user_name}}/.ssh/authorized_keys'
+    src: authorized_keys.j2
+    owner: '{{emergency_user_name}}'
+    group: '{{emergency_user_name}}'
+    mode: 0400

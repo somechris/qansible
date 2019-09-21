@@ -1,0 +1,21 @@
+- name: Install common packages
+  apt:
+    name: '{{item}}'
+    state: present
+  with_items:
+    - atop
+    - psmisc # provides pstree
+
+- name: Ensure uninstalled packages are uninstalled
+  apt:
+    name:  '{{item}}'
+    state: absent
+  with_items: []
+
+- name: Enable common package services
+  service:
+    name: '{{item}}'
+    state: started
+    enabled: yes
+  with_items:
+    - atop

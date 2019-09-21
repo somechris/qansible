@@ -1,0 +1,10 @@
+- name: common-early (generic)
+  hosts: '!unmanaged'
+  roles:
+    - role: emergency-user
+      tags:
+        - 'emergency-user'
+
+    - role: common-packages
+      tags:
+        - 'common-packages'

@@ -1,0 +1,41 @@
+- name: Make sure service_name is set
+  fail: msg="No custom 'service_name' provided. You have to override the 'service_name' variable"
+  when: not service_name or service_name == ''
+
+- name: Prepare motd directory
+  file:
+    path: '{{motd_dir}}'
+    state: directory
+    owner: root
+    group: root
+
+- name: Bring motd ansible banner into place
+  template:
+    dest: '{{motd_dir}}/70-ansible-banner'
+    src: 'banner.j2'
+    owner: root
+    group: root
+    mode: 0555
+
+- name: Bring motd for role into place
+  template:
+    dest: "{{motd_dir}}/70-ansible-role-{{service_name | lower | regex_replace('\\W+', '-')}}"
+    src: 'role.j2'
+    owner: root
+    group: root
+    mode: 0555
+  when: state != "absent"
+
+- name: Clean up motd for role
+  file:
+    path: "{{motd_dir}}/70-ansible-role-{{service_name | lower | regex_replace('\\W+', '-')}}"
+    state: absent
+  when: state == "absent"
+
+- name: Bring motd ansible trailer
+  template:
+    dest: '{{motd_dir}}/70-ansible-trailer'
+    src: 'trailer.j2'
+    owner: root
+    group: root
+    mode: 0555

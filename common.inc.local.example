@@ -1,0 +1,17 @@
+# The file contains examples of values from common.inc that you may
+# want to override.
+#
+# Copy this common.inc.local.example to common.inc.local and modify
+# there to your liking.
+
+#-------------------------------------------------------------------------------
+# LDAP settings
+
+# If your LDAP user name differs from the user name of this host, you
+# can override it by setting the LDAP_USER_NAME variable to your LDAP
+# user name.
+LDAP_USER_NAME="$USER"
+
+# If your SSH key to use for connecting to the hosts is not in the
+# default place, you can overrid eit by setting LDAP_SSH_KEY_FILE
+LDAP_SSH_KEY_FILE="$HOME/.ssh/id_rsa"
