@@ -104,6 +104,7 @@ agreements.
 * Roles:
   - `common-packages`: Sets up common packages needed on all hosts.
   - `emergency-user`: Sets up a local user that allows login even if
+  - `hostname`: Sets up host identifications.
   - `motd`: Sets up motd (message of the day) files shown after login. This is
   - `ssh-client-expect-authorized-key`: Configures expected authorized
     keys for ssh clients.

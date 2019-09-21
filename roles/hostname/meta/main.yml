@@ -1,0 +1,5 @@
+dependencies:
+  - role: motd
+    service_name: hostname
+    service_description: "hostname{{('. AWS name: ' ~ hostvars[inventory_hostname]['ec2_tag_name']) if hostvars[inventory_hostname]['ec2_tag_name'] is defined and inventory_hostname != hostvars[inventory_hostname]['ec2_tag_name'] and inventory_hostname_short != hostvars[inventory_hostname]['ec2_tag_name'] else ''}}"
+    state: "{{'present' if hostvars[inventory_hostname]['hostname_skip'] is not defined or not hostvars[inventory_hostname]['hostname_skip'] else 'absent'}}"

@@ -5,6 +5,10 @@
       tags:
         - 'emergency-user'
 
+    - role: hostname
+      tags:
+        - 'hostname'
+
     - role: common-packages
       tags:
         - 'common-packages'

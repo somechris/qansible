@@ -1,0 +1,11 @@
+- name: Bring hosts file into place
+  template:
+    dest: '/etc/hosts'
+    src: 'hosts.j2'
+    owner: root
+    group: root
+    mode: 0555
+
+- name: Set new hostname
+  hostname: name="{{inventory_hostname_short}}"
+  when: inventory_hostname != ansible_fqdn
