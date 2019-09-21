@@ -313,7 +313,7 @@ lint_yaml() {
     while IFS=: read FILE LINE_NO LINE
     do
         warn "$YAML_FILE_RELS has a top level item not starting in a name setting. Please add a name setting. The full line is: $LINE"
-    done < <(grep -n '^- ' "$YAML_FILE_RELS" | grep -v '^[0-9]*:- \(name\|include\):' )
+    done < <(grep -n '^- ' "$YAML_FILE_RELS" | grep -v '^[0-9]*:- \(name\|include\|import_playbook\):' )
 }
 
 
