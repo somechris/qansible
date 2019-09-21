@@ -339,7 +339,7 @@ lint_host_vars_file() {
     if [ "${HOST_VARS_FILE_RELH: -9}" = "/main.yml" -o "${HOST_VARS_FILE_RELH////_}" = "${HOST_VARS_FILE_RELH}" ]
     then
         # The file is the main YAML file for a host
-        if ! grep -q ^ec2_ip_address "$HOST_VARS_FILE_RELS"
+        if ! grep -q ^public_ipv4_address "$HOST_VARS_FILE_RELS"
         then
             if ! in_array "$HOST_VARS_FILE_RELH" "${LINT_HOST_VARS_WHITELISTED[@]}"
             then
