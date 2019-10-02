@@ -1,0 +1,4 @@
+- name: reload resolvconf
+  service:
+    name: resolvconf
+    state: reloaded

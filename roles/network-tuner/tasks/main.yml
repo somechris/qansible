@@ -4,3 +4,26 @@
     value: '1'
     sysctl_file: /etc/sysctl.d/20-disable_ipv6.conf
     sysctl_set: yes
+
+- name: Install needed packages
+  apt:
+    name: resolvconf
+    state: present
+
+- name: Stop daemons from messing with /etc/resolv.conf
+  template:
+    dest: '/etc/resolvconf.conf'
+    src: 'resolvconf.conf.j2'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload resolvconf
+
+- name: Render proper resolv.conf
+  template:
+    dest: '/etc/resolv.conf'
+    src: 'resolv.conf.j2'
+    owner: root
+    group: root
+    mode: 0444

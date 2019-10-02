@@ -1,0 +1,5 @@
+# {{ansible_managed}}
+
+{% for nameserver in network_tuner_nameservers %}
+nameserver {{nameserver}}
+{% endfor %}

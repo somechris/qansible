@@ -28,4 +28,4 @@ No Globals that are specific only for this role.
 3. Parameters
 -------------
 
-This role does not have parameters.
+* `network_tuner_nameservers`: List of nameservers to use for DNS.
