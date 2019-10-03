@@ -9,6 +9,11 @@
       tags:
         - 'hostname'
 
+    - role: firewall-early
+      tags:
+        - 'firewall'
+        - 'firewall-early'
+
     - role: common-packages
       tags:
         - 'common-packages'

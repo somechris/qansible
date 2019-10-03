@@ -1,0 +1,17 @@
+- name: Add firewall loading script
+  template:
+    dest: '/etc/network/if-pre-up.d/iptables'
+    src: 'iptables-permanent.sh.j2'
+    owner: root
+    group: root
+    mode: 0555
+
+- name: Set up restricted firewall
+  template:
+    dest: '{{firewall_early_rules_file}}'
+    src: 'restricted.rules.j2'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload iptables
