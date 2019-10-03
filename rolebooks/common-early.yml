@@ -21,3 +21,7 @@
     - role: network-tuner
       tags:
         - 'network-tuner'
+
+    - role: ssh-server
+      tags:
+        - 'ssh-server'

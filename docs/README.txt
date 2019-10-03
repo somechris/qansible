@@ -111,4 +111,4 @@ agreements.
   - `network-tuner`: Adjusts settings of network interfaces.
   - `ssh-client-expect-authorized-key`: Configures expected authorized
     keys for ssh clients.
-
+  - `ssh-server`: Sets up an SSH server

@@ -1,0 +1,14 @@
+- name: Install ssh server packages
+  apt:
+    name: openssh-server
+    state: present
+
+- name: Create ssh server config
+  template:
+    dest: '/etc/ssh/sshd_config'
+    src: 'sshd_config.j2'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    - restart sshd
