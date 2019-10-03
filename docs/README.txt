@@ -106,6 +106,7 @@ agreements.
   - `emergency-user`: Sets up a local user that allows login even if
   - `firewall-early`: Sets up a basic firewall to be used while setting up the
     host
+  - `firewall-late`: Sets up the system's firewall
   - `hostname`: Sets up host identifications.
   - `motd`: Sets up motd (message of the day) files shown after login. This is
   - `network-tuner`: Adjusts settings of network interfaces.

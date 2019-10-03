@@ -22,11 +22,11 @@ applications.
 2. Globals
 -------------
 
-No Globals that are specific only for this role.
+* `firewall_early_rules_file`: Name of file to hold the restricted rule set.
 
 
 
 3. Parameters
 -------------
 
-* `firewall_early_rules_file`: Name of file to hold the restricted rule set.
+This role does not have parameters.

@@ -1,0 +1,7 @@
+- name: common-late (generic)
+  hosts: '!unmanaged'
+  roles:
+    - role: firewall-late
+      tags:
+        - 'firewall'
+        - 'firewall-late'

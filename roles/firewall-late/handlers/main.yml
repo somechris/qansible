@@ -1,0 +1,2 @@
+- name: reload iptables
+  shell: /etc/network/if-pre-up.d/iptables

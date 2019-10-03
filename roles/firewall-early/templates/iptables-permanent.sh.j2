@@ -1,5 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
-#{{ansible_managed}}
+# {{ansible_managed}}
 
-/sbin/iptables-restore <'{{firewall_early_rules_file}}'
+RULES_FILE='{{firewall_late_rules_file}}'
+
+if [ ! -e "$RULES_FILE" ]
+then
+    RULES_FILE='{{firewall_early_rules_file}}'
+fi
+
+/sbin/iptables-restore <"$RULES_FILE"
