@@ -1,0 +1,50 @@
+- name: Install needed packages
+  apt:
+    name: exim4-daemon-heavy
+    state: present
+
+- name: Grant the exim user access to SSL certs
+  user:
+    name: 'Debian-exim'
+    groups: ssl-cert
+    append: yes
+
+- name: Ensure needed directories (for aliases)
+  file:
+    path: '{{item}}'
+    owner: root
+    group: root
+    mode: '0555'
+    state: directory
+  with_items:
+    - '/etc/mail'
+    - '/etc/exim4/dkim'
+
+- name: Render aliases
+  template:
+    dest: '/etc/mail/aliases{{"-" if item["key"] else ""}}{{item["key"]}}'
+    src: aliases.j2
+    owner: root
+    group: root
+    mode: 0444
+  with_items: '{{email_server_alias_files_defaults | combine(email_server_alias_files) | dict2items}}'
+
+- name: Setup DKIM private keys
+  copy:
+    dest: '/etc/exim4/dkim/dkim.{{item}}.private.key'
+    src: 'dkim.{{item}}.private.key'
+    owner: Debian-exim
+    group: root
+    mode: 0400
+  with_items: '{{email_server_dkim_domains}}'
+
+- name: Setup main exim config
+  template:
+    dest: '/etc/exim4/exim4.conf'
+    src: exim4.conf.j2
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload exim
+

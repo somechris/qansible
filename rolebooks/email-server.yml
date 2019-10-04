@@ -1,0 +1,6 @@
+- name: Email Server
+  hosts: email_servers
+  roles:
+    - email-server
+  tags:
+    - email-server

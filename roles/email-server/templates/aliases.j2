@@ -1,0 +1,7 @@
+{{ansible_managed}}
+{% for user, aliases in item['value']|dictsort %}
+
+{%   for alias in ([aliases] if aliases is string else aliases)%}
+{{alias}}: {{effective_sysadmin_email_address_local_part if user == '{{effective_sysadmin_email_address_local_part}}' else user}}
+{%   endfor %}
+{% endfor %}

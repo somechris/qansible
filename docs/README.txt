@@ -106,6 +106,7 @@ agreements.
   - `dhparams`: Handles files holding Diffie Hellman parameters for secure
     handshakes. This is needed for applications doing encryption (Websites,
     LDAP, ...)
+  - `email-server`: Sets up an SMTP and POP3 server
   - `emergency-user`: Sets up a local user that allows login even if
   - `firewall-early`: Sets up a basic firewall to be used while setting up the
     host
