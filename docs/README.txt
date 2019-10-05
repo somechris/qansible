@@ -103,6 +103,9 @@ agreements.
 
 * Roles:
   - `common-packages`: Sets up common packages needed on all hosts.
+  - `dhparams`: Handles files holding Diffie Hellman parameters for secure
+    handshakes. This is needed for applications doing encryption (Websites,
+    LDAP, ...)
   - `emergency-user`: Sets up a local user that allows login even if
   - `firewall-early`: Sets up a basic firewall to be used while setting up the
     host

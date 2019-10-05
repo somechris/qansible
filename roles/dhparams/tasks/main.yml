@@ -1,0 +1,16 @@
+- name: Install dhparam packages
+  apt:
+    name:
+      - openssl
+      - ssl-cert
+    state: present
+
+- name: Create dhparams file
+  command: /usr/bin/openssl dhparam -out '{{dhparams_file}}' 4096 creates='{{dhparams_file}}'
+
+- name: Set access restrictions on dhparams file
+  file:
+    dest: '{{dhparams_file}}'
+    owner: root
+    group: ssl-cert
+    mode: 0440
