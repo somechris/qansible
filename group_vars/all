@@ -4,4 +4,7 @@ firewall_late_rules_file: '/etc/iptables.rules'
 #-----------------------------------------------------------------------
 # SSL
 #
+ssl_cert_dir: /etc/ssl/certs
+ssl_private_dir: /etc/ssl/private
+ssl_crl_dir: /etc/ssl/crl
 dhparams_file: '{{ssl_private_dir}}/dhparams.pem'

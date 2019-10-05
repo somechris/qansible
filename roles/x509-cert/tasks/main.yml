@@ -1,0 +1,57 @@
+- name: Install packages for x509 server certificates
+  apt:
+    name: ssl-cert
+    state: present
+
+- name: Install certificate
+  copy:
+    dest: '{{ssl_cert_dir}}/{{x509_cert_name}}__chain.pem'
+    src: '{{x509_cert_name}}/chain.pem'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: Install certificate
+  copy:
+    dest: '{{ssl_cert_dir}}/{{x509_cert_name}}__cert.pem'
+    src: '{{x509_cert_name}}/cert.pem'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: Install chained pem
+  assemble:
+    dest: '{{ssl_cert_dir}}/{{x509_cert_name}}__chained.pem'
+    src: '{{ssl_cert_dir}}'
+    regexp: '^{{x509_cert_name}}__(cert|chain).pem$'
+    remote_src: yes
+    owner: root
+    group: root
+    mode: 0444
+
+- name: Install key
+  copy:
+    dest: '{{ssl_private_dir}}/{{x509_cert_name}}__key.pem'
+    src: '{{x509_cert_name}}/key.pem'
+    owner: root
+    group: ssl-cert
+    mode: 0440
+
+# Since we cannot enforce non-alphabetic order of fragments when
+# assembling key and dhparams, we link dhparams to a name whose order
+# works for us.
+- name: Link dhparams into place
+  file:
+    state: link
+    dest: '{{ssl_private_dir}}/{{x509_cert_name}}__only_dhparams.pem'
+    src: '{{dhparams_file}}'
+
+- name: Install key with dhparams
+  assemble:
+    dest: '{{ssl_private_dir}}/{{x509_cert_name}}__key_w_dhparam.pem'
+    src: '{{ssl_private_dir}}'
+    regexp: '^{{x509_cert_name}}__(key|only_dhparams).pem$'
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0444

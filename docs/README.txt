@@ -116,3 +116,4 @@ agreements.
   - `ssh-client-expect-authorized-key`: Configures expected authorized
     keys for ssh clients.
   - `ssh-server`: Sets up an SSH server
+  - `x509-cert`: Installs an X.509 certificate
