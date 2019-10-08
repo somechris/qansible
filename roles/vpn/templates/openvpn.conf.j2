@@ -1,0 +1,25 @@
+# {{ansible_managed}}
+
+dev tun{{item | vpn_dev_name(inventory_hostname)}}
+
+proto udp{{'' if ansible_distribution == 'Gentoo' else '4'}}
+lport {{item['port']}}
+
+keepalive 60 300
+
+cipher AES-256-CBC
+auth SHA256
+
+ifconfig {{item | vpn_ip('local', inventory_hostname)}} {{item | vpn_ip('remote', inventory_hostname)}}
+
+{% if (item | vpn_served_by(inventory_hostname)) %}
+
+persist-tun
+persist-key
+{% else %}
+
+remote {{hostvars[item['server']]['public_ipv4_address']}}
+rport {{item['port']}}
+{% endif %}
+
+secret /etc/openvpn/{{item | vpn_name(inventory_hostname)}}.key {{ 0 if (item | vpn_served_by(inventory_hostname)) else 1 }}

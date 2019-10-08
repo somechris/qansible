@@ -1,0 +1,11 @@
+- name: reload openvpn-Debian
+  systemd:
+    name: openvpn
+    state: reloaded
+    daemon_reload: yes
+
+- name: reload openvpn-Gentoo
+  service:
+    name: 'openvpn.{{item | vpn_name(inventory_hostname)}}'
+    state: restarted
+  with_items: '{{inventory_hostname | host_vpns(vpn_configs)| list}}'

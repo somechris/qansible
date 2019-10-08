@@ -1,5 +1,9 @@
 # {{ansible_managed}}
 *filter
+{% for config in (inventory_hostname | host_vpns(vpn_configs)| list) %}
+{{('VPN_' ~ (config | vpn_name(inventory_hostname)) ~ '_in') | iptables_init_chain}}
+{% endfor %}
+
 :INPUT DROP [0:0]
 :FORWARD DROP [0:0]
 :OUTPUT ACCEPT [0:0]
@@ -8,5 +12,16 @@
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 -A INPUT -p tcp -m tcp --dport {{ssh_server_port}} -j ACCEPT
+
+{% for config in (inventory_hostname | host_vpns(vpn_configs)| list) %}
+{% set source_opt='' %}
+{% if (config | vpn_served_by(inventory_hostname)) %}
+{%   if (hostvars[config['client']]['public_ipv4_address'] | default('')) %}
+{%     set source_opt='--source ' ~ (hostvars[config['client']]['public_ipv4_address']) ~ ' ' %}
+{%   endif %}
+{% endif %}
+-A INPUT -p udp {{source_opt}}--dport {{config['port']}} -j ACCEPT
+-A INPUT -i tun{{config | vpn_dev_name(inventory_hostname)}} -j VPN_{{config | vpn_name(inventory_hostname)}}_in
+{% endfor %}
 
 COMMIT

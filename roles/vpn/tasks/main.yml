@@ -1,0 +1,57 @@
+- name: Install VPN packages
+  apt:
+    name:
+      - openvpn
+    state: present
+  when: 'ansible_distribution == "Debian"'
+
+- name: Install VPN packages
+  portage:
+    name:
+      - openvpn
+    state: present
+  when: 'ansible_distribution == "Gentoo"'
+
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in 'vpn' role"
+  when: 'ansible_distribution not in ["Debian", "Gentoo"]'
+
+- name: Bring static keys in place
+  #
+  # Generate keys via
+  #
+  #    openvpn --genkey --secret vpn-name.key
+  #
+  copy:
+    dest: '/etc/openvpn/{{item | vpn_name(inventory_hostname)}}.key'
+    src: '{{item | vpn_name(None)}}.key'
+    owner: root
+    group: root
+    mode: 0400
+  with_items: '{{inventory_hostname | host_vpns(vpn_configs)| list}}'
+  notify:
+    - reload openvpn
+
+- name: Render configs
+  template:
+    dest: '/etc/openvpn/{{item | vpn_name(inventory_hostname)}}.conf'
+    src: 'openvpn.conf.j2'
+    owner: root
+    group: root
+    mode: 0400
+  with_items: '{{inventory_hostname | host_vpns(vpn_configs)| list}}'
+  notify:
+    - reload openvpn-{{ansible_distribution}}
+
+- name: Bring service config into place
+  file:
+    state: link
+    dest: '/etc/init.d/openvpn.{{item | vpn_name(inventory_hostname)}}'
+    src: '/etc/init.d/openvpn'
+    owner: 'root'
+    group: 'root'
+    mode: 0755
+  with_items: '{{inventory_hostname | host_vpns(vpn_configs)| list}}'
+  when: 'ansible_distribution == "Gentoo"'
+  notify:
+    - reload openvpn-{{ansible_distribution}}

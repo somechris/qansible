@@ -1,0 +1,6 @@
+- name: VPN setup
+  hosts: all
+  roles:
+    - vpn
+  tags:
+    - vpn
