@@ -15,7 +15,7 @@ def vpn_dev_name(vpn_config, inventory_hostname):
 
 
 def host_vpns(hostname, vpn_configs):
-    for vpn_config in vpn_configs:
+    for key, vpn_config in sorted(vpn_configs.iteritems()):
         if hostname in [vpn_config['server'], vpn_config['client']]:
             yield vpn_config
 
