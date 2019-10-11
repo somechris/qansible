@@ -179,7 +179,7 @@ tls_require_ciphers = ${if =={$received_port}{{'{' ~ email_server_smtp_port}}}\
 # daemon_smtp_ports = 25
 daemon_smtp_ports = {{email_server_smtp_port}}
 
-local_interfaces = 127.0.0.1
+local_interfaces = {{email_server_net_accesses | net_accesses_to_local_ips(net_configs, inventory_hostname) | join(' : ')}}
 
 # Specify the domain you want to be added to all unqualified addresses
 # here. An unqualified address is one that does not contain an "@" character
