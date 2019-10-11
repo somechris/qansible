@@ -6,6 +6,6 @@
 
 - name: reload openvpn-Gentoo
   service:
-    name: 'openvpn.{{item | vpn_name(inventory_hostname)}}'
+    name: 'openvpn.{{item | net_slug(inventory_hostname)}}'
     state: restarted
-  with_items: '{{inventory_hostname | host_vpns(vpn_configs)| list}}'
+  with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn") | list}}'

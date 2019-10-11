@@ -23,35 +23,52 @@
   #    openvpn --genkey --secret vpn-name.key
   #
   copy:
-    dest: '/etc/openvpn/{{item | vpn_name(inventory_hostname)}}.key'
-    src: '{{item | vpn_name(None)}}.key'
+    dest: '/etc/openvpn/{{item | net_slug(inventory_hostname)}}.key'
+    src: '{{item | net_slug(None)}}.key'
     owner: root
     group: root
     mode: 0400
-  with_items: '{{inventory_hostname | host_vpns(vpn_configs)| list}}'
+  with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
   notify:
     - reload openvpn
 
 - name: Render configs
   template:
-    dest: '/etc/openvpn/{{item | vpn_name(inventory_hostname)}}.conf'
+    dest: '/etc/openvpn/{{item | net_slug(inventory_hostname)}}.conf'
     src: 'openvpn.conf.j2'
     owner: root
     group: root
     mode: 0400
-  with_items: '{{inventory_hostname | host_vpns(vpn_configs)| list}}'
+  with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
   notify:
     - reload openvpn-{{ansible_distribution}}
 
 - name: Bring service config into place
   file:
     state: link
-    dest: '/etc/init.d/openvpn.{{item | vpn_name(inventory_hostname)}}'
+    dest: '/etc/init.d/openvpn.{{item | net_slug(inventory_hostname)}}'
     src: '/etc/init.d/openvpn'
     owner: 'root'
     group: 'root'
     mode: 0755
-  with_items: '{{inventory_hostname | host_vpns(vpn_configs)| list}}'
+  with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
   when: 'ansible_distribution == "Gentoo"'
   notify:
     - reload openvpn-{{ansible_distribution}}
+
+- name: Updating port config
+  set_fact:
+    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
+      item["port"]: {
+        "name": "VPN_" ~ (item | net_slug(inventory_hostname)),
+        "protocol": "udp",
+        "incoming_net_accesses": [{
+           "net_key": "internet",
+           "hosts": [item[item | net_host_key("remote", inventory_hostname)]],
+           }]
+      }
+    }, merge_lists=True)}}'
+  changed_when: False
+  with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn") | list}}'
+  tags:
+    - always

@@ -4,6 +4,40 @@
 public_hostname: '{{inventory_hostname}}'
 
 #-----------------------------------------------------------------------
+# Networking
+#
+# `net_configs` is a list of networks available on the system. This
+# include networks that are managed or set up through software, like
+# VPNs. Each network config is a dictionary with the following
+# key/value pairs:
+# * `type`: The type of network. Either `shim` for a fake network
+#     that's only there to easy management, or `vpn` which indicates a
+#     VPN.
+# * `client`: (Only for type `vpn`) The name of the host that acts as
+#     client.
+# * `server`: (Only for type `vpn`) The name of the host that acts as
+#     server.
+# * `port`: (Only for type `vpn`) The UDP port to use to set up the
+#     VPN.
+# * `ipv4_net`: (Only for type `vpn`) The IPv4 net to use for the
+#     VPN. Typically a `/30` net.
+net_configs: '{{net_configs_default}}'
+net_configs_default:
+  loopback:
+    type: shim
+    interface: 'lo'
+    local_ip: 127.0.0.1
+    remote_ranges: ['127.0.0.1/8']
+    public: False
+  internet:
+    type: shim
+    interface: '{{public_interface_name}}'
+    remote_ranges: ['0.0.0.0/0']
+    public: True
+public_ipv4_address_ranges: ['0.0.0.0/0']
+public_interface_name: ''
+
+#-----------------------------------------------------------------------
 # Firewall
 #
 firewall_early_rules_file: '/etc/iptables.restricted.rules'
