@@ -2,7 +2,6 @@ email_server_smtp_port: 25
 email_server_localpart_lists: {}
 email_server_domain_lists: {}
 email_server_local_domains: []
-email_server_relay_from_hosts: []
 email_server_relay_domains_from_host: {}
 email_server_alias_files: {}
 email_server_alias_files_defaults:
@@ -38,7 +37,11 @@ email_server_alias_files_defaults:
 email_server_dkim_domains: []
 email_server_smtp_port_ssl_config: compat
 email_server_smtp_extra_port_ssl_config: hardened
-email_server_net_accesses_default:
+
+email_server_relay_net_accesses_default:
   - loopback
+email_server_relay_net_accesses_extra: []
+email_server_relay_net_accesses: '{{(email_server_relay_net_accesses_default + email_server_relay_net_accesses_extra)}}'
+email_server_relay_from_hosts_extra: []
 email_server_net_accesses_extra: []
-email_server_net_accesses: '{{(email_server_net_accesses_default + email_server_net_accesses_extra)}}'
+email_server_net_accesses: '{{(email_server_relay_net_accesses + email_server_net_accesses_extra)}}'

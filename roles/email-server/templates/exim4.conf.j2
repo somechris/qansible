@@ -66,7 +66,7 @@ domainlist {{name}} = {{ items | join(' : ') }}
 
 domainlist local_domains = {{ (['@'] + email_server_local_domains) | join(' : ') }}
 domainlist relay_to_domains =
-hostlist   relay_from_hosts = {{ ([inventory_hostname] + email_server_relay_from_hosts) | join(' : ') }}
+hostlist   relay_from_hosts = {{email_server_relay_net_accesses | net_accesses_to_remote_ranges(net_configs, inventory_hostname, hostvars) | join(' : ')}}
 
 # Most straightforward access control requirements can be obtained by
 # appropriate settings of the above options. In more complicated situations,

@@ -112,29 +112,43 @@ def net_accesses_to_local_ips(net_accesses, net_configs, inventory_hostname):
         ret += [ip]
     return ret
 
+def net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hostvars):
+    net_access = build_net_access(net_access, net_configs)
+    net_config = net_configs[net_access['net_key']]
+
+    if net_config['type'] == 'vpn':
+        ranges = [net_ip(net_config, 'remote', inventory_hostname) + '/32']
+    elif net_config['type'] == 'shim':
+        if net_config['public']:
+            ranges = []
+            for host in net_access['hosts']:
+                if host == 'all':
+                    ranges += net_config['remote_ranges']
+                else:
+                    if 'public_ipv4_address' in hostvars[host]:
+                        ranges += [hostvars[host]['public_ipv4_address']]
+                    else:
+                        ranges += hostvars[host]['public_ipv4_address_ranges']
+        else:
+            ranges = net_config['remote_ranges']
+    else:
+        raise RuntimeError('Unsupported type \'%s\' for net config in net_ranges' % (net_config['type']))
+    return ranges
+
+def net_accesses_to_remote_ranges(net_accesses, net_configs, inventory_hostname, hostvars):
+    ret = []
+    for net_access in net_accesses:
+        ret += net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hostvars)
+    return ret
+
 def net_access_to_incoming_rules(net_access, net_configs, inventory_hostname, hostvars):
     net_access = build_net_access(net_access, net_configs)
     net_config = net_configs[net_access['net_key']]
     interface = net_dev_name(net_config, inventory_hostname)
 
     rules = []
-    if net_config['type'] == 'vpn':
-        sources = [net_ip(net_config, 'remote', inventory_hostname) + '/32']
-    elif net_config['type'] == 'shim':
-        if net_config['public']:
-            sources = []
-            for host in net_access['hosts']:
-                if host == 'all':
-                    sources += net_config['remote_ranges']
-                else:
-                    if 'public_ipv4_address' in hostvars[host]:
-                        sources += [hostvars[host]['public_ipv4_address']]
-                    else:
-                        sources += hostvars[host]['public_ipv4_address_ranges']
-        else:
-            sources = net_config['remote_ranges']
-    else:
-        raise RuntimeError('Unsupported type \'%s\' for net config in net_ranges' % (net_config['type']))
+
+    sources = net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hostvars)
 
     for source in sources:
         rules += [{
@@ -157,5 +171,6 @@ class FilterModule(object):
             'net_host_key': net_host_key,
             'net_ip': net_ip,
             'net_accesses_to_local_ips': net_accesses_to_local_ips,
+            'net_accesses_to_remote_ranges': net_accesses_to_remote_ranges,
             'net_access_to_incoming_rules': net_access_to_incoming_rules,
         }
