@@ -1,4 +1,17 @@
 #-----------------------------------------------------------------------
+# Environment
+#
+company_name: Development-Environment
+company_name_slug: development
+company_name_slug_w_case: Development
+company_domain_tld: environment
+company_domain_second_level: development
+company_domain: '{{company_domain_second_level}}.{{company_domain_tld}}'
+company_homepage: 'https://{{company_domain}}/'
+company_email_domain: '{{company_domain}}'
+sysadmin_email_address: 'sysadmin@{{company_email_domain}}'
+
+#-----------------------------------------------------------------------
 # Naming
 #
 public_hostname: '{{inventory_hostname}}'
