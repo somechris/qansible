@@ -18,6 +18,10 @@
       tags:
         - 'common-packages'
 
+    - role: common-directories
+      tags:
+        - 'common-directories'
+
     - role: network-tuner
       tags:
         - 'network-tuner'

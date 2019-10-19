@@ -102,6 +102,7 @@ agreements.
 ----------------
 
 * Roles:
+  - `common-directories`: Sets up common directories needed on all hosts.
   - `common-packages`: Sets up common packages needed on all hosts.
   - `dhparams`: Handles files holding Diffie Hellman parameters for secure
     handshakes. This is needed for applications doing encryption (Websites,

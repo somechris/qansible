@@ -1,0 +1,9 @@
+- name: Ensure common directories exists
+  file:
+    path: '{{item}}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - '{{common_directories_db}}'

@@ -4,6 +4,11 @@
 public_hostname: '{{inventory_hostname}}'
 
 #-----------------------------------------------------------------------
+# Common directories
+#
+common_directories_db: '/var/db'
+
+#-----------------------------------------------------------------------
 # Networking
 #
 # `net_configs` is a list of networks available on the system. This
