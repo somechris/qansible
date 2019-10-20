@@ -4,3 +4,10 @@
     - email-server
   tags:
     - email-server
+
+- name: POP3 erver
+  hosts: pop3_servers
+  roles:
+    - pop3-server
+  tags:
+    - pop3-server

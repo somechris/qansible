@@ -1,0 +1,9 @@
+# {{ansible_managed}}
+
+{% for user, settings in pop3_server_users | dictsort %}
+{%   set extra = '' %}
+{%   if 'net_accesses' in settings %}
+{%     set extra = 'allow_nets=' ~ (settings['net_accesses'] | net_accesses_to_remote_ranges(net_configs, inventory_hostname, hostvars) | join(',')) %}
+{%   endif %}
+{{user | format_passwd_line(password=settings['password'], salt=settings['salt'], uid='mail', gid='mail', home=('/var/mail/' ~ user), extra=extra)}}
+{% endfor %}

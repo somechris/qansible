@@ -1,0 +1,3 @@
+dependencies:
+  - role: x509-cert
+    x509_cert_name: '{{inventory_hostname}}'

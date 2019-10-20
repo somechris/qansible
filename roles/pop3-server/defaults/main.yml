@@ -1,0 +1,8 @@
+pop3_server_port: 110
+pop3_server_ssl_port: 995
+pop3_server_net_accesses:
+  - loopback
+pop3_server_db_directory: '{{common_directories_db}}/dovecot'
+pop3_server_index_directory: '{{pop3_server_db_directory}}/index'
+pop3_server_control_directory: '{{pop3_server_db_directory}}/control'
+pop3_server_users: {}

@@ -79,6 +79,7 @@ def ssl_config(type='compat', variant='openssl'):
             raise RuntimeError('Unsupported cipher type \'%s\' for ssl_cipher'
                                % (type))
         ciphers = ':'.join(ciphers)
+        protocols = ['TLSv1.2']
     elif variant == 'gnutls':
         if type == 'hardened':
             ciphers = [
@@ -96,11 +97,13 @@ def ssl_config(type='compat', variant='openssl'):
             raise RuntimeError('Unsupported cipher type \'%s\' for ssl_cipher'
                                % (type))
         ciphers = ':'.join(ciphers)
+        protocols = []
     else:
         raise RuntimeError('Unsupported cipher variant \'%s\' for ssl_cipher'
                            % (variant))
     ret = {
-        'ciphers': ciphers
+        'ciphers': ciphers,
+        'protocols': protocols,
         }
     return ret
 

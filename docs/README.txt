@@ -115,6 +115,7 @@ agreements.
   - `hostname`: Sets up host identifications.
   - `motd`: Sets up motd (message of the day) files shown after login. This is
   - `network-tuner`: Adjusts settings of network interfaces.
+  - `pop3-server`: Sets up a POP3 server.
   - `ssh-client-expect-authorized-key`: Configures expected authorized
     keys for ssh clients.
   - `ssh-server`: Sets up an SSH server
