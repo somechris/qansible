@@ -247,8 +247,12 @@ host_lookup = *
 # connection, leading to delays on starting up SMTP sessions. (The default was
 # reduced from 30s to 5s for release 4.61.)
 
-rfc1413_hosts = *
-rfc1413_query_timeout = 0s
+# If hosts are not from relay_from_hosts, we do not trust them too
+# much. So we either request an ident server, or we delay 7
+# seconds. Those 7 seconds are ok for proper remote SMTP servers, but
+# fends off some fire-and-forget rouge spam senders.
+rfc1413_hosts = !+relay_from_hosts
+rfc1413_query_timeout = 7s
 #rfc1413_hosts = !127.0.0.1
 #rfc1413_query_timeout = 5s
 
