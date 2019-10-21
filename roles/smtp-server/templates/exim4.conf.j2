@@ -160,9 +160,9 @@ tls_advertise_hosts = *
 tls_certificate = {{ssl_cert_dir}}/{{inventory_hostname}}__chained.pem
 tls_privatekey = {{ssl_private_dir}}/{{inventory_hostname}}__key.pem
 tls_dhparam = {{dhparams_file}}
-tls_require_ciphers = ${if =={$received_port}{{'{' ~ smtp_server_smtp_port}}}\
-                           {{'{' ~ (smtp_server_smtp_port_ssl_config | ssl_config('gnutls'))['ciphers']}}}\
-                           {{'{' ~ (smtp_server_smtp_extra_port_ssl_config | ssl_config('gnutls'))['ciphers']}}}}
+tls_require_ciphers = ${if =={$received_port}{{'{' ~ smtp_server_port}}}\
+                           {{'{' ~ (smtp_server_port_ssl_config | ssl_config('gnutls'))['ciphers']}}}\
+                           {{'{' ~ (smtp_server_extra_port_ssl_config | ssl_config('gnutls'))['ciphers']}}}}
 
 
 # In order to support roaming users who wish to send email from anywhere,
@@ -177,7 +177,7 @@ tls_require_ciphers = ${if =={$received_port}{{'{' ~ smtp_server_smtp_port}}}\
 # daemon_smtp_ports = 25 : 465 : 587
 # tls_on_connect_ports = 465
 # daemon_smtp_ports = 25
-daemon_smtp_ports = {{smtp_server_smtp_port}}
+daemon_smtp_ports = {{smtp_server_port}}
 
 local_interfaces = {{smtp_server_net_accesses | net_accesses_to_local_ips(net_configs, inventory_hostname) | join(' : ')}}
 
@@ -595,9 +595,7 @@ dnslookup:
 {% for router in smtp_server_routers %}
 
 {{router['name']}}:
-{% if router['debug_print'] is sameas true %}
   debug_print = "R: {{router['name']}} for $local_part@$domain"
-{% endif %}
   driver = {{router['driver']}}
 {%   if router['domains'] is defined %}
   domains = {{router['domains']}}
