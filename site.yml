@@ -4,4 +4,6 @@
 
 - import_playbook: rolebooks/mail.yml
 
+- import_playbook: rolebooks/local.yml
+
 - import_playbook: rolebooks/common-late.yml

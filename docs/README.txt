@@ -1,6 +1,7 @@
 1. Quickstart
 2. Big picture
 3. Role overview
+4. Local role overview
 
 
 
@@ -121,3 +122,10 @@ agreements.
   - `ssh-server`: Sets up an SSH server
   - `vpn`: Sets up the server's VPN connections
   - `x509-cert`: Installs an X.509 certificate
+
+
+
+4. Local role overview
+----------------------
+
+<none yet>
