@@ -56,17 +56,17 @@ primary_hostname = {{public_hostname}}
 # +local_domains, +relay_to_domains, and +relay_from_hosts, respectively. They
 # are all colon-separated lists:
 
-{% for name, items in email_server_localpart_lists.iteritems() %}
+{% for name, items in smtp_server_localpart_lists.iteritems() %}
 localpartlist {{name}} = {{ items | join(' : ') }}
 {% endfor %}
 
-{% for name, items in email_server_domain_lists.iteritems() %}
+{% for name, items in smtp_server_domain_lists.iteritems() %}
 domainlist {{name}} = {{ items | join(' : ') }}
 {% endfor %}
 
-domainlist local_domains = {{ (['@'] + email_server_local_domains) | join(' : ') }}
+domainlist local_domains = {{ (['@'] + smtp_server_local_domains) | join(' : ') }}
 domainlist relay_to_domains =
-hostlist   relay_from_hosts = {{email_server_relay_net_accesses | net_accesses_to_remote_ranges(net_configs, inventory_hostname, hostvars) | join(' : ')}}
+hostlist   relay_from_hosts = {{smtp_server_relay_net_accesses | net_accesses_to_remote_ranges(net_configs, inventory_hostname, hostvars) | join(' : ')}}
 
 # Most straightforward access control requirements can be obtained by
 # appropriate settings of the above options. In more complicated situations,
@@ -160,9 +160,9 @@ tls_advertise_hosts = *
 tls_certificate = {{ssl_cert_dir}}/{{inventory_hostname}}__chained.pem
 tls_privatekey = {{ssl_private_dir}}/{{inventory_hostname}}__key.pem
 tls_dhparam = {{dhparams_file}}
-tls_require_ciphers = ${if =={$received_port}{{'{' ~ email_server_smtp_port}}}\
-                           {{'{' ~ (email_server_smtp_port_ssl_config | ssl_config('gnutls'))['ciphers']}}}\
-                           {{'{' ~ (email_server_smtp_extra_port_ssl_config | ssl_config('gnutls'))['ciphers']}}}}
+tls_require_ciphers = ${if =={$received_port}{{'{' ~ smtp_server_smtp_port}}}\
+                           {{'{' ~ (smtp_server_smtp_port_ssl_config | ssl_config('gnutls'))['ciphers']}}}\
+                           {{'{' ~ (smtp_server_smtp_extra_port_ssl_config | ssl_config('gnutls'))['ciphers']}}}}
 
 
 # In order to support roaming users who wish to send email from anywhere,
@@ -177,9 +177,9 @@ tls_require_ciphers = ${if =={$received_port}{{'{' ~ email_server_smtp_port}}}\
 # daemon_smtp_ports = 25 : 465 : 587
 # tls_on_connect_ports = 465
 # daemon_smtp_ports = 25
-daemon_smtp_ports = {{email_server_smtp_port}}
+daemon_smtp_ports = {{smtp_server_smtp_port}}
 
-local_interfaces = {{email_server_net_accesses | net_accesses_to_local_ips(net_configs, inventory_hostname) | join(' : ')}}
+local_interfaces = {{smtp_server_net_accesses | net_accesses_to_local_ips(net_configs, inventory_hostname) | join(' : ')}}
 
 # Specify the domain you want to be added to all unqualified addresses
 # here. An unqualified address is one that does not contain an "@" character
@@ -383,7 +383,7 @@ acl_check_rcpt:
           local_parts   = ^[./|] : ^.*[@%!\$] : ^.*/\\.\\./
 
 
-{% for host, domains in email_server_relay_domains_from_host.iteritems() %}
+{% for host, domains in smtp_server_relay_domains_from_host.iteritems() %}
   # Limited domains for {{host}}
   accept  hosts          = {{host}}
           sender_domains = {{domains | join(' : ')}}
@@ -592,7 +592,7 @@ dnslookup:
 #--------------------------------------------------------------------
 # aistleitner.info
 
-{% for router in email_server_routers %}
+{% for router in smtp_server_routers %}
 
 {{router['name']}}:
 {% if router['debug_print'] is sameas true %}

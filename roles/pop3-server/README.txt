@@ -14,7 +14,7 @@ Role: pop3-server
 
 Installs an POP3 server for people to fetch their mail. The POP3
 server serves mail from /var/mail to users. But the POP3 server does
-not care how mail gets to /var/mail (see email-server role for getting
+not care how mail gets to /var/mail (see smtp-server role for getting
 mail to /var/mail).
 
 

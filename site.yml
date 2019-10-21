@@ -2,6 +2,6 @@
 
 - import_playbook: rolebooks/vpn.yml
 
-- import_playbook: rolebooks/email-server.yml
+- import_playbook: rolebooks/mail.yml
 
 - import_playbook: rolebooks/common-late.yml

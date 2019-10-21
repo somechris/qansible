@@ -1,0 +1,47 @@
+smtp_server_smtp_port: 25
+smtp_server_localpart_lists: {}
+smtp_server_domain_lists: {}
+smtp_server_local_domains: []
+smtp_server_relay_domains_from_host: {}
+smtp_server_alias_files: {}
+smtp_server_alias_files_defaults:
+  '':
+    operator:
+      - MAILER-DAEMON
+      - abuse
+      - adm
+      - bin
+      - daemon
+      - dmarc
+      - exim
+      - ftp
+      - hostmaster
+      - lp
+      - mail
+      - named
+      - news
+      - nobody
+      - noc
+      - postfix
+      - postmaster
+      - root
+      - security
+      - usenet
+      - uucp
+      - webmaster
+      - www
+    '/dev/null':
+      - 'decode'
+    '{{effective_sysadmin_email_address_local_part}}':
+      - 'operator'
+smtp_server_dkim_domains: []
+smtp_server_smtp_port_ssl_config: compat
+smtp_server_smtp_extra_port_ssl_config: hardened
+
+smtp_server_relay_net_accesses_default:
+  - loopback
+smtp_server_relay_net_accesses_extra: []
+smtp_server_relay_net_accesses: '{{(smtp_server_relay_net_accesses_default + smtp_server_relay_net_accesses_extra)}}'
+smtp_server_relay_from_hosts_extra: []
+smtp_server_net_accesses_extra: []
+smtp_server_net_accesses: '{{(smtp_server_relay_net_accesses + smtp_server_net_accesses_extra)}}'

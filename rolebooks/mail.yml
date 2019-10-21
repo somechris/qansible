@@ -1,9 +1,9 @@
-- name: Email Server
-  hosts: email_servers
+- name: SMTP Server
+  hosts: smtp_servers
   roles:
-    - email-server
+    - smtp-server
   tags:
-    - email-server
+    - smtp-server
 
 - name: POP3 erver
   hosts: pop3_servers
