@@ -31,7 +31,7 @@ def net_dev_name(net_config, inventory_hostname):
         raise RuntimeError('Unsupported type \'%s\' for net config in net_dev_name' % (net_config['type']))
     return name
 
-def host_nets(hostname, net_configs, type=None):
+def host_net_keys(hostname, net_configs, type=None, exclude=[]):
     for key, net_config in sorted(net_configs.iteritems()):
         if type is None or type == net_config['type']:
             on_host = False
@@ -44,8 +44,12 @@ def host_nets(hostname, net_configs, type=None):
                         ])
             else:
                 raise RuntimeError('Unsupported type \'%s\' for net config in host_nets' % (net_config['type']))
-            if on_host:
-                yield net_config
+            if on_host and key not in exclude:
+                yield key
+
+def host_nets(hostname, net_configs, type=None):
+    for key in host_net_keys(hostname, net_configs, type):
+        yield net_configs[key]
 
 # good
 def net_served_by(net_config, inventory_hostname):
@@ -165,6 +169,7 @@ class FilterModule(object):
     def filters(self):
         return {
             'host_nets': host_nets,
+            'host_net_keys': host_net_keys,
             'net_dev_name': net_dev_name,
             'net_slug': net_slug,
             'net_served_by': net_served_by,

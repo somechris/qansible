@@ -26,4 +26,5 @@ Sets up an ssh server.
 3. Parameters
 -------------
 
-This role does not have parameters.
+* `ssh_server_net_accesses`: List of net accesses of which hosts can reach
+  the service.

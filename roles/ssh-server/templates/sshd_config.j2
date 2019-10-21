@@ -2,7 +2,9 @@
 
 Port {{ssh_server_port}}
 AddressFamily inet
-ListenAddress 0.0.0.0
+{% for net_access in (ssh_server_net_accesses | net_accesses_to_local_ips(net_configs, inventory_hostname)) %}
+ListenAddress {{net_access}}
+{% endfor %}
 
 HostKey /etc/ssh/ssh_host_ed25519_key
 

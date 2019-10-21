@@ -7,8 +7,6 @@
 {{'INPUT' | iptables_append_rule('DROP', m='state', state='INVALID')}}
 {{'INPUT' | iptables_append_rule('ACCEPT', m='state', state='RELATED,ESTABLISHED')}}
 
-{{'INPUT' | iptables_append_rule('ACCEPT', p='tcp', dport=ssh_server_port)}}
-
 {% for port, config in (firewall_late_port_config | dictsort) %}
 {%   set chain=(config['name'] | default('PORT_' ~ port)) ~ '_in' %}
 {%   set protocol=(config['protocol'] | default(None)) %}
