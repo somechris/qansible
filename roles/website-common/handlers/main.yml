@@ -1,0 +1,4 @@
+- name: reload webserver
+  service:
+    name: '{{website_common_kind if website_common_kind != "apache" else "apache2"}}'
+    state: reloaded

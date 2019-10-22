@@ -10,6 +10,7 @@ company_domain: '{{company_domain_second_level}}.{{company_domain_tld}}'
 company_homepage: 'https://{{company_domain}}/'
 company_email_domain: '{{company_domain}}'
 sysadmin_email_address: 'sysadmin@{{company_email_domain}}'
+webmaster_email_address: 'webmaster@{{company_email_domain}}'
 
 #-----------------------------------------------------------------------
 # Naming
@@ -20,6 +21,9 @@ public_hostname: '{{inventory_hostname}}'
 # Common directories
 #
 common_directories_db: '/var/db'
+common_directories_data_base: /data
+common_directories_data_dir1: '{{common_directories_data_base}}/d1'
+
 
 #-----------------------------------------------------------------------
 # Networking
@@ -61,10 +65,37 @@ public_interface_name: ''
 firewall_early_rules_file: '/etc/iptables.restricted.rules'
 firewall_late_rules_file: '/etc/iptables.rules'
 
-#-----------------------------------------------------------------------
-# SSL
+#---------------------------------------------------------------------------
+# Web sites
 #
+
+webserver_ports_plain:
+  - 80
+webserver_ports_encrypted:
+  - 443
+webserver_net_accesses:
+  - 'loopback'
+web_site_root_dir: /var/www
+
+web_site_authenticated_user_header: 'X-Proxy-User'
+web_site_authenticated_email_header: 'X-Proxy-User-Mail'
+web_site_authenticated_display_name_header: 'X-Proxy-User-Display-Name'
+
 ssl_cert_dir: /etc/ssl/certs
 ssl_private_dir: /etc/ssl/private
 ssl_crl_dir: /etc/ssl/crl
 dhparams_file: '{{ssl_private_dir}}/dhparams.pem'
+
+default_ssl_setup: compat
+
+apache_webserver_ports_plain: '{{webserver_ports_plain}}'
+apache_webserver_ports_encrypted: '{{webserver_ports_encrypted}}'
+apache_websites: []
+nginx_websites: []
+
+
+
+#-----------------------------------------------------------------------
+# Artifacts
+artifact_meta_dir: .build-metadata
+artifact_pool_base_url: "https://{{company_domain}}/"

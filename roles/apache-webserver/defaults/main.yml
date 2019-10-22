@@ -1,0 +1,3 @@
+apache_webserver_net_accesses: '{{webserver_net_accesses}}'
+apache_webserver_ports_plain: '{{webserver_ports_plain}}'
+apache_webserver_ports_encrypted: '{{webserver_ports_encrypted}}'

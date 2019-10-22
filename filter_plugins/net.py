@@ -116,7 +116,18 @@ def net_accesses_to_local_ips(net_accesses, net_configs, inventory_hostname):
         ret += [ip]
     return ret
 
-def net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hostvars):
+def cidrToNetmask(cidr):
+    ret = ''
+    val = 2**32 - 2**(32-cidr)
+    for i in range(3,-1,-1):
+        ret += str((val >> (i*8)) & 255) + '.'
+    return ret[:-1]
+
+def rangeCidrToNetmask(range):
+    split = range.split('/',1)
+    return [split[0], cidrToNetmask(int(split[1]))]
+
+def net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hostvars, notation='CIDR'):
     net_access = build_net_access(net_access, net_configs)
     net_config = net_configs[net_access['net_key']]
 
@@ -137,12 +148,20 @@ def net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hos
             ranges = net_config['remote_ranges']
     else:
         raise RuntimeError('Unsupported type \'%s\' for net config in net_ranges' % (net_config['type']))
+
+    if notation == 'CIDR':
+        pass # default notation
+    elif notation == 'netmask':
+        ranges = [ rangeCidrToNetmask(range) for range in ranges ]
+    else:
+        raise RuntimeError('Unsupported notation \'%s\' in net_access_to_remote_ranges' % (notation))
+
     return ranges
 
-def net_accesses_to_remote_ranges(net_accesses, net_configs, inventory_hostname, hostvars):
+def net_accesses_to_remote_ranges(net_accesses, net_configs, inventory_hostname, hostvars, notation='CIDR'):
     ret = []
     for net_access in net_accesses:
-        ret += net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hostvars)
+        ret += net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hostvars, notation=notation)
     return ret
 
 def net_access_to_incoming_rules(net_access, net_configs, inventory_hostname, hostvars):

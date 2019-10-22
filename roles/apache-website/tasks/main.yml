@@ -1,0 +1,40 @@
+- name: Link effective log directory from default place
+  file:
+    state: link
+    path: '/var/log/apache2/{{apache_website_domain}}'
+    owner: www-data
+    group: adm
+    src: '{{web_site_root_dir}}/{{apache_website_domain}}/logs'
+    follow: no
+  notify:
+    reload apache
+
+- name: Configure {{apache_website_domain}} site
+  template:
+    dest: /etc/apache2/sites-available/{{apache_website_domain}}.conf
+    src: 'site.conf.j2'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload apache
+  tags: ['gisi-foo'] # TODO: weg damit
+
+- name: Enable {{apache_website_domain}} site
+  file:
+    state: link
+    dest: '/etc/apache2/sites-enabled/{{"00-" if apache_website_domain == "default" else ""}}{{apache_website_domain}}.conf'
+    src: '/etc/apache2/sites-available/{{apache_website_domain}}.conf'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload apache
+
+- name: Collect hosted website
+  set_fact:
+    apache_websites: '{{apache_websites | default([])}} + [ "{{apache_website_domain}}" ]'
+  when: 'apache_website_domain not in (apache_websites | default([]))'
+  changed_when: False
+  tags:
+    - always

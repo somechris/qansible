@@ -1,0 +1,25 @@
+allow_duplicates: yes
+
+dependencies:
+  - role: motd
+    service_name: 'Website: {{website_common_domain}}'
+
+  - role: dhparams
+    when: 'website_common_is_https | bool'
+
+  - role: x509-cert
+    x509_cert_name: '{{website_common_domain}}'
+    when: 'website_common_is_https | bool'
+
+  - role: x509-cert
+    x509_cert_name: 'www.{{website_common_domain}}'
+    when: '(website_common_is_https | bool) and (website_common_add_www_redirects | bool)'
+
+  - role: add-host-to-group
+    new_groups: '{{website_common_kind}}'
+
+  - role: add-host-to-group
+    new_groups: 'website_{{website_common_domain}}_server'
+
+  - role: add-host-to-group
+    new_groups: 'website_{{website_common_domain}}_server_{{website_common_kind}}'

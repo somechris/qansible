@@ -1,0 +1,4 @@
+- name: Install requested packages
+  apt:
+    name: '{{install_packages_name}}'
+    state: '{{install_packages_state}}'

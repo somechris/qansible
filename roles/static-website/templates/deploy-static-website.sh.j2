@@ -1,0 +1,236 @@
+#!/bin/bash
+# {{ansible_managed}}
+
+set -e
+set -o pipefail
+
+#---------------------------------------------------------------------
+print_help() {
+    cat <<EOF
+$0 [ OPTIONS ] DOMAIN BUILD
+
+Deploys a static web site from artifact pool
+
+DOMAIN -- The domain to deploy (E.g.: json-schema.example.com)
+BUILD -- The DOMAIN's build number (E.g.: 17.467dcd6fd280e673465bd6594f9ddf141a4cda32)
+
+OPTIONS:
+  --help       -- Prints this page
+  --artifact-domain OTHER_DOMAIN
+               -- Use the artifact of OTHER_DOMAIN to serve DOMAIN.
+  --mode MODE  -- Run in mode MODE. Available modes are
+                     verify - Verifies that the given build is deployed
+                     deploy - Does a plain deploy
+  --verbose    -- Increase verbosity
+EOF
+}
+
+ARTIFACT_POOL_URL="{{artifact_pool_base_url}}"
+
+#---------------------------------------------------------------------
+error() {
+    echo "Error:" "$@" >&2
+    exit 1
+}
+
+#---------------------------------------------------------------------
+icinga_ok() {
+    echo "OK:" "$@"
+    exit 0
+}
+
+#---------------------------------------------------------------------
+icinga_error() {
+    echo "ERROR:" "$@"
+    exit 2
+}
+
+#---------------------------------------------------------------------
+log() {
+    echo "$@"
+}
+
+#---------------------------------------------------------------------
+log_verbose() {
+    if [ "$VERBOSITY" -gt 0 ]
+    then
+        log "$@"
+    fi
+}
+
+#---------------------------------------------------------------------
+parse_arguments() {
+    while [ $# -gt 2 ]
+    do
+        local ARGUMENT="$1"
+        shift
+        case "$ARGUMENT" in
+            "--help" )
+                print_help
+                exit 1
+                ;;
+            "--verbose" )
+                VERBOSITY=$((VERBOSITY+1))
+                ;;
+            "--artifact-domain" )
+                [[ $# -gt 0 ]] || error "$ARGUMENT requires a parameter"
+                ARTIFACT_DOMAIN="$1"
+                shift
+                ;;
+            "--mode" )
+                [[ $# -gt 0 ]] || error "$ARGUMENT requires a parameter"
+                case "$1" in
+                    "deploy" \
+                        | "verify" )
+                        MODE="$1"
+                        ;;
+                    * )
+                        error "Unknown mode '$1'"
+                        ;;
+                esac
+                shift
+                ;;
+            * )
+                error "Unknown argument '$ARGUMENT'"
+                ;;
+        esac
+    done
+    DOMAIN="$1"
+    BUILD="$2"
+}
+
+#---------------------------------------------------------------------
+download_artifact_raw() {
+    sudo wget \
+        --output-document "$DOWNLOAD_DIR_ABS/website-static-$DOMAIN.$BUILD.tar.gz" \
+        "$ARTIFACT_POOL_URL/website-static-$ARTIFACT_DOMAIN/$BUILD/website-static-$ARTIFACT_DOMAIN.tar.gz"
+}
+
+#---------------------------------------------------------------------
+download_artifact() {
+    if [ "$VERBOSITY" -gt 0 ]
+    then
+        download_artifact_raw "$@" --verbose
+    else
+        download_artifact_raw "$@" >/dev/null
+    fi
+}
+
+#---------------------------------------------------------------------
+perform_deploy_forced() {
+    log_verbose "Preparing deployment temp dir"
+    local TMP_DIR_ABS="$(mktemp -d -t deploy-static-site.XXXXXX)"
+    chgrp www-data "$TMP_DIR_ABS"
+    chmod g+rx "$TMP_DIR_ABS"
+
+    local DOWNLOAD_DIR_ABS="$TMP_DIR_ABS/download"
+    mkdir "$DOWNLOAD_DIR_ABS"
+    chown www-data "$DOWNLOAD_DIR_ABS"
+
+    log_verbose "Fetching artifact"
+    download_artifact
+
+    log_verbose "Unpacking artifact"
+    local UNPACKED_DIR_ABS="$TMP_DIR_ABS/$DOMAIN.deploy"
+    mkdir -p "$UNPACKED_DIR_ABS"
+    pushd "$UNPACKED_DIR_ABS" >/dev/null
+    local VERBOSE_OPTS=()
+    if [ "$VERBOSITY" -gt 0 ]
+    then
+        VERBOSE_OPTS=("--verbose")
+    fi
+    tar "${VERBOSE_OPTS[@]}" -xzf "$DOWNLOAD_DIR_ABS/website-static-$DOMAIN.$BUILD.tar.gz"
+    popd >/dev/null
+
+    rm -rf "$DEPLOY_TARGET_DIR_ABS.deploy"
+    rm -rf "$DEPLOY_TARGET_DIR_ABS.old"
+    chown -R --reference="$DEPLOY_TARGET_DIR_ABS" "$UNPACKED_DIR_ABS"
+    chmod --reference="$DEPLOY_TARGET_DIR_ABS" "$UNPACKED_DIR_ABS"
+    mv "$UNPACKED_DIR_ABS" "$DEPLOY_TARGET_DIR_ABS.deploy"
+    mv "$DEPLOY_TARGET_DIR_ABS" "$DEPLOY_TARGET_DIR_ABS.old"
+    mv "$DEPLOY_TARGET_DIR_ABS.deploy" "$DEPLOY_TARGET_DIR_ABS"
+}
+
+#---------------------------------------------------------------------
+perform_deploy() {
+    if "$0" --mode verify "$DOMAIN" "$BUILD" &>/dev/null
+    then
+        log_verbose "Skipped deployment, as deployed version still good."
+    else
+        perform_deploy_forced
+    fi
+}
+
+#---------------------------------------------------------------------
+file_list_diff() {
+    diff -Naur "$@" <(echo "./{{artifact_meta_dir}}/files.sha512" | cat - "{{artifact_meta_dir}}/files.sha512" | sed -e 's/^[0-9a-f ]*//' | sort) <(find -type f | sort)
+}
+
+#---------------------------------------------------------------------
+verify_checksums() {
+    sha512sum "$@" -c <"$DEPLOY_TARGET_DIR_ABS/{{artifact_meta_dir}}/files.sha512"
+}
+
+#---------------------------------------------------------------------
+perform_verify() {
+    if [ ! -d "$DEPLOY_TARGET_DIR_ABS" ]
+    then
+        icinga_error "No htdocs at '$DEPLOY_TARGET_DIR_ABS'"
+    fi
+
+    local BUILD_FILE_ABS="$DEPLOY_TARGET_DIR_ABS/{{artifact_meta_dir}}/build/number"
+    if [ ! -e "$BUILD_FILE_ABS" ]
+    then
+        icinga_error "No build metadata file at '$BUILD_FILE_ABS'"
+    fi
+
+    local LIVE_BUILD="$(cat $BUILD_FILE_ABS)"
+    if [ "$BUILD" != "$LIVE_BUILD" ]
+    then
+        icinga_error "Expected build: $BUILD, Live build: $LIVE_BUILD"
+    fi
+
+    pushd "$DEPLOY_TARGET_DIR_ABS" >/dev/null
+    if ! verify_checksums --quiet &>/dev/null
+    then
+        icinga_error "Files with mismatching checksum" "$(verify_checksums 2>&1 | grep -v ': OK$')"
+    fi
+    popd >/dev/null
+
+    pushd "$DEPLOY_TARGET_DIR_ABS" >/dev/null
+    if ! file_list_diff -q &>/dev/null
+    then
+        icinga_error "File list differences:" "$(file_list_diff 2>&1)"
+    fi
+    popd >/dev/null
+
+    icinga_ok "Live build: $BUILD"
+}
+
+#---------------------------------------------------------------------
+ARTIFACT_DOMAIN=
+DOMAIN=
+BUILD=
+VERBOSITY=0
+MODE=deploy
+
+parse_arguments "$@"
+
+if [ -z "$DOMAIN" ]
+then
+    error "No domain given"
+fi
+
+if [ -z "$BUILD" ]
+then
+    error "No build given"
+fi
+
+if [ -z "$ARTIFACT_DOMAIN" ]
+then
+    ARTIFACT_DOMAIN="$DOMAIN"
+fi
+
+DEPLOY_TARGET_DIR_ABS="{{web_site_root_dir}}/$DOMAIN/htdocs"
+
+perform_"${MODE}"

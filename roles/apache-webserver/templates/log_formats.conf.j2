@@ -1,0 +1,5 @@
+# {{ansible_managed}}
+
+LogFormat "req_v2 %{{'{'}}%Y-%m-%dT%H:%M:%S}t+00:00 %h %>s %O %D %{{'{'}}SSL_PROTOCOL}x %{{'{'}}SSL_CIPHER}x %{{'{'}}SSL_CLIENT_M_SERIAL}x \"%u\" \"%r\" \"%{Referer}i\" \"%{X-Forwarded-For}i\" \"%{User-Agent}i\"" req_v2
+
+LogFormat "req_v2 %{{'{'}}%Y-%m-%dT%H:%M:%S}t+00:00 127.0.0.1 %>s %O %D %{{'{'}}SSL_PROTOCOL}x %{{'{'}}SSL_CIPHER}x %{{'{'}}SSL_CLIENT_M_SERIAL}x \"%u\" \"\" \"%{Referer}i\" \"\" \"\"" req_v2_anon

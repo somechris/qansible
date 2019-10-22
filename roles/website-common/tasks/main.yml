@@ -1,0 +1,61 @@
+- name: Create effective site directory
+  file:
+    state: directory
+    dest: '{{common_directories_data_dir1}}/website-{{website_common_domain}}'
+    owner: root
+    group: root
+    mode: 0555
+  notify:
+    reload webserver
+
+- name: Link effective site directory into place
+  file:
+    state: link
+    dest: '{{web_site_root_dir}}/{{website_common_domain}}'
+    src: '{{common_directories_data_dir1}}/website-{{website_common_domain}}'
+  notify:
+    reload webserver
+
+- name: Create htdocs site directories
+  file:
+    state: directory
+    dest: '{{web_site_root_dir}}/{{website_common_domain}}/htdocs'
+    owner: www-data
+    group: www-data
+    mode: 0555
+  notify:
+    reload webserver
+
+- name: Create htpasswds site directories
+  file:
+    state: directory
+    dest: '{{web_site_root_dir}}/{{website_common_domain}}/htpasswds'
+    owner: root
+    group: root
+    mode: 0555
+  notify:
+    reload webserver
+
+- name: Create log directories
+  file:
+    state: directory
+    dest: '{{web_site_root_dir}}/{{website_common_domain}}/logs'
+    owner: www-data
+    group: www-data
+    mode: 0775
+  notify:
+    reload webserver
+
+- name: Load credentials
+  include_vars: credentials.yml
+
+- name: Create htpasswords
+  template:
+    dest: '{{web_site_root_dir}}/{{website_common_domain}}/htpasswds/{{item.name}}'
+    src: 'htpasswd.j2'
+    owner: www-data
+    group: ssl-cert
+    mode: 0440
+  with_items: '{{website_common_htpasswds}}'
+  notify:
+    reload webserver

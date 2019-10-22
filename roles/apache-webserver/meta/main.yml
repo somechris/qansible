@@ -1,0 +1,21 @@
+allow_duplicates: no
+
+dependencies:
+  # Since the default website needs apache installed (so the needed
+  # directories are there), we cannot install apache through `tasks`,
+  # but need to do early here.
+  - role: install-packages
+    install_packages_name: apache2
+    install_packages_state: present
+
+  - role: apache-website
+    apache_website_domain: 'default'
+    apache_website_is_https: False
+    apache_website_add_www_redirects: False
+    apache_website_log_anonymously: False # Requests to this site are
+      # either someone trying to break in or from us. So either way we
+      # can/should log request details.
+    apache_website_net_accesses: []
+    apache_website_locations:
+      - name: /server-status
+        net_accesses: ['loopback']

@@ -1,0 +1,51 @@
+# If the `new_groups` parameter contains a Jinja2 template, starting
+# with Ansible 2, add_hosts no longer renders the template afresh for
+# each host, but the template from the first element in `play_hosts`
+# is reused for all hosts. This breaks grouping for example for Reds,
+# as there the website template would be
+#
+# ```
+# website_{{web_host}}_server
+# ```
+#
+# where web_host is `content.[...]` for some reds and
+# `content-alt.[...]` for some other.
+#
+# So if we used the `new_groups` variable directly in the `add_host`
+# task, (starting with Ansible 2.0) all reds either get added to the
+# `website_conifer.[...]_server` group or the
+# `website_conifer-alt.[...]_server` group, depending only on the
+# `web_host` of the first host in `play_hosts`.
+#
+# We instead want to add those `play_hosts` that have a `web_host` of
+# `content.[...]` to the `website_conifer.[...]_server` group and
+# those that have a `web_host` of `content-alt.[...]` to the
+# `website_conifer-alt.[...]_server` group.
+#
+# To work around that Ansible 2 change, we first register the
+# correctly rendered template for each host in a fact, and then lookup
+# that fact to determine the required groups within `add_host`.
+
+- name: Registering fact to work around template rendering issue
+  set_fact:
+    add_host_to_group_fact_new_groups: '{{new_groups | to_group_name}}'
+  changed_when: False
+  tags:
+    - always
+
+- name: Adding all play_hosts to groups
+  add_host:
+    name: '{{item}}'
+    # The `| default("all")` saves cases where some of the
+    # `play_hosts` are skipped from the play. For such hosts, the the
+    # above `set_fact` rule got skipped, and we should skip those
+    # hosts also in add_host. But skipping is not possible here, as
+    # `add_host` bypasses the host loop. So we fake skipping by adding
+    # the host to the `all` group instead, where it is a member
+    # already.
+    groups: '{{hostvars[item]["add_host_to_group_fact_new_groups"] | default("all")}}'
+  changed_when: False
+  with_items:
+    '{{play_hosts}}'
+  tags:
+    - always

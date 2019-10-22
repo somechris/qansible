@@ -1,0 +1,18 @@
+allow_duplicates: yes
+
+dependencies:
+    # Ansible detects an endless recursion when using 'apache-webserver'
+    # literally here, as apache-webserver itself depends on
+    # apache-website. Limiting recursion to only the first time using
+    # `when` does not help Ansible to figure out that it is no real
+    # endless recursion. So we have to resort to messing with the role
+    # name (but can therefore skip a `when` clause).
+  - role: '{{"apache-webserver" | role_name_pass_if_already_included}}'
+
+  - role: website-common
+    website_common_domain: '{{apache_website_domain}}'
+    website_common_htpasswds: '{{apache_website_htpasswds}}'
+    website_common_is_https: '{{apache_website_is_https}}'
+    website_common_add_www_redirects: '{{apache_website_add_www_redirects}}'
+    website_common_kind: apache
+

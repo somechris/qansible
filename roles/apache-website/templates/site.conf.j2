@@ -1,0 +1,63 @@
+# {{ansible_managed}}
+{% for prefix in ([''] + (['www.'] if (apache_website_add_www_redirects | bool) else [])) %}
+{%   for port in (apache_webserver_ports_plain + (apache_webserver_ports_encrypted if apache_website_is_https else [])) %}
+
+<VirtualHost *:{{port}}>
+  ServerName {{prefix}}{{apache_website_domain}}
+  DocumentRoot {{web_site_root_dir}}/{{apache_website_domain}}/htdocs/
+  ServerSignature Off
+  ServerAdmin {{webmaster_email_address}}
+
+{%     if (port in apache_webserver_ports_plain and (apache_website_is_https | bool)) or prefix %}
+  Redirect permanent / http{{"s" if apache_website_is_https else ""}}://{{apache_website_domain}}/
+{%     else %}
+{%       if port in apache_webserver_ports_encrypted %}
+{%         set ssl_config = (default_ssl_setup | ssl_config(variant='openssl')) %}
+  SSLEngine on
+  SSLProtocol -All{%for protocol in ssl_config['protocols']%} +{{protocol}}{%endfor%}
+
+  SSLCertificateChainFile {{ssl_cert_dir}}/{{apache_website_domain}}__chain.pem
+  SSLCertificateFile {{ssl_cert_dir}}/{{apache_website_domain}}__cert.pem
+  SSLCertificateKeyFile {{ssl_private_dir}}/{{apache_website_domain}}__key_w_dhparam.pem
+  SSLHonorCipherOrder on
+  SSLCipherSuite {{ssl_config['ciphers']}}
+
+{%       endif %}
+
+{%       set root_shim = ([{'name': '/'}] if (apache_website_locations | selectattr('name', 'equalto', '/') | list | length) == 0 else []) %}
+{%       for location in (root_shim + apache_website_locations)%}
+
+  <Location "{{location['name']}}">
+    <RequireAny>
+{%         if location['name'] == '/' and (location['net_accesses'] is defined and location['net_accesses'] != apache_website_net_accesses) %}
+#####################################################
+Config error!
+
+You have explicitly set net_accesses for / to:
+
+{{location['net_accesses']}}
+
+which does not met the implicit net_accesses for / from apache_website_net_accesses:
+
+{{apache_website_net_accesses}}
+#####################################################
+{%         endif %}
+{%         for remote_range in (location['net_accesses'] | default(apache_website_net_accesses) | net_accesses_to_remote_ranges(net_configs, inventory_hostname, hostvars, notation='netmask')) %}
+      Require ip {{remote_range[0]}}/{{remote_range[1]}}
+{%         endfor %}
+
+      Require all denied
+      # ^ This 'Require all denied' makes sure that at least one rule
+      # fails and RequireAny hence cannot return neutral
+    </RequireAny>
+  </Location>
+{%       endfor %}
+{%     endif %}
+
+
+  ErrorLog {{web_site_root_dir}}/{{apache_website_domain}}/logs/{{port}}_error.log
+  LogLevel warn
+  CustomLog {{web_site_root_dir}}/{{apache_website_domain}}/logs/{{port}}_access.log req_v2{{"_anon" if (apache_website_log_anonymously | bool) else ""}}
+</VirtualHost>
+{%   endfor %}
+{% endfor %}

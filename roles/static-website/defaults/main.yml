@@ -1,0 +1,3 @@
+static_website_default_locations:
+  - name: '/{{artifact_meta_dir}}'
+    net_accesses: []

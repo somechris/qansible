@@ -1,0 +1,5 @@
+website_common_domain: ''
+website_common_kind: ''
+website_common_htpasswds: []
+website_common_is_https: True
+website_common_add_www_redirects: True

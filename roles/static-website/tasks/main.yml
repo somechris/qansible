@@ -1,0 +1,19 @@
+- name: Collect site information
+  set_fact:
+    static_website_list: '{{static_website_list | default([])}} + [{"domain": "{{static_website_domain}}", "build": "{{static_website_build}}"}]'
+  changed_when: False
+  tags:
+    - always
+
+- name: Setup deployment script
+  template:
+    dest: '/usr/bin/deploy-static-website'
+    src: deploy-static-website.sh.j2
+    owner: root
+    group: root
+    mode: 0555
+
+- name: Deploy site
+  command: /usr/bin/deploy-static-website --verbose --artifact-domain '{{static_website_artifact_domain}}' '{{static_website_domain}}' '{{static_website_build}}'
+  register: static_website_reg_deployment
+  changed_when: 'static_website_reg_deployment.stdout != "Skipped deployment, as deployed version still good."'

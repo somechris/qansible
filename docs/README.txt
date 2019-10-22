@@ -103,6 +103,11 @@ agreements.
 ----------------
 
 * Roles:
+  - `apache-webserver`: Configures an apache webserver with only the
+    default page.
+  - `apache-website`: Configures an apache site (along with
+    provisioning apache itself).
+  - `add-host-to-group`: Dynamically adds a host to a group in Ansible.
   - `common-directories`: Sets up common directories needed on all hosts.
   - `common-packages`: Sets up common packages needed on all hosts.
   - `debug`: Allows to prints debug messages between roles in `meta`
@@ -111,17 +116,25 @@ agreements.
     LDAP, ...)
   - `smtp-server`: Sets up an SMTP server.
   - `emergency-user`: Sets up a local user that allows login even if
+  - `fail`: Fails a playbook. This can be used to fail early in `meta` parts.
   - `firewall-early`: Sets up a basic firewall to be used while setting up the
     host
   - `firewall-late`: Sets up the system's firewall
   - `hostname`: Sets up host identifications.
+  - `install-packages`: Install packages. This is useful to install
+    packages before role dependencies get executed.
   - `motd`: Sets up motd (message of the day) files shown after login. This is
   - `network-tuner`: Adjusts settings of network interfaces.
+  - `pass`: A playbook that does nothing. This is useful when using
+    conditionals for role names and needing to "do nothing" in certain
+    cases.
   - `pop3-server`: Sets up a POP3 server.
   - `ssh-client-expect-authorized-key`: Configures expected authorized
     keys for ssh clients.
   - `ssh-server`: Sets up an SSH server
+  - `static-website`: Deploys a static HTML site from an artifact url
   - `vpn`: Sets up the server's VPN connections
+  - `website-common`: Common tasks for websites for different webservers.
   - `x509-cert`: Installs an X.509 certificate
 
 

@@ -1,0 +1,111 @@
+- name: Install apache
+  apt:
+    name:
+      # - apache2 # Installed through `meta`, as it is needed early for dependent roles
+      - libapache2-mod-authnz-external
+    state: present
+
+- name: Drop undesired default configurations
+  file:
+    state: absent
+    dest: '/etc/apache2/conf-enabled/{{item}}'
+  with_items:
+    - icinga.conf # Icinga from apt configures its site via a conf. That
+                  # gets in the way of our site conf. Hence, we drop it
+    - icinga-web.conf # (See icinga.conf)
+    - serve-cgi-bin.conf # We do not want default cgi-bin serving
+  notify:
+    reload apache
+
+- name: Make custom confs available
+  template:
+    dest: '/etc/apache2/conf-available/{{item}}'
+    src: '{{item}}.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - log_formats.conf
+  notify:
+    reload apache
+
+- name: Enable needed confs
+  file:
+    state: link
+    dest: '/etc/apache2/conf-enabled/{{item}}'
+    src: '/etc/apache2/conf-available/{{item}}'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - log_formats.conf
+  notify:
+    reload apache
+
+- name: Drop undesired modules
+  file:
+    state: absent
+    dest: '/etc/apache2/mods-enabled/{{item}}'
+  with_items:
+    - status.conf # Some distros do not restrict status module to local
+                  # requests, hence we roll our own config. That way we
+                  # should be say even after updates.
+  notify:
+    reload apache
+
+- name: Make custom module confs available
+  template:
+    dest: '/etc/apache2/mods-available/{{item}}'
+    src: '{{item}}.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - status_local.conf
+  notify:
+    reload apache
+
+- name: Enable needed mods
+  file:
+    state: link
+    dest: '/etc/apache2/mods-enabled/{{item}}'
+    src: '/etc/apache2/mods-available/{{item}}'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - authnz_ldap.load
+    - headers.load
+    - proxy.conf
+    - proxy.load
+    - proxy_http.load
+    - ldap.load
+    - ldap.conf
+    - ssl.conf
+    - ssl.load
+    - status_local.conf
+    - status.load
+    - socache_shmcb.load
+  notify:
+    reload apache
+
+- name: Drop default site
+  file:
+    state: absent
+    dest: /etc/apache2/sites-enabled/000-default.conf
+  notify:
+    reload apache
+
+- name: Updating port config
+  set_fact:
+    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
+      item: {
+        "name": "WEBSERVER_" ~ item,
+        "protocol": "tcp",
+        "incoming_net_accesses": apache_webserver_net_accesses,
+      }
+    }, merge_lists=True)}}'
+  changed_when: False
+  with_items: '{{apache_webserver_ports_plain + apache_webserver_ports_encrypted}}'
+  tags:
+    - always
