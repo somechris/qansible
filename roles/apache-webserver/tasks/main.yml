@@ -3,6 +3,8 @@
     name:
       # - apache2 # Installed through `meta`, as it is needed early for dependent roles
       - libapache2-mod-authnz-external
+      - libapache2-mod-security2
+      - modsecurity-crs
     state: present
 
 - name: Drop undesired default configurations
@@ -26,6 +28,7 @@
     mode: 0444
   with_items:
     - log_formats.conf
+    - server_headers.conf
   notify:
     reload apache
 
@@ -39,6 +42,7 @@
     mode: 0444
   with_items:
     - log_formats.conf
+    - server_headers.conf
   notify:
     reload apache
 
@@ -81,11 +85,33 @@
     - proxy_http.load
     - ldap.load
     - ldap.conf
+    - security2.conf
+    - security2.load
     - ssl.conf
     - ssl.load
     - status_local.conf
     - status.load
     - socache_shmcb.load
+  notify:
+    reload apache
+
+- name: Configure modsecurity
+  template:
+    dest: '/etc/modsecurity/modsecurity.conf'
+    src: 'modsecurity.conf.j2'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload apache
+
+- name: Configure OWASP modsecurity rule set
+  template:
+    dest: '/etc/modsecurity/crs/crs-setup.conf'
+    src: 'crs-setup.conf.j2'
+    owner: root
+    group: root
+    mode: 0444
   notify:
     reload apache
 

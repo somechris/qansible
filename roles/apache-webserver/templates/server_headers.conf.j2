@@ -1,0 +1,11 @@
+# {{ansible_managed}}
+
+# No more Apache in 'Server' Header.
+SecServerSignature "lighttpd/1.4.54"
+ServerTokens Full
+
+# Drop server information from automatically generated pages.
+ServerSignature Off
+
+# Will make debugging harder, but meh.
+TraceEnable Off
