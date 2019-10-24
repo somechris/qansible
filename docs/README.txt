@@ -105,6 +105,7 @@ agreements.
 * Roles:
   - `common-directories`: Sets up common directories needed on all hosts.
   - `common-packages`: Sets up common packages needed on all hosts.
+  - `debug`: Allows to prints debug messages between roles in `meta`
   - `dhparams`: Handles files holding Diffie Hellman parameters for secure
     handshakes. This is needed for applications doing encryption (Websites,
     LDAP, ...)
@@ -128,4 +129,11 @@ agreements.
 4. Local role overview
 ----------------------
 
-<none yet>
+(Use this section to add a short summary for roles that are local to
+your local repo.)
+
+* Local roles:
+  - `local-role1`: description of role
+  - `local-role2`: description of role
+  - `local-role3`: description of role
+  - ...
