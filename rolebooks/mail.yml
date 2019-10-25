@@ -5,7 +5,7 @@
   tags:
     - smtp-server
 
-- name: POP3 erver
+- name: POP3 server
   hosts: pop3_servers
   roles:
     - pop3-server
