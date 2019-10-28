@@ -286,9 +286,14 @@ lint_role() {
         do
             local INCLUDED_ROLE="$(sed -e 's/^[ 	]*//' -e 's/[ 	]*$//' <<<"$PADDED_INCLUDED_ROLE")"
             local INCLUDED_ROLE_MARKER="roles/$INCLUDED_ROLE/tasks/main.yml"
-            if [ ! -f "$INCLUDED_ROLE_MARKER" ]
+            if [ "${INCLUDED_ROLE}" = "${INCLUDED_ROLE%{{*}" ]
             then
-                warn "role '$ROLE' includes role '$INCLUDED_ROLE' in $FILE (line: $LINE_NO), but file '$INCLUDED_ROLE_MARKER' does not exist"
+                # '{{' does not occur in the role name, so there it's no template in the name
+                if [ ! -f "$INCLUDED_ROLE_MARKER" ]
+                then
+                    # included role does not have tasks/main.yml file
+                    warn "role '$ROLE' includes role '$INCLUDED_ROLE' in $FILE (line: $LINE_NO), but file '$INCLUDED_ROLE_MARKER' does not exist"
+                fi
             fi
         done < <(  grep -HRnoP '^[         ]*-[    ]*role[  ]*:[   ]*(.*)[         ]*$' "roles/$ROLE/meta/main.yml" )
     fi
