@@ -54,6 +54,7 @@ net_configs_default:
   internet:
     type: shim
     interface: '{{public_interface_name}}'
+    local_ip: '{{public_ipv4_address | default("127.0.0.1")}}'
     remote_ranges: ['0.0.0.0/0']
     public: True
 public_ipv4_address_ranges: ['0.0.0.0/0']
