@@ -18,6 +18,7 @@
     groups: 'sudo'
     createhome: yes
     home: '/home/{{emergency_user_name}}'
+    password: '*'
     shell: /bin/bash
     uid: 8000
 
