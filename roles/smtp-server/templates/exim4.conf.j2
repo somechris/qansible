@@ -599,7 +599,8 @@ dnslookup:
 {% for router in smtp_server_routers %}
 
 {{router['name']}}:
-  debug_print = "R: {{router['name']}} for $local_part@$domain" # lint-ignore
+  debug_print = "R: {{router['name']}} for $local_part@$domain" {# # lint-ignore #}
+
   driver = {{router['driver']}}
 {%   if router['domains'] is defined %}
   domains = {{router['domains']}}
