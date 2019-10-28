@@ -186,7 +186,9 @@ lint_role() {
 
                 local LINT_IGNORE=false
                 local FULL_LINE="$(sed -n "${LINE_NO}p" "$FILE" ; true)"
-                if [ "lint-ignore" = "${FULL_LINE: -11}" ]
+                if [ "lint-ignore" = "${FULL_LINE: -11}" \
+                    -o "lint-ignore #}" = "${FULL_LINE: -14}" \
+                    ]
                 then
                     LINT_IGNORE=true
                 fi
