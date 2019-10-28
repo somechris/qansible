@@ -30,7 +30,7 @@
     mode: 0400
   with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
   notify:
-    - reload openvpn
+    - reload openvpn-{{ansible_distribution}}
 
 - name: Render configs
   template:
