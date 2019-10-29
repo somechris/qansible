@@ -18,7 +18,6 @@
     mode: 0444
   notify:
     reload apache
-  tags: ['gisi-foo'] # TODO: weg damit
 
 - name: Enable {{apache_website_domain}} site
   file:
