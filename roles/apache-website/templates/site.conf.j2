@@ -23,6 +23,12 @@
   SSLCipherSuite {{ssl_config['ciphers']}}
 
 {%       endif %}
+{%       if apache_website_redirects %}
+
+{%         for redirect in apache_website_redirects %}
+  Redirect {{redirect['from']}} {{redirect['to']}}
+{%         endfor %}
+{%       endif %}
 
 {%       set root_shim = ([{'name': '/'}] if (apache_website_locations | selectattr('name', 'equalto', '/') | list | length) == 0 else []) %}
 {%       for location in (root_shim + apache_website_locations)%}

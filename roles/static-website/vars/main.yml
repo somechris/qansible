@@ -6,3 +6,4 @@ static_website_locations: []
 static_website_htpasswds: []
 static_website_net_accesses:
   - loopback
+static_website_redirects: []

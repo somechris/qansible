@@ -64,3 +64,8 @@ No Globals that are specific only for this role.
   site. This can be more restrictive that
   apache_webserver_net_accesses (note the name `server`, not `site`),
   but not more permissive.
+* `apache_website_redirects`: A list of redirects to set up for this
+  site. Each redirect is a dictionary, holding the following
+  key/values:
+  * `from`: The match that triggers the redirect
+  * `to`: The URL to redirect to

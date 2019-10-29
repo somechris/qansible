@@ -6,3 +6,4 @@ apache_website_log_anonymously: True
 apache_website_net_accesses:
   - loopback
 apache_website_add_www_redirects: '{{(apache_website_domain | split(".") | length) < 3}}'
+apache_website_redirects: []

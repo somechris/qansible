@@ -54,3 +54,6 @@ Deploys a static html page from S3.
 * `static_website_net_accesses`: The net-accesses that can access this
   site. This can be more restrictive than the webserver's net_accesses,
   but not more permissive.
+* `static_website_redirects`: The redirects to set up for this
+  site. See `apache_website_redirects` of the `apache_website` role
+  for format of this configuration.
