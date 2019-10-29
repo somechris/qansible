@@ -79,6 +79,7 @@
     mode: 0444
   with_items:
     - authnz_ldap.load
+    - cgi.load
     - headers.load
     - proxy.conf
     - proxy.load

@@ -42,6 +42,7 @@ No Globals that are specific only for this role.
   of the `website-common` role.
 * `apache_website_locations`: (optional) (default: empty) List of location
   definitions. Each item is a dictionary holding:
+   * `is_cgi`: If True, treat this location as cgi and allow to execute them.
    * `name`: The location's URL.
    * `net-accesses`: The net-accesses that may use the location
 * `apache_website_add_www_redirects`: If True, sets up a

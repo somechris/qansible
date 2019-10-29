@@ -50,6 +50,11 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
       # ^ This 'Require all denied' makes sure that at least one rule
       # fails and RequireAny hence cannot return neutral
     </RequireAny>
+{%         if location["is_cgi"] | default(False) | bool %}
+
+    Options ExecCGI
+    SetHandler cgi-script
+{%         endif %}
   </Location>
 {%       endfor %}
 {%     endif %}
