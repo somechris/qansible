@@ -41,6 +41,10 @@ def role_name_pass_if_already_included(role_name):
     return "pass" if counter else role_name
 
 
+def split(input, separator):
+    return input.split(separator)
+
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
@@ -50,4 +54,5 @@ class FilterModule(object):
             'merge_list_of_lists': merge_list_of_lists,
             'slug': slug,
             'role_name_pass_if_already_included': role_name_pass_if_already_included,
+            'split': split,
         }

@@ -5,4 +5,4 @@ apache_website_is_https: True
 apache_website_log_anonymously: True
 apache_website_net_accesses:
   - loopback
-apache_website_add_www_redirects: '{{not (apache_website_domain.startswith("www."))}}'
+apache_website_add_www_redirects: '{{(apache_website_domain | split(".") | length) < 3}}'
