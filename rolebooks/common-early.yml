@@ -29,3 +29,7 @@
     - role: ssh-server
       tags:
         - 'ssh-server'
+
+    - role: time
+      tags:
+        - time

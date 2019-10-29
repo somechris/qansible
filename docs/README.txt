@@ -133,6 +133,7 @@ agreements.
     keys for ssh clients.
   - `ssh-server`: Sets up an SSH server
   - `static-website`: Deploys a static HTML site from an artifact url
+  - `time`: Takes care about time settings.
   - `vpn`: Sets up the server's VPN connections
   - `website-common`: Common tasks for websites for different webservers.
   - `x509-cert`: Installs an X.509 certificate
