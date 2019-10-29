@@ -1,0 +1,5 @@
+# {{ansible_managed}}
+
+{% for locale in locale_locales %}
+{{locale}} {{locale | regex_replace('.*\.([^.]*)', '\\1')}}
+{% endfor %}

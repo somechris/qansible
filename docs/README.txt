@@ -123,6 +123,7 @@ agreements.
   - `hostname`: Sets up host identifications.
   - `install-packages`: Install packages. This is useful to install
     packages before role dependencies get executed.
+  - `locale`: Sets up locales.
   - `motd`: Sets up motd (message of the day) files shown after login. This is
   - `network-tuner`: Adjusts settings of network interfaces.
   - `pass`: A playbook that does nothing. This is useful when using

@@ -30,6 +30,10 @@
       tags:
         - 'ssh-server'
 
+    - role: locale
+      tags:
+        - locale
+
     - role: time
       tags:
         - time

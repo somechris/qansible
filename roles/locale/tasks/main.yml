@@ -1,0 +1,16 @@
+- name: Make sure locale is marked for generation
+  template:
+    dest: '/etc/locale.gen'
+    src: locale.gen.j2
+    owner: root
+    group: root
+    mode: 0444
+  notify: locale rebuild
+
+- name: Create locale defaults
+  template:
+    dest: '/etc/default/locale'
+    src: default.j2
+    owner: root
+    group: root
+    mode: 0444
