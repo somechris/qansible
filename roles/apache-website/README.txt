@@ -45,6 +45,10 @@ No Globals that are specific only for this role.
    * `is_cgi`: If True, treat this location as cgi and allow to execute them.
    * `name`: The location's URL.
    * `net-accesses`: The net-accesses that may use the location
+   * `type`: (Default: `static`) If `static`, `name` is the literal
+     name of the location to match. If `regexp` take `name` as
+     regular expression to match with. This regular expression will
+     automatically be anchored to the path start.
 * `apache_website_add_www_redirects`: If True, sets up a
   `www.{{apache_website_domain}}` site that redirects to
   `{{apache_website_domain}}`.

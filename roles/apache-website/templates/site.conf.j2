@@ -26,8 +26,15 @@
 
 {%       set root_shim = ([{'name': '/'}] if (apache_website_locations | selectattr('name', 'equalto', '/') | list | length) == 0 else []) %}
 {%       for location in (root_shim + apache_website_locations)%}
+{%         set location_type = (location['type'] | default('static')) %}
+{%         set location_suffix = '' %}
+{%         set location_start_extra = '' %}
+{%         if location_type == 'regexp' %}
+{%           set location_suffix = 'Match' %}
+{%           set location_start_extra = '^' %}
+{%         endif %}
 
-  <Location "{{location['name']}}">
+  <Location{{location_suffix}} "{{location_start_extra}}{{location['name']}}">
     <RequireAny>
 {%         if location['name'] == '/' and (location['net_accesses'] is defined and location['net_accesses'] != apache_website_net_accesses) %}
 #####################################################
@@ -55,7 +62,7 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
     Options ExecCGI
     SetHandler cgi-script
 {%         endif %}
-  </Location>
+  </Location{{location_suffix}}>
 {%       endfor %}
 {%     endif %}
 
