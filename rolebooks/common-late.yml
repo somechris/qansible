@@ -1,6 +1,12 @@
 - name: common-late (generic)
   hosts: '!unmanaged'
   roles:
+    - role: apache-website-default
+      when: (apache_websites | default([]) | length) > 1
+      tags:
+        - apache-website-default
+        - website
+
     - role: firewall-late
       tags:
         - 'firewall'

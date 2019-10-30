@@ -1,7 +1,7 @@
 - name: Install apache
   apt:
     name:
-      # - apache2 # Installed through `meta`, as it is needed early for dependent roles
+      - apache2
       - libapache2-mod-authnz-external
       - libapache2-mod-security2
       - modsecurity-crs

@@ -107,6 +107,7 @@ agreements.
     default page.
   - `apache-website`: Configures an apache site (along with
     provisioning apache itself).
+  - `apache-website-default`: Configures apache's default website.
   - `add-host-to-group`: Dynamically adds a host to a group in Ansible.
   - `common-directories`: Sets up common directories needed on all hosts.
   - `common-packages`: Sets up common packages needed on all hosts.
