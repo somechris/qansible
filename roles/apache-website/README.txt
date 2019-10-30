@@ -69,3 +69,16 @@ No Globals that are specific only for this role.
   key/values:
   * `from`: The match that triggers the redirect
   * `to`: The URL to redirect to
+* `apache_website_rewrites`: A list of rewrites to set up for this
+  site. Each rewrite is a dictionary, holding the following
+  key/values:
+  * `description`: (Optional) Description of this rewrite's purpose.
+  * `conditions`: (Optional) A list of conditions that all need to be
+    matched for the rewrite to become effective. Each condition is a
+    dictionary holding the following key/values:
+    * `string`: The string to match in.
+    * `condition`: The condition that has to hold for the `string`.
+  * `rule`: a dictionary holding the following key/values:
+    * `from`: A match for the part of the current URI to rewrite.
+    * `to`: The target to rewrite to.
+    * `flags`: A list of flags for this rewrite rule (E.g.: `['END']`)

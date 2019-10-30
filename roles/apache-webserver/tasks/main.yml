@@ -86,6 +86,7 @@
     - proxy_http.load
     - ldap.load
     - ldap.conf
+    - rewrite.load
     - security2.conf
     - security2.load
     - ssl.conf

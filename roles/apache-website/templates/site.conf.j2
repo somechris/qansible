@@ -23,6 +23,21 @@
   SSLCipherSuite {{ssl_config['ciphers']}}
 
 {%       endif %}
+{%       if apache_website_rewrites %}
+  RewriteEngine on
+
+{%         for rewrite in apache_website_rewrites %}
+
+{%           if (rewrite['description'] | default('')) %}
+  # {{rewrite['description']}}
+{%           endif %}
+{%           for condition in (rewrite['conditions'] | default([])) %}
+  RewriteCond {{condition['string']}} {{condition['condition']}}
+{%           endfor %}
+{%           set rule = rewrite['rule'] %}
+  RewriteRule {{rule['from']}} {{rule['to']}}{{(' [' ~ (rule['flags'] | join(',')) ~ ']') if (rule['flags'] | default('')) else ''}}
+{%         endfor %}
+{%       endif %}
 {%       if apache_website_redirects %}
 
 {%         for redirect in apache_website_redirects %}

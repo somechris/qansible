@@ -7,3 +7,4 @@ static_website_htpasswds: []
 static_website_net_accesses:
   - loopback
 static_website_redirects: []
+static_website_rewrites: []

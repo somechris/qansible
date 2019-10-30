@@ -7,6 +7,7 @@ dependencies:
     apache_website_htpasswds: '{{static_website_htpasswds}}'
     apache_website_net_accesses: '{{static_website_net_accesses}}'
     apache_website_redirects: '{{static_website_redirects}}'
+    apache_website_rewrites: '{{static_website_rewrites}}'
     when: static_website_server_flavor == 'apache'
 
   - role: fail

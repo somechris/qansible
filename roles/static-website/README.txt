@@ -57,3 +57,6 @@ Deploys a static html page from S3.
 * `static_website_redirects`: The redirects to set up for this
   site. See `apache_website_redirects` of the `apache_website` role
   for format of this configuration.
+* `static_website_rewrites`: The rewrites to set up for this
+  site. See `apache_website_rewrites` of the `apache_website` role
+  for format of this configuration.
