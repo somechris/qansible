@@ -47,6 +47,24 @@ No Globals that are specific only for this role.
    * `is_cgi`: If True, treat this location as cgi and allow to execute them.
    * `name`: The location's URL.
    * `net-accesses`: The net-accesses that may use the location
+   * `security_rules`: List of security adaptions for this
+     location. Each security adaption is a dictionary with the
+     following key/values:
+     * `actions`: For type `add-rule`, the list of actions to carry out on a
+       match. If `actions` is the string `standard-deny`, it will get expanded
+       to denying the request at severity `CRITICAL`.
+     * `id`: The id of the adaption. For type `remove-target`, the id gives
+       the rule to remove a target from.
+     * `operator`: For `add-type`, the operator to match with against the
+       `targets` (E.g.: `@rx ^(?i:file)://(.*)$`).
+     * `rationale`: The plain text rationale why the adaption is necessary.
+     * `targets`: For type `remove-target`, `targets` is the list of targets
+       to remove from the security rule `id` for this location. For type
+       `add-rule`, it is the list of targets to match against. (E.g.:
+       ['ARGS:url', 'REQUEST_URI'])
+     * `type`: The type of adaption. Possible adaptions are:
+       * `add-rule`: adds a new rule
+       * `remove-target`: removes targets from an existing rule
    * `type`: (Default: `static`) If `static`, `name` is the literal
      name of the location to match. If `regexp` take `name` as
      regular expression to match with. This regular expression will

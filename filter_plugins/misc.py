@@ -44,6 +44,8 @@ def role_name_pass_if_already_included(role_name):
 def split(input, separator):
     return input.split(separator)
 
+def is_list(input):
+    return isinstance(input, list)
 
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
@@ -55,4 +57,5 @@ class FilterModule(object):
             'slug': slug,
             'role_name_pass_if_already_included': role_name_pass_if_already_included,
             'split': split,
+            'is_list': is_list,
         }

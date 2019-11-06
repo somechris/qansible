@@ -1,4 +1,7 @@
 # {{ansible_managed}}
+{% set location_root_shim = ([{'name': '/'}] if (apache_website_locations | selectattr('name', 'equalto', '/') | list | length) == 0 else []) %}
+{% set ids = {'sec_rules': ((apache_website_domain | hashing_mod(499)) * 200 + 50000)} %}
+
 {% for prefix in ([''] + (['www.'] if (apache_website_add_www_redirects | bool) else [])) %}
 {%   for port in (apache_webserver_ports_plain + (apache_webserver_ports_encrypted if apache_website_is_https else [])) %}
 
@@ -45,8 +48,7 @@
 {%         endfor %}
 {%       endif %}
 
-{%       set root_shim = ([{'name': '/'}] if (apache_website_locations | selectattr('name', 'equalto', '/') | list | length) == 0 else []) %}
-{%       for location in (root_shim + apache_website_locations)%}
+{%       for location in (location_root_shim + apache_website_locations)%}
 {%         set location_type = (location['type'] | default('static')) %}
 {%         set location_suffix = '' %}
 {%         set location_start_extra = '' %}
@@ -97,4 +99,80 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
   CustomLog {{web_site_root_dir}}/{{apache_website_domain}}/logs/{{port}}_access.log req_v2{{"_anon" if (apache_website_log_anonymously | bool) else ""}}
 </VirtualHost>
 {%   endfor %}
+{% endfor %}
+
+{# Helper for SecRule config #}
+{% macro sec_rule(rationale, phase, match, extra_conditions, actions) %}
+{%   if not (actions | is_list) %}
+{%     if actions == 'standard-deny' %}
+{%       set actions = [
+           'block',
+           'capture',
+           't:none',
+           "setvar:'tx.anomaly_score_pl1=+%{tx.critical_anomaly_score}'",
+           "severity:'CRITICAL'",
+           "logdata:'Matched within %{MATCHED_VAR_NAME}: %{MATCHED_VAR}'",
+           "deny"
+           ] %}
+{%     else %}
+{%       set actions = [actions] %}
+{%     endif %}
+{%   endif %}
+{%   set first_rule_actions = [
+         "id:'" ~ (ids["sec_rules"]) ~ "'",
+         "phase:" ~ phase,
+         "msg:'" ~ (rationale | replace("'", "_")) ~ "'",
+         ] + (actions | select("starts_with_any", [
+             "block",
+             "deny",
+             "id:",
+             "logdata:",
+             "msg:",
+             "nolog",
+             "phase:",
+             "severity:",
+             ]) | list) + [
+         "chain",
+         ] %}
+{%   set last_rule_actions = (actions | select("not_in", first_rule_actions) | list) %}
+SecRule REQUEST_HEADERS:Host "@streq {{apache_website_domain}}" "{{first_rule_actions | join(',\\\n    ')}}"
+{%   for condition in ([{"targets":["REQUEST_FILENAME"], "operator":match}] + extra_conditions) %}
+  SecRule {{condition['targets'] | join('|')}} "{{condition['operator']}}" "{{(last_rule_actions | join(',\\\n    ')) if loop.last else "chain"}}"
+{%   endfor %}
+{% set ids = (ids | update_dict({'sec_rules': ids['sec_rules'] + 1})) %}
+{% endmacro %}
+{# #}
+{# #}
+{% for location in (location_root_shim + apache_website_locations)%}
+{%   if (location["security_rules"] | default([]) != []) %}
+
+##############################################################
+# SecRules for {{apache_website_domain}}{{location['name']}}
+{%     set location_type = (location['type'] | default('static')) %}
+{%     set match = "" %}
+{%     if (location_type == 'static') %}
+{%       set match = "@streq " ~ location['name'] %}
+{%     elif (location_type == 'regexp') %}
+{%       set match = "@rx ^" ~ location['name'] %}
+{%     else %}
+#####################################################
+Config error!
+
+Unknown location type {{location_type}} for location {{location}} is security rules.
+#####################################################
+{%     endif %}
+{%     for rule in location["security_rules"] %}
+{%       set rationale = rule['rationale']%}
+#{{rule['type']}} id:{{rule['id']|default('')}} rationale: {{rationale}}
+{%       if rule['type'] == 'remove-target' %}
+{%         for target in rule['targets'] %}
+{{           sec_rule(rationale, 1, match, [], ["nolog", "ctl:ruleRemoveTargetById=" ~ rule['id'] ~ ";" ~ target]) }}
+{%         endfor %}
+{%       elif rule['type'] == 'add-rule' %}
+{{         sec_rule(rationale, 2, match, [{'targets': rule['targets'], 'operator': rule['operator']}], rule['actions']) }}
+{%       else %}
+ERROR: Unknown type {{rule['type']}} for security rule {{rule}}
+{%       endif %}
+{%     endfor %}
+{%   endif %}
 {% endfor %}
