@@ -1,3 +1,13 @@
 apache_webserver_net_accesses: '{{webserver_net_accesses}}'
 apache_webserver_ports_plain: '{{webserver_ports_plain}}'
 apache_webserver_ports_encrypted: '{{webserver_ports_encrypted}}'
+apache_webserver_error_documents:
+  400:
+    reason: Bad Request
+    explanation: Your browser sent a bad request that our server cannot process.
+  403:
+    reason: Forbidden
+    explanation: You are not allowed to access this resource.
+  404:
+    reason: Not Found
+    explanation: The requested resource could not be found.

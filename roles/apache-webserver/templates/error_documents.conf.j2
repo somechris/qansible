@@ -1,0 +1,15 @@
+# {{ansible_managed}}
+
+{% for code, spec in (apache_webserver_error_documents | dictsort) %}
+ErrorDocument {{code}} "{{[
+  '<html>',
+  '<head><title>' ~ code ~ ' ' ~ spec['reason'] ~ '</title></head>',
+  '<body bgcolor=\\\"white\\\">',
+  '<center><h1>' ~ code ~ ' ' ~ spec['reason'] ~'</h1></center>',
+  (('<center>' ~ spec['explanation'] ~ '</center>') if 'explanation' in spec else ''),
+  '<hr><center>If you need help, please let us know by emailing <a href=\\\"mailto:' ~ webmaster_email_address ~ '\\\">' ~ webmaster_email_address ~ '</a></center>',
+  '<hr><center>nginx</center>',
+  '</body>',
+  '</html>',
+  ] | join('\\n')}}{# Generate >512 byte document (by appending newlines), so browsers actually show it. #}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "
+{% endfor %}

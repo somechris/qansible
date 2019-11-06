@@ -29,6 +29,7 @@
   with_items:
     - log_formats.conf
     - server_headers.conf
+    - error_documents.conf
   notify:
     reload apache
 
@@ -43,6 +44,7 @@
   with_items:
     - log_formats.conf
     - server_headers.conf
+    - error_documents.conf
   notify:
     reload apache
 

@@ -34,3 +34,10 @@ No Globals that are specific only for this role.
   unencrypted plaintext connections.
 * `apache_webserver_ports_encrypted`: The ports to listen on for
   encrypted connections.
+* `apache_webserver_error_documents`: Dictionary of overrides for
+  Apache's default error pages. The keys are the status codes. The
+  values are themselves dictionaries holding the following
+  keys/values:
+  * `reason`: A short, one-line, plain text description of the reason
+    for this status page showing up. (E.g.: `Bad Request`)
+  * `explanation`: A more detailed explanation of what happened.
