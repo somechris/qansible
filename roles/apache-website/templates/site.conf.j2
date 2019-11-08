@@ -89,6 +89,12 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
     Options ExecCGI
     SetHandler cgi-script
 {%         endif %}
+{%         if location["expose_server_status"] | default(False) | bool %}
+
+    SetHandler server-status
+    # ExtendedStatus and ProxyStatus have to be turned on globally,
+    # and are turned on through mods-enabled.
+{%         endif %}
   </Location{{location_suffix}}>
 {%       endfor %}
 {%     endif %}

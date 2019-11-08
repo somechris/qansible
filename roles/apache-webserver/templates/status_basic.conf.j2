@@ -1,10 +1,5 @@
 # {{ansible_managed}}
 <IfModule mod_status.c>
-  <Location /server-status>
-    SetHandler server-status
-    Require local # Only allowed from localhost
-  </Location>
-
   # Most metrics require ExtendedStatus to bu turned On
   ExtendedStatus On
 

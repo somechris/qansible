@@ -67,7 +67,7 @@
     group: root
     mode: 0444
   with_items:
-    - status_local.conf
+    - status_basic.conf
   notify:
     reload apache
 
@@ -93,7 +93,7 @@
     - security2.load
     - ssl.conf
     - ssl.load
-    - status_local.conf
+    - status_basic.conf
     - status.load
     - socache_shmcb.load
   notify:
