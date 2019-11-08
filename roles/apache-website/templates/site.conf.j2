@@ -11,21 +11,21 @@
   ServerSignature Off
   ServerAdmin {{webmaster_email_address}}
 
-{%     if (port in apache_webserver_ports_plain and (apache_website_is_https | bool)) or prefix %}
-  Redirect permanent / http{{"s" if apache_website_is_https else ""}}://{{apache_website_domain}}/
-{%     else %}
-{%       if port in apache_webserver_ports_encrypted %}
-{%         set ssl_config = (default_ssl_setup | ssl_config(variant='openssl')) %}
+{%     if port in apache_webserver_ports_encrypted %}
+{%       set ssl_config = (default_ssl_setup | ssl_config(variant='openssl')) %}
   SSLEngine on
   SSLProtocol -All{%for protocol in ssl_config['protocols']%} +{{protocol}}{%endfor%}
 
-  SSLCertificateChainFile {{ssl_cert_dir}}/{{apache_website_domain}}__chain.pem
-  SSLCertificateFile {{ssl_cert_dir}}/{{apache_website_domain}}__cert.pem
-  SSLCertificateKeyFile {{ssl_private_dir}}/{{apache_website_domain}}__key_w_dhparam.pem
+  SSLCertificateChainFile {{ssl_cert_dir}}/{{prefix}}{{apache_website_domain}}__chain.pem
+  SSLCertificateFile {{ssl_cert_dir}}/{{prefix}}{{apache_website_domain}}__cert.pem
+  SSLCertificateKeyFile {{ssl_private_dir}}/{{prefix}}{{apache_website_domain}}__key_w_dhparam.pem
   SSLHonorCipherOrder on
   SSLCipherSuite {{ssl_config['ciphers']}}
 
-{%       endif %}
+{%     endif %}
+{%     if (port in apache_webserver_ports_plain and (apache_website_is_https | bool)) or prefix %}
+  Redirect permanent / http{{"s" if apache_website_is_https else ""}}://{{apache_website_domain}}/
+{%     else %}
 {%       if apache_website_rewrites %}
   RewriteEngine on
 
