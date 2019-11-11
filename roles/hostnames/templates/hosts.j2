@@ -1,3 +1,6 @@
 # {{ansible_managed}}
 
-127.0.0.1 {{inventory_hostname}} {{inventory_hostname_short}} localhost
+127.0.0.1   {{inventory_hostname}} {{inventory_hostname_short}} localhost
+{% for name, settings in (hostnames_static | dictsort) %}
+{{settings['ip']}} {{(11 - (settings['ip'] | length)) | whitespace}}{{name}}  # {{settings['reason']}}
+{% endfor %}

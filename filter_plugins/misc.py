@@ -47,6 +47,15 @@ def split(input, separator):
 def is_list(input):
     return isinstance(input, list)
 
+
+def repeat(base, length):
+    return (base * (int(length/len(base)) + 1))[:length]
+
+
+def whitespace(length):
+    return repeat(' ', length)
+
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
@@ -58,4 +67,6 @@ class FilterModule(object):
             'role_name_pass_if_already_included': role_name_pass_if_already_included,
             'split': split,
             'is_list': is_list,
+            'repeat': repeat,
+            'whitespace': whitespace,
         }
