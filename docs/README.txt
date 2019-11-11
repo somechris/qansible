@@ -121,7 +121,7 @@ agreements.
   - `firewall-early`: Sets up a basic firewall to be used while setting up the
     host
   - `firewall-late`: Sets up the system's firewall
-  - `hostname`: Sets up host identifications.
+  - `hostnames`: Sets up host identifications.
   - `install-packages`: Install packages. This is useful to install
     packages before role dependencies get executed.
   - `locale`: Sets up locales.

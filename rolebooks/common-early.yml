@@ -5,9 +5,9 @@
       tags:
         - 'emergency-user'
 
-    - role: hostname
+    - role: hostnames
       tags:
-        - 'hostname'
+        - 'hostnames'
 
     - role: firewall-early
       tags:

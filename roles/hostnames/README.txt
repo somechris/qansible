@@ -1,5 +1,5 @@
-Role: hostname
-==============
+Role: hostnames
+===============
 
 
 
