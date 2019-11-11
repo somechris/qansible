@@ -1,0 +1,11 @@
+# {{ansible_managed}}
+
+# We don't care much about where people come from. So we allow any
+# Referers as long they are visible.
+SecRuleUpdateTargetById 920272 !REQUEST_HEADERS:Referer
+
+# Bots come with email addresses (or `(at)`) in `From`
+# headers. Neither do we want to exclude them, nor carefully audit
+# them. So we whitelist them.
+SecRuleUpdateTargetById 920272 !REQUEST_HEADERS:From
+SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:From

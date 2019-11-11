@@ -68,6 +68,7 @@
     mode: 0444
   with_items:
     - status_basic.conf
+    - security_rules_global.conf
   notify:
     reload apache
 
@@ -89,6 +90,7 @@
     - ldap.load
     - ldap.conf
     - rewrite.load
+    - security_rules_global.conf
     - security2.conf
     - security2.load
     - ssl.conf
