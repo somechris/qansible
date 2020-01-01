@@ -163,7 +163,7 @@ perform_deploy() {
 
 #---------------------------------------------------------------------
 file_list_diff() {
-    diff -Naur "$@" <(echo "./{{artifact_meta_dir}}/files.sha512" | cat - "{{artifact_meta_dir}}/files.sha512" | sed -e 's/^[0-9a-f ]*//' | sort) <(find -type f | sort)
+    diff -Naur "$@" <(echo "./{{artifact_meta_dir}}/files.sha512" | cat - "{{artifact_meta_dir}}/files.sha512" | sed -e 's/^[0-9a-f ]*//' | sort) <(find -type f -o -type l | sort)
 }
 
 #---------------------------------------------------------------------
