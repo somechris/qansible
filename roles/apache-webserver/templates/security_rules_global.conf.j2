@@ -9,3 +9,10 @@ SecRuleUpdateTargetById 920272 !REQUEST_HEADERS:Referer
 # them. So we whitelist them.
 SecRuleUpdateTargetById 920272 !REQUEST_HEADERS:From
 SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:From
+
+
+# Sec-Fetch-User is either `?0` or `?1`. So it contains `?` (63)
+# which is forbidden in 920274. Upstream has a fix for this and also
+# adds 920275 for this very case. Until that fix flows down to us, we
+# whitelist this header.
+SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:Sec-Fetch-User
