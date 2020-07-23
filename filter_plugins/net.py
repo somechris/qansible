@@ -27,6 +27,8 @@ def net_dev_name(net_config, inventory_hostname):
         name = 'tun' + net_slug(net_config, inventory_hostname, capital=True)
     elif net_config['type'] == 'shim':
         name = net_config['interface']
+    elif net_config['type'] == 'local-subnet':
+        name = net_config['interface']
     else:
         raise RuntimeError('Unsupported type \'%s\' for net config in net_dev_name' % (net_config['type']))
     return name
@@ -42,6 +44,8 @@ def host_net_keys(hostname, net_configs, type=None, exclude=[]):
                         net_config['server'],
                         net_config['client']
                         ])
+            elif net_config['type'] == 'local-subnet':
+                on_host = net_config.get('local_ip', False)
             else:
                 raise RuntimeError('Unsupported type \'%s\' for net config in host_nets' % (net_config['type']))
             if on_host and key not in exclude:
@@ -92,6 +96,8 @@ def net_ip(net_config, kind, inventory_hostname=None):
             ip = net_config['local_ip']
         else:
             raise RuntimeError('Unsupported kind \'%s\' for net config in net_ip / shim' % (kind))
+    elif net_config['type'] == 'local-subnet':
+        ip = net_config['local_ip']
     else:
         raise RuntimeError('Unsupported type \'%s\' for net config in net_ip' % (net_config['type']))
 
@@ -146,6 +152,8 @@ def net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hos
                         ranges += hostvars[host]['public_ipv4_address_ranges']
         else:
             ranges = net_config['remote_ranges']
+    elif net_config['type'] == 'local-subnet':
+        ranges = net_config['remote_ranges']
     else:
         raise RuntimeError('Unsupported type \'%s\' for net config in net_ranges' % (net_config['type']))
 
