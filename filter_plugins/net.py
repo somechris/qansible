@@ -47,7 +47,7 @@ def host_net_keys(hostname, net_configs, type=None, exclude=[]):
             elif net_config['type'] == 'local-subnet':
                 on_host = net_config.get('local_ip', False)
             else:
-                raise RuntimeError('Unsupported type \'%s\' for net config in host_nets' % (net_config['type']))
+                raise RuntimeError('Unsupported type \'%s\' for net config in host_net_keys' % (net_config['type']))
             if on_host and key not in exclude:
                 yield key
 
