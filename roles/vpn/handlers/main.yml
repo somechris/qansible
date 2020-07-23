@@ -1,7 +1,7 @@
 - name: reload openvpn-Debian
   systemd:
     name: openvpn
-    state: reloaded
+    state: restarted
     daemon_reload: yes
 
 - name: reload openvpn-Gentoo
