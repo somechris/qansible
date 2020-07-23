@@ -3,14 +3,14 @@
     name:
       - openvpn
     state: present
-  when: 'ansible_distribution == "Debian"'
+  when: 'ansible_distribution == "Debian" and (inventory_hostname | host_nets(net_configs, type="vpn")| list)'
 
 - name: Install VPN packages
   portage:
     name:
       - openvpn
     state: present
-  when: 'ansible_distribution == "Gentoo"'
+  when: 'ansible_distribution == "Gentoo" and (inventory_hostname | host_nets(net_configs, type="vpn")| list)'
 
 - name: Drop-out for unsupported distributions
   fail: msg="Unsupported distribution '{{ansible_distribution}}' in 'vpn' role"
