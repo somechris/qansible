@@ -3,8 +3,9 @@
 Port {{ssh_server_port}}
 AddressFamily inet
 {% for net_access in (ssh_server_net_accesses | net_accesses_to_local_ips(net_configs, inventory_hostname)) %}
-ListenAddress {{net_access}}
+#ListenAddress {{net_access}}
 {% endfor %}
+# TODO: Enable ListeningAddress. This currently is flaky, as it fails if the needed VPN is not yet up.
 
 HostKey /etc/ssh/ssh_host_ed25519_key
 
