@@ -9,6 +9,10 @@ import base64
 #
 # to generate a good salt
 def mkpasswd(password, salt, method='SHA512-CRYPT', add_text_method=True):
+    if len(salt) < 16:
+        # Warn about too short salts. We want to make sure they are long enough
+        # to contribute to the difficulty.
+        raise RuntimeError("Please use at least 16 characters as salt")
     if method == 'SHA512-CRYPT':
         if len(salt) != 16:
             raise RuntimeError("Salt has to be 16 characters in [a-zA-Z0-9./] for %s." % (method))
