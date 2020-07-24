@@ -83,10 +83,27 @@ def ssl_config(type='compat', variant='openssl'):
     elif variant == 'gnutls':
         if type == 'hardened':
             ciphers = [
-                'SECURE128',
-                '+SECURE192',
-                '-VERS-ALL',
+                'NONE',
                 '+VERS-TLS1.2',
+                '+VERS-TLS1.3',
+                '+DHE-RSA',
+                '+ECDHE-RSA',
+                '+ECDHE-ECDSA',
+                '+SHA256',
+                '+SHA384',
+                '+AEAD',
+                '+AES-256-GCM',
+                '+AES-256-CCM',
+                '+CHACHA20-POLY1305',
+                '+SIGN-RSA-SHA224',
+                '+SIGN-RSA-SHA256',
+                '+SIGN-RSA-SHA384',
+                '+SIGN-RSA-SHA512',
+                '+SIGN-ECDSA-SHA224',
+                '+SIGN-ECDSA-SHA256',
+                '+SIGN-ECDSA-SHA384',
+                '+SIGN-ECDSA-SHA512',
+                '+COMP-ALL',
                 ]
         elif type == 'compat':
             ciphers = [
