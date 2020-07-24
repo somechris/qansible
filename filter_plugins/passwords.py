@@ -1,4 +1,6 @@
 import crypt
+import hashlib
+import base64
 
 
 # You can use
@@ -11,9 +13,15 @@ def mkpasswd(password, salt, method='SHA512-CRYPT', add_text_method=True):
         if len(salt) != 16:
             raise RuntimeError("Salt has to be 16 characters in [a-zA-Z0-9./] for %s." % (method))
         hashed_password = crypt.crypt(password, "$6$%s" % (salt))
+    elif method == 'SSHA':  # SHA1 is broken, but SSHA is still ok-ish. If
+        # possible, avoid SSHA and use something more secure
+        hash = hashlib.sha1()
+        hash.update(password)
+        hash.update(salt)
+        hashed_password = base64.b64encode(hash.digest() + str(salt))
     else:
-        raise NotImplementedError("Only SHA512-CRYPT is supported at " +
-                                  "this point")
+        raise NotImplementedError("Only SHA512-CRYPT and SSHA are supported " +
+                                  "at this point")
     ret = (('{%s}' % (method)) if add_text_method else '') + hashed_password
     return ret
 
