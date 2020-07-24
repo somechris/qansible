@@ -1,3 +1,5 @@
+# lint-distribution-independent
+
 # If the `new_groups` parameter contains a Jinja2 template, starting
 # with Ansible 2, add_hosts no longer renders the template afresh for
 # each host, but the template from the first element in `play_hosts`

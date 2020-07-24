@@ -299,6 +299,17 @@ lint_role() {
             fi
         done < <(  grep -HRnoP '^[         ]*-[    ]*role[  ]*:[   ]*(.*)[         ]*$' "roles/$ROLE/meta/main.yml" )
     fi
+
+    if [ -e "roles/$ROLE/tasks/main.yml" ]
+    then
+        if ! grep --quiet "fail: msg=\"Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role\"" "roles/$ROLE/tasks/main.yml"
+        then
+            if ! grep --quiet "^# lint-distribution-independent" "roles/$ROLE/tasks/main.yml"
+            then
+                warn "No distribution guard in role $ROLE"
+            fi
+        fi
+    fi
 }
 
 

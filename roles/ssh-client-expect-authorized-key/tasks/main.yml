@@ -1,3 +1,7 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
+  when: 'ansible_distribution not in ["Debian"]'
+
 - name: Updating key collector
   set_fact:
     ssh_client_expect_authorized_key_collector: '{{ssh_client_expect_authorized_key_collector | default({}) | update_dict(ssh_client_expect_authorized_key_expectation, merge_lists=True)}}'

@@ -1,3 +1,5 @@
+# lint-distribution-independent
+
 - name: Abort
   fail:
     msg: '{{msg}}'

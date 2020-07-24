@@ -1,3 +1,7 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
+  when: 'ansible_distribution not in ["Debian"]'
+
 - name: Install OpenLDAP client tools
   apt:
     name:
@@ -5,10 +9,6 @@
       - nslcd
     state: present
   when: 'ansible_distribution == "Debian"'
-
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{ansible_distribution}}' in 'ldap-client-early' role"
-  when: 'ansible_distribution not in ["Debian"]'
 
 - name: Configure openldap client
   template:

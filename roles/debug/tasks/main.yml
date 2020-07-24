@@ -1,2 +1,4 @@
+# lint-distribution-independent
+
 - name: Output debug message
   debug: msg='{{debug_msg}}'

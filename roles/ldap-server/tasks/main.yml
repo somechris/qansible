@@ -1,5 +1,5 @@
 - name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{ansible_distribution}}' in 'ldap-server' role"
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
   when: 'ansible_distribution not in ["Debian"]'
 
 - name: Preseed ldap domain

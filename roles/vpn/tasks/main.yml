@@ -1,3 +1,7 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
+  when: 'ansible_distribution not in ["Debian", "Gentoo"]'
+
 - name: Install VPN packages
   apt:
     name:
@@ -11,10 +15,6 @@
       - openvpn
     state: present
   when: 'ansible_distribution == "Gentoo" and (inventory_hostname | host_nets(net_configs, type="vpn")| list)'
-
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{ansible_distribution}}' in 'vpn' role"
-  when: 'ansible_distribution not in ["Debian", "Gentoo"]'
 
 - name: Bring static keys in place
   #

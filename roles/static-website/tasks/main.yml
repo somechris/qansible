@@ -1,3 +1,7 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
+  when: 'ansible_distribution not in ["Debian"]'
+
 - name: Collect site information
   set_fact:
     static_website_list: '{{static_website_list | default([])}} + [{"domain": "{{static_website_domain}}", "build": "{{static_website_build}}"}]'
