@@ -54,4 +54,4 @@
     remote_src: yes
     owner: root
     group: ssl-cert
-    mode: 0444
+    mode: 0440
