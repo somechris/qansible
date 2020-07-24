@@ -1,0 +1,37 @@
+# {{ansible_managed}}
+#
+# /etc/nslcd.conf
+# nslcd configuration file. See nslcd.conf(5)
+# for details.
+
+# The user and group nslcd should run as.
+uid nslcd
+gid nslcd
+
+# The location at which the LDAP server(s) should be reachable.
+uri {{ldap_server_uri}}
+
+base {{ldap_server_base_dn}}
+base passwd ou={{ldap_server_ou_people}},{{ldap_server_base_dn}}
+base group ou={{ldap_server_ou_groups}},{{ldap_server_base_dn}}
+filter group (objectClass=groupOfNames)
+
+# The LDAP protocol version to use.
+#ldap_version 3
+
+# The DN to bind with for normal lookups.
+#binddn cn=annonymous,dc=example,dc=net
+#bindpw secret
+
+# The DN used for password modifications by root.
+#rootpwmoddn cn=admin,dc=example,dc=com
+
+# SSL options
+ssl start_tls
+tls_reqcert hard
+tls_cacertfile {{ssl_cert_dir}}/{{ldap_server_host}}__chain.pem
+tls_ciphers {{(ldap_server_ssl_type | ssl_config('gnutls'))['ciphers']}}
+
+# The search scope.
+#scope sub
+scope one

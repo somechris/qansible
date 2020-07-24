@@ -1,0 +1,7 @@
+# {{ansible_managed}}
+dn: cn=<group>,<gsuffix>,<suffix>
+objectClass: <gclass>
+objectClass: auxiliaryPosixGroup
+cn: <group>
+gidNumber: <gid>
+member: <gdummymember>

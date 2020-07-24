@@ -1,0 +1,33 @@
+#!/bin/bash
+# {{ansible_managed}}
+
+QUERY_UID="$1"
+
+LDAP_GROUPS=()
+
+# Default login groups ---------------------------------------------------------
+{% for group in ldap_client_late_default_login_groups %}
+LDAP_GROUPS+=("{{group}}")
+{% endfor %}
+
+# Host specific login groups ---------------------------------------------------
+{% for group in ldap_client_late_host_specific_login_groups %}
+LDAP_GROUPS+=("{{group}}")
+{% endfor %}
+
+# Configuration done. Back to work. --------------------------------------------
+
+QUERY_GROUPS="(|"
+for LDAP_GROUP in "${LDAP_GROUPS[@]}"
+do
+  QUERY_GROUPS+="(memberOf=cn=$LDAP_GROUP,ou={{ldap_server_ou_groups}},{{ldap_server_base_dn}})"
+done
+QUERY_GROUPS+=")"
+
+QUERY="(&(objectClass=ldapPublicKey)${QUERY_GROUPS}(uid=${QUERY_UID}))"
+
+BASE_DN="ou={{ldap_server_ou_people}},{{ldap_server_base_dn}}"
+
+ldapsearch -D '' -ZZ -b "$BASE_DN" -o ldif-wrap=no "$QUERY"  'sshPublicKey' \
+    | grep '^sshPublicKey: ' \
+    | cut -f 2- -d ' '

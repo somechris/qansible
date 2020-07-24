@@ -1,0 +1,13 @@
+- name: restart nslcd
+  service:
+    name: nslcd
+    state: restarted
+
+- name: restart nscd
+  service:
+    name: nscd
+    state: restarted
+
+- name: regenerate pam
+  command: pam-auth-update --package
+  become: true

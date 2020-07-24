@@ -1,0 +1,17 @@
+# {{ansible_managed}}
+dn: uid=<user>,<usuffix>,<suffix>
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: organizationalPerson
+objectClass: person
+objectClass: ldapPublicKey
+uid: <user>
+displayName: <givenname> <surname>
+cn: <givenname> <surname>
+givenName: <givenname>
+sn: <surname>
+mail: <givenname_lower>.<surname_lower>@{{company_email_domain}}
+uidNumber: <uid>
+gidNumber: <gid>
+homeDirectory: <home>
+loginShell: <shell>

@@ -1,0 +1,6 @@
+# {{ansible_managed}}
+
+dn: {{ldap_server_base_dn}}
+changetype: modify
+replace: o
+o: {{ldap_server_organization}}

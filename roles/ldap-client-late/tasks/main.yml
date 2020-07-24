@@ -1,0 +1,19 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in 'ldap-client-late' role"
+  when: 'ansible_distribution not in ["Debian"]'
+
+- name: Setup helper script to get ssh keys
+  template:
+    dest: '/usr/bin/get-ldap-ssh-public-key'
+    src: get-ldap-ssh-public-key.sh.j2
+    owner: root
+    group: root
+    mode: 0555
+
+- name: Setup sudo config
+  template:
+    dest: '/etc/sudoers.d/50-ldap-client'
+    src: sudoers.j2
+    owner: root
+    group: root
+    mode: 0440

@@ -1,0 +1,21 @@
+ldap_server_organization: '{{company_name}}'
+
+# ldap_server_log_level allows to tune how verbose the syslog messages are.
+# See http://www.openldap.org/doc/admin24/slapdconf2.html
+# You probably want either none, stats, or -1 for debug
+ldap_server_log_level: stats
+
+ldap_server_mdb_access:
+  - 'attrs=userPassword,shadowLastChange by self write by anonymous auth by dn="cn=admin,{{ldap_server_base_dn}}" write by * none'
+  - 'dn.base="" by * read'
+  - '* by dn="cn=admin,{{ldap_server_base_dn}}" write by * read'
+
+ldap_server_uid_start: 10000
+ldap_server_password_scheme: SSHA # Unfortunately, OpenLDAP does not
+# support strong algos. SSHA is the strongest one there is. So we pick
+# that one.
+
+ldap_server_ldapscripts_log_file: '/var/log/ldapscripts.log'
+
+ldap_server_net_accesses:
+  - loopback

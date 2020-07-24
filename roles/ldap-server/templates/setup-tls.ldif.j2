@@ -1,0 +1,26 @@
+# {{ansible_managed}}
+dn: cn=config
+changetype: modify
+replace: olcTLSDHParamFile
+olcTLSDHParamFile: {{dhparams_file}}
+-
+replace: olcTLSCACertificateFile
+olcTLSCACertificateFile: {{ssl_cert_dir}}/{{ldap_server_host}}__chain.pem
+-
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: {{ssl_cert_dir}}/{{ldap_server_host}}__cert.pem
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: {{ssl_private_dir}}/{{ldap_server_host}}__key.pem
+-
+replace: olcLocalSSF
+olcLocalSSF: 256
+-
+replace: olcSaslSecProps
+olcSaslSecProps: noplain,minssf=256
+-
+replace: olcSecurity
+olcSecurity: ssf=256
+-
+replace: olcTLSCipherSuite
+olcTLSCipherSuite: {{(ldap_server_ssl_type | ssl_config('gnutls'))['ciphers']}}

@@ -100,3 +100,18 @@ nginx_websites: []
 # Artifacts
 artifact_meta_dir: .build-metadata
 artifact_pool_base_url: "https://{{company_domain}}/"
+
+#---------------------------------------------------------------------------
+# OpenLDAP settings
+#
+ldap_server_base_dn: 'dc={{company_domain_second_level}},dc={{company_domain_tld}}'
+ldap_server_host: 'ldap.{{company_domain}}'
+ldap_server_port: 389
+ldap_server_uri: 'ldap://{{ldap_server_host}}:{{ldap_server_port}}'
+ldap_server_ou_groups: groups
+ldap_server_ou_people: people
+ldap_server_ou_machines: machines
+ldap_server_ou_services: services
+ldap_server_ssl_type: hardened
+ldap_client_late_default_login_groups:
+  - fire-fighter

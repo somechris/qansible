@@ -1,0 +1,7 @@
+- name: LDAP servers
+  hosts: ldap_servers
+  roles:
+    - ldap-server
+  tags:
+    - ldap-server
+    - ldap

@@ -1,0 +1,7 @@
+dependencies:
+  - role: motd
+    service_name: 'OpenLDAP client'
+
+  - role: x509-cert
+    x509_cert_name: '{{ldap_server_host}}'
+    x509_cert_needs_private_key: False

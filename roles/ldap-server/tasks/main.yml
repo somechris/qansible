@@ -1,0 +1,199 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in 'ldap-server' role"
+  when: 'ansible_distribution not in ["Debian"]'
+
+- name: Preseed ldap domain
+  debconf:
+    name: slapd
+    question: slapd/domain
+    vtype: string
+    # Not using company_domain or similar variables, since this value
+    # should really be built from the ldap_server_base_dn itself. This is
+    # needed to make sure modifications of ldap_server_base_dn variable flow
+    # into the right places
+    value: '{{ldap_server_base_dn | regex_replace(",", ".") | regex_replace("dc=", "") }}'
+
+- name: Install ldap packages
+  apt:
+    name:
+      - slapd
+      - ldap-utils
+      - ldapscripts
+    state: present
+
+- name: Make sure openldap user can access certs
+  user:
+    state: present
+    name: openldap
+    append: yes
+    createhome: no
+    groups: ssl-cert
+
+- name: Create init script defaults
+  template:
+    dest: '/etc/default/slapd'
+    src: 'slapd-defaults.conf.j2'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    - reload slapd
+
+- name: Create directory for bootstrapping ldifs
+  file:
+    state: directory
+    path: /etc/ldap/bootstrapping
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Load credentials
+  include_vars: credentials.yml
+
+- name: Create bootstrapping ldifs
+  template:
+    dest: '/etc/ldap/bootstrapping/setup-{{item}}.ldif'
+    src: 'setup-{{item}}.ldif.j2'
+    owner: root
+    group: root
+    mode: 0400
+  with_items:
+    - tls
+    - logging
+    - password-hashing
+    - root-password
+    - index
+    - mdb-access-w-root
+    - dc-main
+    - ou-people
+    - ou-groups
+    - ou-machines
+    - ou-services
+    - mdb-access
+    - ssh-public-key-schema
+    - auxiliary-posix-group
+    - memberof-loading
+    - memberof-overlaying
+
+- name: Update cn=config
+  shell: 'ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/bootstrapping/setup-{{item}}.ldif ; test $? -eq 0 -o $? -eq 68 -o $? -eq 80'
+  # 0 is ok
+  # 68 is entry already exists
+  # 80 is other (Needed for ssh public key scheme)
+  with_items:
+    - logging
+    - password-hashing
+    - root-password
+    - tls
+    - index
+    - mdb-access-w-root
+    - dc-main
+    - ou-people
+    - ou-groups
+    - ou-machines
+    - ou-services
+    - mdb-access
+    - ssh-public-key-schema
+    - auxiliary-posix-group
+  notify:
+    - reload slapd
+
+- name: Drop bootstrapping ldifs
+  file:
+    state: absent
+    path: '/etc/ldap/bootstrapping/setup-{{item}}.ldif'
+  with_items:
+    - root-password
+
+# Loading the member module if it is loaded already will fail. Hence,
+# we have to check if it is already there before trying to add it
+- name: Check if the memberof module is loaded
+  command: ldapsearch -Q -Y EXTERNAL -H ldapi:/// -LLL -b 'cn=module{0},cn=config' olcModuleLoad
+  changed_when: False
+  register: memberof_loading
+
+- name: Setup loading of memberof module
+  command: 'ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/bootstrapping/setup-memberof-loading.ldif'
+  when: '"memberof" not in memberof_loading.stdout'
+  notify:
+    - reload slapd
+
+# The memberof module can be added more than once to mdb. Hence, we have
+# to check if it is already there before trying to add it
+- name: Check if the memberof module is included in mdb
+  command: ldapsearch -Q -Y EXTERNAL -H ldapi:/// -LLL -b 'olcDatabase={1}mdb,cn=config' olcOverlay
+  changed_when: False
+  register: memberof_overlaying
+
+- name: Setup memberof overlay
+  command: 'ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/bootstrapping/setup-memberof-overlaying.ldif'
+  when: '"memberof" not in memberof_overlaying.stdout'
+  notify:
+    - reload slapd
+
+- name: Enforce permission on ldapscripts password file
+  # We only enforce sane permissions. But we do not actually set the
+  # password, as we do not want to have the password lying around on
+  # the host the whole time.
+  file:
+    path: /etc/ldapscripts/ldapscripts.passwd
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Enforce permission on ldapscripts log file
+  file:
+    path: '{{ldap_server_ldapscripts_log_file}}'
+    owner: root
+    group: root
+    mode: 0640
+
+- name: Copy ldapscripts templates
+  template:
+    dest: '/etc/ldapscripts/{{item}}.template'
+    src: '{{item}}.template'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - group
+    - user
+    - machine
+
+- name: Configure ldapscripts
+  template:
+    dest: /etc/ldapscripts/ldapscripts.conf
+    src: ldapscripts.conf.j2
+    owner: root
+    group: root
+    mode: 0400
+
+- name: Bring backup script into place
+  template:
+    dest: /usr/bin/dump-ldap-backup
+    src: dump-backup.sh.j2
+    owner: root
+    group: root
+    mode: 0555
+  tags:
+    - backup
+
+- name: Configuring backup
+  set_fact:
+    backup_configs: '{{(backup_configs | default([])) + [{"kind": "ldap", "suffix": "ldif"}] }}'
+  changed_when: False
+  tags:
+    - always
+
+- name: Updating port config
+  set_fact:
+    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
+      ldap_server_port: {
+        "name": "LDAP",
+        "protocol": "tcp",
+        "incoming_net_accesses": ldap_server_net_accesses,
+      }
+    }, merge_lists=True)}}'
+  changed_when: False
+  tags:
+    - always

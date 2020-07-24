@@ -1,0 +1,46 @@
+#!/bin/bash
+# {{ansible_managed}}
+
+set -e
+set -o pipefail
+
+#---------------------------------------------------------------------
+print_help() {
+    cat <<EOF
+$0 [ OPTIONS ]
+
+Dumps ldap server data to stdout
+
+OPTIONS:
+  --help                -- Prints this page
+EOF
+}
+
+#---------------------------------------------------------------------
+parse_arguments() {
+    while [ $# -gt 0 ]
+    do
+        local ARGUMENT="$1"
+        shift
+        case "$ARGUMENT" in
+            "--help" )
+                print_help
+                exit 1
+                ;;
+            * )
+                error "Unknown argument '$ARGUMENT'"
+                ;;
+        esac
+    done
+}
+
+#---------------------------------------------------------------------
+error() {
+    echo "Error:" "$@" >&2
+    exit 1
+}
+
+#---------------------------------------------------------------------
+parse_arguments "$@"
+
+exec /usr/sbin/slapcat

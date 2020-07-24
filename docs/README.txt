@@ -124,8 +124,12 @@ agreements.
   - `hostnames`: Sets up host identifications.
   - `install-packages`: Install packages. This is useful to install
     packages before role dependencies get executed.
+  - `ldap-client-early`: Early part of LDAP client configuration.
+  - `ldap-client-late`: Late part of LDAP client configuration.
+  - `ldap-server`: Sets up an LDAP server.
   - `locale`: Sets up locales.
   - `motd`: Sets up motd (message of the day) files shown after login. This is
+  - `name-service-switch`: Configures name service switching
   - `network-tuner`: Adjusts settings of network interfaces.
   - `pass`: A playbook that does nothing. This is useful when using
     conditionals for role names and needing to "do nothing" in certain

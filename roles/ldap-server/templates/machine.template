@@ -1,0 +1,10 @@
+# {{ansible_managed}}
+dn: uid=<user>,<msuffix>,<suffix>
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: <user>
+displayName: <user>
+cn: <user>
+sn: <user>
+mail: {{sysadmin_email_address}}

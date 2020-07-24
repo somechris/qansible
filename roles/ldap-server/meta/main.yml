@@ -1,0 +1,8 @@
+dependencies:
+  - role: motd
+    service_name: 'OpenLDAP server'
+
+  - role: dhparams
+
+  - role: x509-cert
+    x509_cert_name: '{{ldap_server_host}}'

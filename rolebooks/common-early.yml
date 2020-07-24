@@ -37,3 +37,13 @@
     - role: time
       tags:
         - time
+
+    - role: ldap-client-early
+      tags:
+        - ldap-client-early
+        - ldap-client
+        - ldap
+
+    - role: name-service-switch
+      tags:
+        - name-service-switch

@@ -1,0 +1,11 @@
+# {{ansible_managed}}
+
+# Default login groups ---------------------------------------------------------
+{% for group in ldap_client_late_default_login_groups %}
+%{{group}} ALL=(ALL:ALL) NOPASSWD: ALL
+{% endfor %}
+
+# Host specific login groups ---------------------------------------------------
+{% for group in ldap_client_late_host_specific_login_groups %}
+%{{group}} ALL=(ALL:ALL) NOPASSWD: ALL
+{% endfor %}

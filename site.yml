@@ -1,5 +1,6 @@
 - import_playbook: rolebooks/common-early.yml
 
+- import_playbook: rolebooks/ldap-servers.yml
 - import_playbook: rolebooks/vpn.yml
 
 - import_playbook: rolebooks/mail.yml

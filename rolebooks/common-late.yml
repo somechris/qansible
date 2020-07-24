@@ -11,3 +11,10 @@
       tags:
         - 'firewall'
         - 'firewall-late'
+
+    - role: ldap-client-late
+      tags:
+       - ldap-client-late
+       - ldap-client
+       - ldap
+
