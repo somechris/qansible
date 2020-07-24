@@ -1,1 +1,2 @@
 x509_cert_name: ''
+x509_cert_needs_private_key: True

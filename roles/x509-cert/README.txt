@@ -41,3 +41,5 @@ No Globals that are specific only for this role.
 -------------
 
 * `x509_cert_name`: The name of the certificate to set up.
+* `x509_cert_needs_private_key`: (Default: True) If True, bring private keys to
+  the host.

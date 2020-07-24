@@ -36,6 +36,7 @@
     owner: root
     group: ssl-cert
     mode: 0440
+  when: 'x509_cert_needs_private_key'
 
 # Since we cannot enforce non-alphabetic order of fragments when
 # assembling key and dhparams, we link dhparams to a name whose order
@@ -45,6 +46,7 @@
     state: link
     dest: '{{ssl_private_dir}}/{{x509_cert_name}}__only_dhparams.pem'
     src: '{{dhparams_file}}'
+  when: 'x509_cert_needs_private_key'
 
 - name: Install key with dhparams
   assemble:
@@ -55,3 +57,4 @@
     owner: root
     group: ssl-cert
     mode: 0440
+  when: 'x509_cert_needs_private_key'
