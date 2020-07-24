@@ -9,7 +9,7 @@ import crypt
 def mkpasswd(password, salt, method='SHA512-CRYPT', add_text_method=True):
     if method == 'SHA512-CRYPT':
         if len(salt) != 16:
-            raise RuntimeError("Salt has to be 17 characters in [a-zA-Z0-9./] for %s." % (method))
+            raise RuntimeError("Salt has to be 16 characters in [a-zA-Z0-9./] for %s." % (method))
         hashed_password = crypt.crypt(password, "$6$%s" % (salt))
     else:
         raise NotImplementedError("Only SHA512-CRYPT is supported at " +
