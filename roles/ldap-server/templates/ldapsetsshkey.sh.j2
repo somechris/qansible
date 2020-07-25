@@ -1,0 +1,56 @@
+#!/bin/bash
+# {{ansible_managed}}
+
+set -e
+set -o pipefail
+
+error() {
+    echo "ERROR" "$@" >&2
+    exit 1
+}
+
+USER="$1"
+SSH_PUB_FILE="$2"
+
+print_help() {
+    cat <<EOF
+$0 USER [PUBLIC_KEY_FILE]
+
+Sets the SSH key of USER to PUBLIC_KEY_FILE in LDAP
+
+EOF
+}
+
+if [ -z "$USER" ]
+then
+    print_help
+    error "No user given"
+fi
+
+cat_public_key() {
+    if [ -z "$SSH_PUB_FILE" -o "$SSH_PUB_FILE" = "-" ]
+    then
+        echo "Please paste the public key file for user $USER, then press Enter and afterwards Ctrl-D" >&2
+
+        cat | (grep -v '^ *$' || true) | sed -e 's/^ *//' -e 's/ *$//' -e 's/  */ /g'
+
+    else
+        cat "$SSH_PUB_FILE"
+    fi
+}
+
+cat_ldif() {
+    local KEY=sshPublicKey
+    cat <<EOF
+
+dn: uid=$USER,ou={{ldap_server_ou_people}},{{ldap_server_base_dn}}
+changetype: modify
+replace: $KEY
+EOF
+    echo -n "$KEY: "
+    cat_public_key
+    echo
+    echo
+}
+
+cat_ldif | ldapmodify -ZZ -y /etc/ldapscripts/ldapscripts.passwd -D cn=admin,{{ldap_server_base_dn}}

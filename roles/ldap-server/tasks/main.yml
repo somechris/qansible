@@ -168,6 +168,14 @@
     group: root
     mode: 0400
 
+- name: Render own ldap helpers
+  template:
+    dest: '/usr/bin/ldapsetsshkey'
+    src: 'ldapsetsshkey.sh.j2'
+    owner: root
+    group: root
+    mode: 0544
+
 - name: Bring backup script into place
   template:
     dest: /usr/bin/dump-ldap-backup
