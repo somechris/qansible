@@ -26,7 +26,7 @@ PubkeyAuthentication yes
 AuthorizedKeysFile .ssh/authorized_keys
 
 AuthorizedPrincipalsFile none
-AuthorizedKeysCommand none
+AuthorizedKeysCommand /usr/bin/get-ldap-ssh-public-key
 AuthorizedKeysCommandUser nobody
 
 HostbasedAuthentication no
