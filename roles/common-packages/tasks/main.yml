@@ -3,6 +3,7 @@
     name:
       - atop
       - psmisc # provides pstree
+      - net-tools # provides netstat
     state: present
 
 - name: Ensure uninstalled packages are uninstalled
