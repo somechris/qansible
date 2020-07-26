@@ -16,6 +16,7 @@
                   # gets in the way of our site conf. Hence, we drop it
     - icinga-web.conf # (See icinga.conf)
     - serve-cgi-bin.conf # We do not want default cgi-bin serving
+    - javascript-common.conf # No automatic javascript exporting
   notify:
     reload apache
 
