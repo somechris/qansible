@@ -4,6 +4,7 @@
       - atop
       - psmisc # provides pstree
       - net-tools # provides netstat
+      - aptitude # Ansible prefers `aptitude` over `apt-get`
     state: present
 
 - name: Ensure uninstalled packages are uninstalled
