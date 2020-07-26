@@ -44,6 +44,15 @@ No Globals that are specific only for this role.
   definitions. Each item is a dictionary holding:
    * `alias`: (Default: '') (Optional) If set, configures the location as alias
      for this file/directory on the file system.
+   * `auth`: If defined, specifies the authentication/authorization for this
+     location as dictionary. The available key/values are:
+     * `ldap-groups`: A list of LDAP group names. The user is authorized, if it
+       is any of them.
+     Authorization requirements are merged with parents. So if for example
+     membership in the group `staff` is required for `/foo`, and group
+     `analytics` for `/foo/bar`, then one needs to be both in `staff` and
+     `analytics` to access `/foo/bar`. (This helps to avoid accidentally nixing
+     net_access requirements on parents)
    * `cors`: (Default: ``) (Optional) If `allow-all-simple`, white-list simple
      requests through CORS.
    * `is_cgi`: If True, treat this location as cgi and allow to execute them.

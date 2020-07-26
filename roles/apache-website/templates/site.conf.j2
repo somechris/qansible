@@ -58,8 +58,24 @@
 {%         endif %}
 
   <Location{{location_suffix}} "{{location_start_extra}}{{location['name']}}">
-    <RequireAny>
-{%         if location['name'] == '/' and (location['net_accesses'] is defined and location['net_accesses'] != apache_website_net_accesses) %}
+    AuthMerging And
+{# ^^^^ makes sure that an ldap-groups (i.e.: Require) on /foo/bar does to    #}
+{# reset the net_accesses (i.e.: also Require) set on /foo. With              #}
+{# `AuthMerging And` both the ldap-groups and the net-accesses apply to       #}
+{# /foo/bar. #}
+{%         if (location['auth'] is defined) %}
+    AuthType basic
+    AuthName "{{apache_website_domain}}"
+{%           if (location['auth']['ldap_groups'] is defined) %}
+    AuthBasicProvider ldap
+    AuthLDAPUrl "{{ldap_server_uri}}/ou={{ldap_server_ou_people}},{{ldap_server_base_dn}}?uid,mail,displayName?one" STARTTLS
+{%           endif %}
+{%         endif %}
+    <RequireAll>
+{%         if location['name'] == '/' or (location['net_accesses'] is defined) %}
+      # Net-accesses
+      <RequireAny>
+{%           if location['name'] == '/' and (location['net_accesses'] is defined and location['net_accesses'] != apache_website_net_accesses) %}
 #####################################################
 Config error!
 
@@ -71,15 +87,32 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
 
 {{apache_website_net_accesses}}
 #####################################################
-{%         endif %}
-{%         for remote_range in (location['net_accesses'] | default(apache_website_net_accesses) | net_accesses_to_remote_ranges(net_configs, inventory_hostname, hostvars, notation='netmask')) %}
-      Require ip {{remote_range[0]}}/{{remote_range[1]}}
-{%         endfor %}
+{%           endif %}
+{%           for remote_range in (location['net_accesses'] | default(apache_website_net_accesses) | net_accesses_to_remote_ranges(net_configs, inventory_hostname, hostvars, notation='netmask')) %}
+        Require ip {{remote_range[0]}}/{{remote_range[1]}}
+{%           endfor %}
 
-      Require all denied
-      # ^ This 'Require all denied' makes sure that at least one rule
-      # fails and RequireAny hence cannot return neutral
-    </RequireAny>
+        Require all denied
+        # ^ This 'Require all denied' makes sure that at least one rule
+        # fails and RequireAny hence cannot return neutral
+      </RequireAny>
+{%         endif %}
+{%         if (location['auth'] is defined) %}
+{%           if (location['auth']['ldap_groups'] is defined) %}
+
+      # ldap-groups
+      <RequireAny>
+{% for ldap_group in location['auth']['ldap_groups'] %}
+        Require ldap-group cn={{ldap_group}},ou={{ldap_server_ou_groups}},{{ldap_server_base_dn}}
+{% endfor %}
+        Require all denied
+        # ^ This 'Require all denied' makes sure that at least one rule
+        # fails and RequireAny hence cannot return neutral
+      </RequireAny>
+{%           endif %}
+{%         endif %}
+      Require all granted
+    </RequireAll>
 {%         if (location['cors'] | default('')) == 'allow-all-simple' %}
 
     Header always set Access-Control-Allow-Origin "*"
