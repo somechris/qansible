@@ -7,6 +7,9 @@
         - apache-website-default
         - website
 
+    - role: apache-webserver
+      when: (apache_websites | default([]) | length) > 1
+
     - role: diamond
       tags:
         - diamond

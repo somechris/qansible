@@ -2,17 +2,6 @@
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
   when: 'qhost_distribution not in ["Debian"]'
 
-- name: Link effective log directory from default place
-  file:
-    state: link
-    path: '/var/log/apache2/{{apache_website_domain}}'
-    owner: www-data
-    group: adm
-    src: '{{web_site_root_dir}}/{{apache_website_domain}}/logs'
-    follow: no
-  notify:
-    reload apache
-
 - name: Configure {{apache_website_domain}} site
   template:
     dest: '{{web_site_root_dir}}/{{apache_website_domain}}/conf/{{apache_website_domain}}.conf'
@@ -23,28 +12,11 @@
   notify:
     reload apache
 
-- name: Link site conf to available site confs
-  file:
-    state: link
-    dest: '/etc/apache2/sites-available/{{apache_website_domain}}.conf'
-    src: '{{web_site_root_dir}}/{{apache_website_domain}}/conf/{{apache_website_domain}}.conf'
-    owner: root
-    group: root
-    mode: 0444
-    force: yes
-  notify:
-    reload apache
-
-- name: Enable {{apache_website_domain}} site
-  file:
-    state: link
-    dest: '/etc/apache2/sites-enabled/{{"00-" if apache_website_domain == "default" else ""}}{{apache_website_domain}}.conf'
-    src: '/etc/apache2/sites-available/{{apache_website_domain}}.conf'
-    owner: root
-    group: root
-    mode: 0444
-  notify:
-    reload apache
+- name: Collect hosted website
+  set_fact:
+    apache_updated_websites: '{{apache_updated_websites | default([])}} + [ "{{apache_website_domain}}" ]'
+  when: 'apache_website_domain not in (apache_updated_websites | default([]))'
+  changed_when: False
 
 - name: Collect hosted website
   set_fact:
