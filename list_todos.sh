@@ -48,5 +48,5 @@ filter() {
 
 grep -rn '[# ]TODO *:' * 2>/dev/null \
     | filter "${FALSE_POSITIVES[@]}" \
-    | sed -e 's/^\([^:]*\):\([0-9]*\):.*[# ]TODO *: *\(.*\)$/* \3\n        \1 (line:\2)/' \
-
+    | sort \
+    | sed -e 's/^\([^:]*\):\([0-9]*\):.*[# ]TODO *: *\(.*\)$/* \1:\2 -- \3/' \
