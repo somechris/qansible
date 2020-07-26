@@ -95,7 +95,33 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
     # ExtendedStatus and ProxyStatus have to be turned on globally,
     # and are turned on through mods-enabled.
 {%         endif %}
+{%         if (location["alias"] | default('')) != '' %}
+    # This location has an alias (see below after the Locations)
+{# We'd like to include Aliases directly here, but when adding an alias #}
+{# within a location, we always end up getting 301s with a trailing     #}
+{# appended slash. So for example aliasing to '/bar' within a location  #}
+{# '/', then a request to '/foo.html' (although /bar/foo.html is a file #}
+{# and exists) get redirected to '/foo.html/'. We've given up on that   #}
+{# for now and instead alias after the <Location/>s.                    #}
+{%         endif %}
   </Location{{location_suffix}}>
+{%       endfor %}
+{%       for location in (apache_website_locations | reverse) %}
+{%         if (location["alias"] | default('')) != '' %}
+{%           if ((location['type'] | default('static')) == 'static') %}
+  Alias "{{location["name"]}}" "{{location["alias"]}}"
+  <Directory "{{location["alias"]}}">
+    # White-listing alias, as it may live outside of the whitelisted /var/www
+    Require all granted
+  </Directory>
+{%           else %}
+#####################################################
+Config error!
+
+Aliases are only supported for static locations, but "{{location["name"]}}" is "{{location["type"]}}"
+#####################################################
+{%           endif %}
+{%         endif %}
 {%       endfor %}
 {%     endif %}
 
