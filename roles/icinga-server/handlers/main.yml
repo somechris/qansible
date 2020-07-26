@@ -1,0 +1,2 @@
+- name: reload icinga
+  service: name=icinga state=reloaded

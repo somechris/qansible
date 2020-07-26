@@ -6,5 +6,6 @@
 - import_playbook: rolebooks/mail.yml
 
 - import_playbook: rolebooks/local.yml
+- import_playbook: rolebooks/icinga-servers.yml
 
 - import_playbook: rolebooks/common-late.yml

@@ -1,0 +1,7 @@
+- name: Icinga servers
+  hosts: icinga_servers
+  roles:
+    - icinga-server
+  tags:
+    - icinga-server
+    - icinga

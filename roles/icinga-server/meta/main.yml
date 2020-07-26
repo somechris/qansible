@@ -1,0 +1,37 @@
+dependencies:
+  - role: motd
+    service_name: 'icinga'
+
+  - role: apache-website
+    # to-do: implementieren
+    apache_website_domain: '{{icinga_server_web_host}}'
+    apache_website_net_accesses: '{{icinga_server_net_accesses}}'
+    apache_website_locations:
+      - name: '/'
+        # Relies on
+        #   DirectoryIndex index.html
+        #   Options FollowSymLinks
+        # but that's default anyways. We do not set them here explicitly, to
+        # avoid giving the impression the others websites do not have them.
+        auth:
+          ldap_groups:
+            - staff
+        alias: '{{icinga_server_htdocs_dir}}/'
+      - name: '/stylesheets'
+        alias: '/etc/icinga/stylesheets/'
+      - name: '/cgi-bin/icinga'
+        alias: '/usr/lib/cgi-bin/icinga'
+        is_cgi: True
+      - name: '/cgi-bin/icinga/cmd.cgi'
+        security_rules:
+        - type: remove-target
+          id: 920273
+          rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
+          targets:
+          - 'ARGS:limit'
+          - 'REQUEST_BODY'
+        - type: remove-target
+          id: 921170
+          rationale: When submitting a command for multiple hosts, Icinga passes the argument multiple times. So we whitelist the used arguments.
+          targets:
+          - 'ARGS_NAMES:host'

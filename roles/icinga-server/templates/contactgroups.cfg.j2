@@ -1,0 +1,9 @@
+# {{ansible_managed}}
+
+{% for contact_group in icinga_server_contact_groups %}
+
+define contactgroup {
+  contactgroup_name {{contact_group}}
+  members {{icinga_server_contact_groups[contact_group] | join(",")}}
+}
+{% endfor %}

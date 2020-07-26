@@ -1,0 +1,11 @@
+# {{ansible_managed}}
+
+define host{
+  use generic-host
+  host_name {{inventory_hostname}}
+{% if icinga_client_ip_address %}
+  address {{icinga_client_ip_address}}
+{% endif %}
+  icon_image            {{host_info_os | map_os_to_image}}
+  icon_image_alt        {{host_info_os}}
+}

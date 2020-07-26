@@ -12,6 +12,8 @@ company_email_domain: '{{company_domain}}'
 sysadmin_email_address: 'sysadmin@{{company_email_domain}}'
 webmaster_email_address: 'webmaster@{{company_email_domain}}'
 
+host_info_os: '{{ansible_distribution | default("Unknown")}}'
+
 #-----------------------------------------------------------------------
 # Naming
 #
@@ -115,3 +117,9 @@ ldap_server_ou_services: services
 ldap_server_ssl_type: hardened
 ldap_client_late_default_login_groups:
   - fire-fighter
+
+#---------------------------------------------------------------------------
+# Icinga settings
+#
+icinga_server_web_host: 'icinga.{{company_domain}}'
+icinga_server_object_path: /etc/icinga/objects

@@ -1,0 +1,132 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in 'icinga-server' role"
+  when: 'ansible_distribution not in ["Debian"]'
+
+- name: Install icinga packages
+  apt:
+    name:
+      - icinga
+      - monitoring-plugins
+      - nagios-nrpe-plugin
+    state: present
+
+- name: Fixup directory permissions for current install
+  file:
+    state: directory
+    path: '{{icinga_server_command_dir}}'
+    owner: nagios
+    group: www-data
+    mode: 02710
+
+- name: Update Icinga configuration
+  template:
+    dest: '/etc/icinga/{{item}}.cfg'
+    src: '{{item}}.cfg.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - icinga
+    - cgi
+  notify:
+    reload icinga
+
+- name: Drop unused default configuration
+  template:
+    dest: '/etc/icinga/{{item}}.cfg'
+    src: 'refer_to_objects.cfg.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - commands
+  notify:
+    reload icinga
+
+- name: Drop unused default objects
+  file:
+    state: absent
+    path: '{{icinga_server_object_path}}/{{item}}.cfg'
+  with_items:
+    - contacts_icinga
+    - extinfo_icinga
+    - generic-host_icinga
+    - generic-service_icinga
+    - hostgroups_icinga
+    - ido2db_check_proc
+    - localhost_icinga
+    - services_icinga
+    - timeperiods_icinga
+  notify:
+    reload icinga
+
+- name: Create subdirectories for objects
+  file:
+    state: directory
+    path: '{{icinga_server_object_path}}/{{item}}'
+    owner: root
+    group: root
+    mode: 0555
+  with_items:
+    - commands
+    - hosts
+    - templates
+
+- name: Update default objects
+  template:
+    dest: '{{icinga_server_object_path}}/{{item.dir}}/{{item.name}}.cfg'
+    src: '{{(item.dir + "_") if item.dir != "." else ""}}{{item.name}}.cfg.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - {dir: 'commands', name: 'notification'}
+    - {dir: 'commands', name: 'performance_data'}
+    - {dir: 'templates', name: 'contacts'}
+    - {dir: 'templates', name: 'hosts'}
+    - {dir: 'templates', name: 'services'}
+    - {dir: '.', name: 'contactgroups'}
+    - {dir: '.', name: 'timeperiods'}
+  notify:
+    reload icinga
+
+# This and the following definition are only needed to allow Icinga
+# to expand hostgroups before the icinga-client role ran on the hosts.
+- name: Check if host definitions exist
+  stat:
+    path: '{{icinga_server_object_path}}/hosts/{{item}}.cfg'
+  with_items: '{{groups["all"]}}'
+  register: icinga_server_reg_host_def_stats
+
+- name: Generate host icinga config
+  template:
+    dest: '{{icinga_server_object_path}}/hosts/{{item.item}}-unspecified.cfg'
+    src: 'unspecified-host.cfg.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items: '{{icinga_server_reg_host_def_stats.results}}'
+  when: 'item.stat is defined and not item.stat.exists'
+
+- name: Bring helper scripts in place
+  template:
+    dest: '/etc/icinga/{{item}}.sh'
+    src: '{{item}}.sh.j2'
+    owner: root
+    group: root
+    mode: 0544
+  with_items:
+    update_contacts
+  notify:
+    reload icinga
+
+- name: Update contacts
+  command: /etc/icinga/update_contacts.sh
+  notify:
+    reload icinga
+
+- name: Enable Icinga
+  service:
+    name: icinga
+    state: started
+    enabled: yes

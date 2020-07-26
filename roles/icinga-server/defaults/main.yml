@@ -1,0 +1,5 @@
+icinga_server_htdocs_dir: /usr/share/icinga/htdocs
+icinga_server_command_dir: /var/lib/icinga/rw
+icinga_server_command_file: '{{icinga_server_command_dir}}/icinga.cmd'
+icinga_server_net_accesses:
+  - loopback

@@ -7,6 +7,11 @@
         - apache-website-default
         - website
 
+    - role: icinga-client
+      tags:
+       - icinga-client
+       - icinga
+
     - role: firewall-late
       tags:
         - 'firewall'
@@ -17,4 +22,3 @@
        - ldap-client-late
        - ldap-client
        - ldap
-

@@ -1,0 +1,13 @@
+# {{ansible_managed}}
+
+define contact{
+  # Be sure to set contact_name, alias, and email if you use this template
+  name                          generic_contact
+  service_notification_period   24x7
+  host_notification_period      24x7
+  service_notification_options  w,u,c,r,f,s
+  host_notification_options     d,u,r,f,s
+  service_notification_commands notify-service-by-email
+  host_notification_commands    notify-host-by-email
+  register                      0 ; don't register the contact. Just a template.
+}

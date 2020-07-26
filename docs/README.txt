@@ -122,6 +122,8 @@ agreements.
     host
   - `firewall-late`: Sets up the system's firewall
   - `hostnames`: Sets up host identifications.
+  - `icinga-client`: Configures hosts for Icinga monitoring.
+  - `icinga-server`: Sets up an Icinga server.
   - `install-packages`: Install packages. This is useful to install
     packages before role dependencies get executed.
   - `ldap-client-early`: Early part of LDAP client configuration.
