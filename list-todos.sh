@@ -6,10 +6,10 @@ source "$(dirname "$0")/common.inc"
 
 print_help() {
     cat <<EOF
-list_todos.sh
+$(basename "$0")
 =============
 
-  list_todos.sh
+  $(basename "$0")
 
 Extract and list the TODOs of this project
 EOF
