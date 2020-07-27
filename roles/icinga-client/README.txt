@@ -28,5 +28,7 @@ No Globals that are specific only for this role.
 -------------
 
 * `icinga_client_ip_address`: The IP address to monitor the host at.
+* `icinga_client_monitor_ssh`: (Default: True) If true, monitor that the host
+  allows ssh connections.
 * `icinga_client_server_ip_address`: The IP address Icinga connects from.
 * `icinga_client_server_net`: The key of net access that Icinga connects from.

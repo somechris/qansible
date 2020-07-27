@@ -1,2 +1,3 @@
 icinga_client_ip_address: "{{(net_configs[icinga_client_server_net]|net_ip('local', inventory_hostname)) if icinga_client_server_net is defined else ''}}"
 icinga_client_server_ip_address: "{{(net_configs[icinga_client_server_net]|net_ip('local', groups['icinga_servers'][0])) if icinga_client_server_net is defined else icinga_server_web_host}}"
+icinga_client_monitor_ssh: True

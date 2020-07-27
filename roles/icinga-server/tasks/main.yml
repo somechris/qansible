@@ -70,6 +70,7 @@
   with_items:
     - commands
     - hosts
+    - services
     - templates
 
 - name: Update default objects
