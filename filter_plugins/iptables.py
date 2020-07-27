@@ -23,9 +23,16 @@ def iptables_rule(chain, target, how='append', **kwargs):
         '--source',
         '--dport',
         '--state',
+        '--icmp-type',
         ]:
-        value, kwargs = dict_remove(key.lstrip('-'), kwargs)
+        dict_key = key.lstrip('-')
+        value, kwargs = dict_remove(dict_key, kwargs)
+        if not value:
+            dict_key = dict_key.replace('-', '_')
+            value, kwargs = dict_remove(dict_key, kwargs)
         if value:
+            if key == "--icmp-type":
+                ret += ' -p icmp'
             ret += ' ' + key + ' ' + str(value)
 
     ret += ' -j ' + target
