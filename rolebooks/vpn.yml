@@ -1,5 +1,5 @@
 - name: VPN setup
-  hosts: all
+  hosts: '!unmanaged'
   roles:
     - vpn
   tags:
