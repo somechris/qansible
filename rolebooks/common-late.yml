@@ -1,4 +1,4 @@
-- name: common-late (generic)
+- name: common-late (start)
   hosts: '!unmanaged'
   roles:
     - role: apache-website-default
@@ -7,11 +7,18 @@
         - apache-website-default
         - website
 
+- name: common-late (generic for all, even unmanaged)
+  hosts: all
+  gather_facts: no
+  roles:
     - role: icinga-client
       tags:
        - icinga-client
        - icinga
 
+- name: common-late (finish)
+  hosts: '!unmanaged'
+  roles:
     - role: firewall-late
       tags:
         - 'firewall'
