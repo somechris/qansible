@@ -29,9 +29,29 @@ dependencies:
           rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
           targets:
           - 'ARGS:limit'
+          - 'ARGS:service'
+          - 'ARGS:hostservice'
           - 'REQUEST_BODY'
         - type: remove-target
           id: 921170
           rationale: When submitting a command for multiple hosts, Icinga passes the argument multiple times. So we whitelist the used arguments.
           targets:
           - 'ARGS_NAMES:host'
+          - 'ARGS_NAMES:hostservice'
+        - type: remove-target
+          id: 942432
+          rationale: start_time may contain `2020-07-27`, which triggers this rule already.
+          targets:
+          - 'ARGS:start_time'
+        - type: remove-target
+          id: 942130
+          rationale: hostservice is typically something like `foo.bar.de^SSH/Server`, which already triggers this check.
+          targets:
+          - 'ARGS:hostservice'
+      - name: '/cgi-bin/icinga/extinfo.cgi'
+        security_rules:
+        - type: remove-target
+          id: 920273
+          rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
+          targets:
+          - 'ARGS:service'
