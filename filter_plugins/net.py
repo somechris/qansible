@@ -137,25 +137,35 @@ def net_access_to_remote_ranges(net_access, net_configs, inventory_hostname, hos
     net_access = build_net_access(net_access, net_configs)
     net_config = net_configs[net_access['net_key']]
 
-    if net_config['type'] == 'vpn':
-        ranges = [net_ip(net_config, 'remote', inventory_hostname) + '/32']
-    elif net_config['type'] == 'shim':
-        if net_config['public']:
-            ranges = []
-            for host in net_access['hosts']:
-                if host == 'all':
-                    ranges += net_config['remote_ranges']
-                else:
-                    if 'public_ipv4_address' in hostvars[host]:
-                        ranges += [hostvars[host]['public_ipv4_address']]
-                    else:
-                        ranges += hostvars[host]['public_ipv4_address_ranges']
-        else:
-            ranges = net_config['remote_ranges']
-    elif net_config['type'] == 'local-subnet':
-        ranges = net_config['remote_ranges']
+    if net_access.get('hosts', ['all']) != ['all']:
+        ranges = net_access['hosts']
     else:
-        raise RuntimeError('Unsupported type \'%s\' for net config in net_ranges' % (net_config['type']))
+        if net_config['type'] == 'vpn':
+            ranges = [net_ip(net_config, 'remote', inventory_hostname) + '/32']
+        elif net_config['type'] == 'shim':
+            if net_config['public']:
+                ranges = net_access['hosts']
+            else:
+                ranges = net_config['remote_ranges']
+        elif net_config['type'] == 'local-subnet':
+            ranges = net_config['remote_ranges']
+        else:
+            raise RuntimeError('Unsupported type \'%s\' for net config in net_ranges' % (net_config['type']))
+
+    # Resolve names in ranges
+    unresolved_ranges = ranges
+    ranges=[]
+    for item in unresolved_ranges:
+        if item == 'all':
+            ranges += net_config['remote_ranges']
+        else:
+            if item in hostvars.keys():
+                if 'public_ipv4_address' in hostvars[item]:
+                    ranges += [hostvars[item]['public_ipv4_address']]
+                else:
+                    ranges += hostvars[item]['public_ipv4_address_ranges']
+            else:
+                ranges += [item]
 
     if notation == 'CIDR':
         pass # default notation
