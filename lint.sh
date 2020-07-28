@@ -388,6 +388,26 @@ lint_yamls() {
 
 
 #-----------------------------------------------------------------------
+lint_ban() {
+    local NEEDLE="$1"
+    local WHITELIST_FILE_RE="$2"
+    local WHITELIST_LINE_RE="$3"
+    local ALTERNATIVE="$4"
+
+    while IFS=: read FILE LINE_NO LINE
+    do
+        warn "Avoid using '$NEEDLE', switch to '$ALTERNATIVE' instead. (see $FILE, line $LINE_NO)"
+    done < <(grep -r -n "$NEEDLE" | grep -v '^\(\.git/\|lint\.sh:\|'"$WHITELIST_FILE_RE:[0-9]*:$WHITELIST_RE"'\)' )
+}
+
+
+#-----------------------------------------------------------------------
+lint_bans() {
+    lint_ban "ansible_distribution" "group_vars/all" "qhost_distribution:" "qhost_distribution"
+}
+
+
+#-----------------------------------------------------------------------
 run_tox() {
     if [ -x "$TOX" ]
     then
@@ -427,6 +447,7 @@ parse_arguments "$@"
 lint_roles
 lint_host_vars
 lint_yamls
+lint_bans
 
 run_sub_linters
 
