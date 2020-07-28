@@ -1,0 +1,17 @@
+# {{ansible_managed}}
+
+# Placeholder definition, which is only needed to make Icinga happy
+# when expanding hostgroups. Run Ansible against {{item.item}} to get
+# the real definition.
+define host {
+  use generic-host
+  host_name {{item.item}}.virtual
+{# Trying to set enforced nameservers as address, so we get a host failure if
+the icinga server loses internet connection and hence fails to resolve hosts
+#}
+  address {{(network_tuner_nameservers | default(["127.0.0.1"]))[0]}}
+  notes           This host is a virtual host only.
+  icon_image      symbols/3d_cloud.png
+  icon_image_alt  Virtual Host
+  statusmap_image symbols/3d_cloud.gd2
+}

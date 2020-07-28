@@ -1,3 +1,17 @@
+import copy
+import collections
+
+
+def update_dict(target, source):
+    for key, value in source.iteritems():
+        if isinstance(value, collections.Mapping):
+            repl = update_dict(target.get(key, {}), value)
+            target[key] = repl
+        else:
+            target[key] = source[key]
+    return target
+
+
 def map_distribution_to_image(distribution):
     distribution = distribution.lower()
     ret = 'unknown.gif'
@@ -93,6 +107,163 @@ def icinga_nrpe_command(name, command, arg="", raw=False):
                                    check_template % (command, arg))
 
 
+def icinga_http_check(description, host, domain, expected_status_code=200,
+                      uri='/', ssl=True, method='GET', data=None,
+                      encode_data=False, expected_content='', dns=False,
+                      port=None, variant=''):
+    name = 'http_vhost_' + (method.lower())
+    if dns:
+        name += '_dns'
+    if ssl:
+        name += '_ssl'
+    arguments = [domain, uri, expected_content]
+    if data:
+        name += '_data'
+        if encode_data:
+            if isinstance(data, str):
+                data = urllib.quote_plus(data)
+            else:
+                data = urllib.urlencode(data)
+        arguments += [data]
+    name += '_' + str(expected_status_code)
+    if port:
+        name += '_port'
+        arguments += [port]
+    if variant:
+        name += '_' + variant
+    return icinga_check(description, host, name,
+                        arguments)
+
+
+def icinga_http_preconfigured_checks_get_config_unsplit_unresolved(key, configs):
+    config = configs.get(key, {})
+
+    if 'alias' in config:
+        alias = config['alias']
+        alias_config = icinga_http_preconfigured_checks_get_config_unsplit_unresolved(
+            alias, configs)
+
+        config = copy.deepcopy(config)
+        update_dict(config, alias_config)
+        del config['alias']
+
+    return config
+
+
+
+def icinga_http_preconfigured_checks_get_config_unsplit(web_host, configs):
+    ret = {}
+    for key in [
+        web_host.split('.')[0],
+        web_host,
+        ]:
+        config = icinga_http_preconfigured_checks_get_config_unsplit_unresolved(key, configs)
+
+        ret = copy.deepcopy(ret)
+        update_dict(ret, config)
+
+    if not ret:
+        ret = {"main": {}}
+
+    return ret
+
+
+def icinga_http_preconfigured_checks_get_config(web_host, configs):
+    unsplit_config = icinga_http_preconfigured_checks_get_config_unsplit(
+        web_host, configs)
+
+    config_defaults = {
+        'alias': None,
+        'protocols': ['http', 'https'],
+        'max_https_reqs_per_second': 10,
+        'max_http_reqs_per_second': 0.1,
+        }
+
+    config = {}
+    for key in config_defaults.keys():
+        config[key] = unsplit_config.get(key, config_defaults[key])
+
+    checks = {}
+    for key in unsplit_config.keys():
+        if key not in config:
+            checks[key] = unsplit_config.get(key, {})
+
+    return config, checks
+
+
+def icinga_http_preconfigured_checks_check(host, site, name, config={},
+                                           use_suffix=False, dns=False,
+                                           default_protocol='https'):
+    protocol = config.get('protocol', default_protocol)
+
+    description = site + '/%s' % (protocol)
+    if use_suffix:
+        description += '/' + name
+
+    variant = config.get('variant', '')
+    method = config.get('method', 'GET')
+    uri = config.get('uri', '/')
+    ssl = (protocol != 'http')
+    port = config.get('port', None)
+    data = config.get('data', None)
+    encode_data = config.get('encode_data', False)
+    expected_status_code = config.get('expected_status_code', 200)
+    expected_content = config.get('expected_content', '')
+
+    return icinga_http_check(
+        description=description, host=host,
+        domain=site, method=method, uri=uri, ssl=ssl,
+        data=data, encode_data=encode_data,
+        expected_status_code=expected_status_code,
+        expected_content=expected_content,
+        dns=dns, port=port, variant=variant)
+
+
+def icinga_http_preconfigured_checks(host, apache_sites=[], nginx_sites=[],
+                                     unansiblized_sites=[], configs={},
+                                     dns=False):
+    ret = ''
+    for kind, sites in sorted({
+            'apache': apache_sites,
+            'nginx': nginx_sites,
+            None: unansiblized_sites,
+            }.iteritems()):
+        for site in sorted(sites):
+            config, checks = icinga_http_preconfigured_checks_get_config(
+                site, configs)
+
+            protocols = config['protocols']
+
+            default_protocol = 'https' if 'https' in protocols else 'http'
+            use_suffix = (len(checks) > 1)
+            for check_name, check_config in sorted(checks.iteritems()):
+                ret += icinga_http_preconfigured_checks_check(
+                    host=host, site=site, name=check_name,
+                    config=check_config, use_suffix=use_suffix, dns=dns,
+                    default_protocol=default_protocol)
+
+            if 'https' in protocols:
+                description = site + '/cert'
+                check = 'http_vhost_cert'
+                if dns:
+                    check += '_dns'
+                ret += '\n' + icinga_check(description=description, host=host,
+                                           check=check, args=[site],
+                                           interval='daily')
+
+            if 'http' in protocols and 'https' in protocols:
+                description = site + '/http/https redirect'
+                description = ('%s/http/https redirect') % (site)
+                ret += '\n' + icinga_http_check(description=description,
+                                                host=host,
+                                                domain=site,
+                                                expected_status_code=301,
+                                                ssl=False,
+                                                dns=dns)
+
+            # TODO: add checks for 5xx requests and total.count
+    return ret
+
 class FilterModule(object):
     '''Filters for icinga'''
 
@@ -103,4 +274,7 @@ class FilterModule(object):
             'icinga_nrpe_check': icinga_nrpe_check,
             'icinga_nrpe_command': icinga_nrpe_command,
             'icinga_nrpe_raw_command': icinga_nrpe_raw_command,
+            'icinga_http_check': icinga_http_check,
+            'icinga_http_preconfigured_checks':
+                icinga_http_preconfigured_checks,
         }

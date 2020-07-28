@@ -3,3 +3,6 @@ icinga_server_command_dir: /var/lib/icinga/rw
 icinga_server_command_file: '{{icinga_server_command_dir}}/icinga.cmd'
 icinga_server_net_accesses:
   - loopback
+icinga_server_virtual_external_domains: []
+icinga_server_virtual_internal_domains: []
+icinga_server_preconfigured_web_host_health_checks: {}

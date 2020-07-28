@@ -72,6 +72,7 @@
     - hosts
     - services
     - templates
+    - virtuals
 
 - name: Update default objects
   template:
@@ -126,6 +127,36 @@
   command: /etc/icinga/update_contacts.sh
   notify:
     reload icinga
+
+- name: Generate virtual host icinga config
+  template:
+    dest: '{{icinga_server_object_path}}/hosts/{{item.item}}.virtual.cfg'
+    src: 'virtual-host.cfg.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - item: external-domains
+    - item: internal-domains
+  notify:
+    reload icinga
+  tags:
+    - 'icinga-client'
+
+- name: Generate virtual host service config
+  template:
+    dest: '{{icinga_server_object_path}}/virtual-services-{{item["name"]}}.cfg'
+    src: 'virtual-services.cfg.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - {name: 'external-domains', domains: '{{icinga_server_virtual_external_domains}}'}
+    - {name: 'internal-domains', domains: '{{icinga_server_virtual_internal_domains}}'}
+  notify:
+    reload icinga
+  tags:
+    - 'icinga-client'
 
 - name: Enable Icinga
   service:

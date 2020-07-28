@@ -3,3 +3,6 @@
 {{'SSH/Server' | icinga_check(inventory_hostname,
   'ssh_port_4', [ssh_server_port])}}
 {% endif %}
+{{inventory_hostname | icinga_http_preconfigured_checks(
+    apache_sites=apache_websites,
+    configs=icinga_server_preconfigured_web_host_health_checks) }}
