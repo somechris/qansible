@@ -6,6 +6,6 @@ define host{
 {% if icinga_client_ip_address %}
   address {{icinga_client_ip_address}}
 {% endif %}
-  icon_image            {{host_info_os | map_os_to_image}}
-  icon_image_alt        {{host_info_os}}
+  icon_image            {{qhost_distribution | map_distribution_to_image}}
+  icon_image_alt        {{qhost_distribution}}
 }

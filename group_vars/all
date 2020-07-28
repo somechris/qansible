@@ -12,7 +12,7 @@ company_email_domain: '{{company_domain}}'
 sysadmin_email_address: 'sysadmin@{{company_email_domain}}'
 webmaster_email_address: 'webmaster@{{company_email_domain}}'
 
-host_info_os: '{{ansible_distribution | default("Unknown")}}'
+qhost_distribution: '{{ansible_distribution | default("Unknown")}}'
 
 #-----------------------------------------------------------------------
 # Naming

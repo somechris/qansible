@@ -1,6 +1,6 @@
 - name: Drop-out for unsupported distributions
   fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
-  when: 'host_info_os not in ["Debian"] and "unmanaged" not in group_names'
+  when: 'qhost_distribution not in ["Debian"] and "unmanaged" not in group_names'
 
 - name: Install Icinga client packages
   apt:

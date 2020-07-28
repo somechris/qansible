@@ -1,15 +1,15 @@
-def map_os_to_image(os):
-    os = os.lower()
+def map_distribution_to_image(distribution):
+    distribution = distribution.lower()
     ret = 'unknown.gif'
-    if os == 'debian':
+    if distribution == 'debian':
         ret = 'base/debian.gif'
-    elif os == 'gentoo':
+    elif distribution == 'gentoo':
         ret = 'vendors/gentoo.gif'
-    elif os == 'hp':
+    elif distribution == 'hp':
         ret = 'vendors/hp-ux2.gif'
-    elif os == 'openwrt':
+    elif distribution == 'openwrt':
         ret = 'vendors/linux40.gif'
-    elif os == 'linux':
+    elif distribution == 'linux':
         ret = 'vendors/linux40.gif'
     return ret
 
@@ -98,7 +98,7 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'map_os_to_image': map_os_to_image,
+            'map_distribution_to_image': map_distribution_to_image,
             'icinga_check': icinga_check,
             'icinga_nrpe_check': icinga_nrpe_check,
             'icinga_nrpe_command': icinga_nrpe_command,
