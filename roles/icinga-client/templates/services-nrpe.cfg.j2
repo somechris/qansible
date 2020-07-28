@@ -4,6 +4,8 @@
 {{'Load per CPU' | icinga_nrpe_check(inventory_hostname, 'load_per_cpu')}}
 {{'Name Service/Caching Daemon' | icinga_nrpe_check(inventory_hostname,
                                   'nscd_proc')}}
-
 {{'Name Service/LDAP Lookup' | icinga_nrpe_check(inventory_hostname,
                                 'nslcd_proc')}}
+{% if 'ldap_servers' in group_names %}
+{{'LDAP/Server' | icinga_nrpe_check(inventory_hostname, 'slapd_proc')}}
+{% endif %}

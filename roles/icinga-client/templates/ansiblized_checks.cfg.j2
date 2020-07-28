@@ -2,6 +2,8 @@
 
 {{"disks_all" | icinga_nrpe_command("disk", "-w 20% -c 10% -W 20% -K 10% -e")}}
 {{"load_per_cpu" | icinga_nrpe_command("load", "-r -w 2,1.1,0.8 -c 4,1.5,0.9")}}
-
 {{"nscd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=nscd")}}
 {{"nslcd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=nslcd")}}
+{% if 'ldap_servers' in group_names %}
+{{"slapd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --user=openldap --command=slapd")}}
+{% endif %}
