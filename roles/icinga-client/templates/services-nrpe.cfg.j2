@@ -1,0 +1,9 @@
+# {{ansible_managed}}
+
+{{'Disk Space' | icinga_nrpe_check(inventory_hostname, 'disks_all')}}
+{{'Load per CPU' | icinga_nrpe_check(inventory_hostname, 'load_per_cpu')}}
+{{'Name Service/Caching Daemon' | icinga_nrpe_check(inventory_hostname,
+                                  'nscd_proc')}}
+
+{{'Name Service/LDAP Lookup' | icinga_nrpe_check(inventory_hostname,
+                                'nslcd_proc')}}

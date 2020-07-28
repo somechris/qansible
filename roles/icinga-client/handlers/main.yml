@@ -6,3 +6,8 @@
                  # comes down to the right thing: 10 hosts that request a
                  # restart each cause only one effective restart.
   with_items: '{{groups["icinga_servers"]}}'
+
+- name: reload nagios-nrpe-server
+  service:
+    name: nagios-nrpe-server
+    state: reloaded

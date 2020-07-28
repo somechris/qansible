@@ -1,4 +1,70 @@
-# lint-distribution-independent
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
+  when: 'host_info_os not in ["Debian"] and "unmanaged" not in group_names'
+
+- name: Install Icinga client packages
+  apt:
+    name:
+      - nagios-plugins
+      - nagios-nrpe-server
+    state: present
+  when: '"unmanaged" not in group_names'
+
+- name: Setup base nrpe config
+  template:
+    dest: '/etc/nagios/nrpe.cfg'
+    src: nrpe.cfg.j2
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    - reload nagios-nrpe-server
+  when: '"unmanaged" not in group_names'
+
+- name: Setup nrpe checks config
+  template:
+    dest: /etc/nagios/nrpe_ansiblized_checks.cfg
+    src: ansiblized_checks.cfg.j2
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    - reload nagios-nrpe-server
+  when: '"unmanaged" not in group_names'
+
+- name: Enable NRPE server
+  service:
+    name: nagios-nrpe-server
+    state: started
+    enabled: yes
+  when: '"unmanaged" not in group_names'
+
+- name: Setup remote service configs
+  template:
+    dest: '{{icinga_server_object_path}}/services/{{inventory_hostname}}-nrpe.cfg'
+    src: services-nrpe.cfg.j2
+    owner: root
+    group: root
+    mode: 0444
+  delegate_to: "{{item}}"
+  with_items: '{{groups["icinga_servers"]}}'
+  notify:
+    - reload icinga
+  when: '"unmanaged" not in group_names'
+
+- name: Updating port config
+  set_fact:
+    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
+      icinga_client_nrpe_server_port: {
+        "name": "NRPE",
+        "protocol": "tcp",
+        "incoming_net_accesses": icinga_client_nrpe_net_accesses,
+      }
+    }, merge_lists=True)}}'
+  changed_when: False
+  tags:
+    - always
+  when: '"unmanaged" not in group_names'
 
 - name: Drop unspecified default host config
   file:
@@ -40,10 +106,7 @@
         "name": "ICMP",
         "protocol": "icmp",
         "icmp-type": "echo-request",
-        "incoming_net_accesses": [{
-          "net_key": icinga_client_server_net,
-          "hosts": [icinga_client_server_ip_address],
-        }],
+        "incoming_net_accesses": icinga_client_ping_net_accesses,
       }
     }, merge_lists=True)}}'
   changed_when: False

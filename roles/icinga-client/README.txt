@@ -32,3 +32,10 @@ No Globals that are specific only for this role.
   allows ssh connections.
 * `icinga_client_server_ip_address`: The IP address Icinga connects from.
 * `icinga_client_server_net`: The key of net access that Icinga connects from.
+* `icinga_client_net_accesses`: Default list of net accesses for
+  `icinga_client_nrpe_net_accesses` and `icinga_client_ping_net_accesses`.
+* `icinga_client_nrpe_server_port`: The port the NRPE server listens on.
+* `icinga_client_nrpe_net_accesses`: List of net accesses of which hosts can
+  reach the NRPE service.
+* `icinga_client_ping_net_accesses`: List of net accesses of which hosts can
+  ping the host.

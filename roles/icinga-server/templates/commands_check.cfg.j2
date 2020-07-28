@@ -1,0 +1,59 @@
+# {{ansible_managed}}
+
+{% for spec in [
+    {'status_code': 200, 'message': 'OK'},
+    {'status_code': 204, 'message': 'No Content'},
+    {'status_code': 301, 'message': 'Moved Permanently'},
+    {'status_code': 302, 'message': 'Found'},
+    {'status_code': 302, 'message': 'Moved Temporarily', 'name': '302-mvd-tmp'},
+    {'status_code': 400, 'message': 'Bad Request'},
+    {'status_code': 401, 'message': 'Unauthorized'},
+    {'status_code': 403, 'message': 'Forbidden'},
+    ] %}
+{%   for method in ['GET', 'POST'] %}
+{%     for ssl in [True, False] %}
+{%       for data in [True, False] %}
+{%         for dns in [True, False] %}
+{%           for port in [True, False] %}
+{%             for suffix, warn_time in {'': 1, 'slow': 3}.iteritems() %}
+define command {
+  command_name check_http_vhost_{{method | lower}}{{'_dns' if dns else ''}}{{'_ssl' if ssl else ''}}{{'_data' if data else ''}}_{{spec.name | default(spec.status_code)}}{{('_' + suffix) if suffix else ''}}{{('_port') if port else ''}}
+  command_line /usr/lib/nagios/plugins/check_http \
+{%               if not dns %}
+    -I '$HOSTADDRESS$' \
+{%               endif %}
+    -H '$ARG1$' \
+{{'    --ssl \\\n' if ssl else ''}}    --method {{method}} \
+    -u '$ARG2$' \
+    --expect '{{spec.status_code}} {{spec.message}}' \
+    --string '$ARG3$' \
+    --warning {{warn_time}} \
+    --critical 5 \
+{{"    --post '$ARG4$' \\\n" if data else ''}} \
+{%               if port %}
+    --port '$ARG{{5 if data else 4}}$' \
+{%               endif %}
+
+}
+
+{%             endfor %}
+{%           endfor %}
+{%         endfor %}
+{%       endfor %}
+{%     endfor %}
+{%   endfor %}
+{% endfor %}
+define command {
+  command_name check_http_vhost_cert
+  command_line /usr/lib/nagios/plugins/check_http -I '$HOSTADDRESS$' -H '$ARG1$' --ssl --sni --certificate=70,56
+}
+
+define command {
+  command_name check_http_vhost_cert_dns
+  command_line /usr/lib/nagios/plugins/check_http -H '$ARG1$' --ssl --sni --certificate=70,56
+}
+
+define command {
+	command_name	check_nrpe_timeout
+	command_line	/usr/lib/nagios/plugins/check_nrpe -t $ARG1$ -H $HOSTADDRESS$ -p {{icinga_client_nrpe_server_port}} -c $ARG2$
+}

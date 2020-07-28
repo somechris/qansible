@@ -72,6 +72,27 @@ define service {
 """ % (host, description, non_default_setting_lines, command)
 
 
+def icinga_nrpe_check(description, host, check, timeout=10, interval=None,
+                      contact_groups=None, max_check_attempts=None,
+                      flap_detection=None):
+    return icinga_check(description, host, "nrpe_timeout",
+                        [timeout, "nrpe_check_%s" % (check)],
+                        interval=interval,
+                        contact_groups=contact_groups,
+                        max_check_attempts=max_check_attempts,
+                        flap_detection=flap_detection)
+
+
+def icinga_nrpe_raw_command(name, command):
+    return "check_command[nrpe_check_%s]=%s" % (name, command)
+
+
+def icinga_nrpe_command(name, command, arg="", raw=False):
+    check_template = '/usr/lib/nagios/plugins/check_%s %s'
+    return icinga_nrpe_raw_command(name,
+                                   check_template % (command, arg))
+
+
 class FilterModule(object):
     '''Filters for icinga'''
 
@@ -79,4 +100,7 @@ class FilterModule(object):
         return {
             'map_os_to_image': map_os_to_image,
             'icinga_check': icinga_check,
+            'icinga_nrpe_check': icinga_nrpe_check,
+            'icinga_nrpe_command': icinga_nrpe_command,
+            'icinga_nrpe_raw_command': icinga_nrpe_raw_command,
         }
