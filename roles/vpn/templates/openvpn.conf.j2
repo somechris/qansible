@@ -3,9 +3,9 @@
 dev {{item | net_dev_name(inventory_hostname)}}
 
 {% if (item['protocol'] == 'udp') %}
-proto udp{{'' if ansible_distribution == 'Gentoo' else '4'}}
+proto udp{{'' if qhost_distribution == 'Gentoo' else '4'}}
 {% else %}
-proto tcp{{'' if ansible_distribution == 'Gentoo' else '4'}}-{{ 'server' if (item | net_served_by(inventory_hostname)) else 'client' }}
+proto tcp{{'' if qhost_distribution == 'Gentoo' else '4'}}-{{ 'server' if (item | net_served_by(inventory_hostname)) else 'client' }}
 {% endif %}
 lport {{item['port']}}
 

@@ -1,6 +1,6 @@
 - name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
-  when: 'ansible_distribution not in ["Debian", "Gentoo"]'
+  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
+  when: 'qhost_distribution not in ["Debian", "Gentoo"]'
 
 - name: Create effective site directory
   file:

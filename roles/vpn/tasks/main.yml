@@ -1,20 +1,20 @@
 - name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{ansible_distribution}}' in '{{role_path|basename}}' role"
-  when: 'ansible_distribution not in ["Debian", "Gentoo"]'
+  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
+  when: 'qhost_distribution not in ["Debian", "Gentoo"]'
 
 - name: Install VPN packages
   apt:
     name:
       - openvpn
     state: present
-  when: 'ansible_distribution == "Debian" and (inventory_hostname | host_nets(net_configs, type="vpn")| list)'
+  when: 'qhost_distribution == "Debian" and (inventory_hostname | host_nets(net_configs, type="vpn")| list)'
 
 - name: Install VPN packages
   portage:
     name:
       - openvpn
     state: present
-  when: 'ansible_distribution == "Gentoo" and (inventory_hostname | host_nets(net_configs, type="vpn")| list)'
+  when: 'qhost_distribution == "Gentoo" and (inventory_hostname | host_nets(net_configs, type="vpn")| list)'
 
 - name: Bring static keys in place
   #
@@ -30,7 +30,7 @@
     mode: 0400
   with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
   notify:
-    - reload openvpn-{{ansible_distribution}}
+    - reload openvpn-{{qhost_distribution}}
 
 - name: Render configs
   template:
@@ -41,7 +41,7 @@
     mode: 0400
   with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
   notify:
-    - reload openvpn-{{ansible_distribution}}
+    - reload openvpn-{{qhost_distribution}}
 
 - name: Bring service config into place
   file:
@@ -52,9 +52,9 @@
     group: 'root'
     mode: 0755
   with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
-  when: 'ansible_distribution == "Gentoo"'
+  when: 'qhost_distribution == "Gentoo"'
   notify:
-    - reload openvpn-{{ansible_distribution}}
+    - reload openvpn-{{qhost_distribution}}
 
 - name: Updating port config
   set_fact:
