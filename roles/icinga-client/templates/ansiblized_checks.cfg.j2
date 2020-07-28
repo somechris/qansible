@@ -7,3 +7,6 @@
 {% if 'ldap_servers' in group_names %}
 {{"slapd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --user=openldap --command=slapd")}}
 {% endif %}
+{% if 'icinga_servers' in group_names %}
+{{"icinga_proc" | icinga_nrpe_command("procs", "--critical=1:20 --ppid=1 --user=nagios --command=icinga")}}
+{% endif %}
