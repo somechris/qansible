@@ -21,3 +21,6 @@
 {{('OpenVPN/' + slug + '/Server') | icinga_nrpe_check(inventory_hostname, 'openvpn_' + slug + '_daemon')}}
 {{('OpenVPN/' + slug + '/Status') | icinga_nrpe_check(inventory_hostname, 'openvpn_' + slug + '_status')}}
 {% endfor %}
+{% if 'apache' in group_names %}
+{{('Apache HTTPD/Server') | icinga_nrpe_check(inventory_hostname, 'apache_httpd_proc')}}
+{% endif %}

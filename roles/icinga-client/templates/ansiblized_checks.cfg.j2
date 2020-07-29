@@ -18,3 +18,6 @@
 {{("openvpn_" + slug + "_daemon") | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=openvpn --argument-array=/etc/openvpn/" + slug + ".conf")}}
 {{("openvpn_" + slug + "_status") | icinga_nrpe_command("file_age", "-w 30 -c 300 /run/openvpn/" + slug + ".status")}}
 {% endfor %}
+{% if 'apache' in group_names %}
+{{"apache_httpd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=apache2")}}
+{% endif %}
