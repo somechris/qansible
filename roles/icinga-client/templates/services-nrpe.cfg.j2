@@ -6,6 +6,9 @@
                                   'nscd_proc')}}
 {{'Name Service/LDAP Lookup' | icinga_nrpe_check(inventory_hostname,
                                 'nslcd_proc')}}
+{{'atop/Accounting monitor' | icinga_nrpe_check(inventory_hostname,
+                              'atopacctd_proc')}}
+{{'atop/Daemon' | icinga_nrpe_check(inventory_hostname, 'atop_proc')}}
 {% if 'ldap_servers' in group_names %}
 {{'LDAP/Server' | icinga_nrpe_check(inventory_hostname, 'slapd_proc')}}
 {% endif %}
