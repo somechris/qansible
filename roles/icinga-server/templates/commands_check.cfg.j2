@@ -11,19 +11,19 @@
     {'status_code': 403, 'message': 'Forbidden'},
     ] %}
 {%   for method in ['GET', 'POST'] %}
-{%     for ssl in [True, False] %}
+{%     for ssl in [True, '1.1', '1', '3', '2', False] %}
 {%       for data in [True, False] %}
 {%         for dns in [True, False] %}
 {%           for port in [True, False] %}
 {%             for suffix, warn_time in {'': 1, 'slow': 3}.iteritems() %}
 define command {
-  command_name check_http_vhost_{{method | lower}}{{'_dns' if dns else ''}}{{'_ssl' if ssl else ''}}{{'_data' if data else ''}}_{{spec.name | default(spec.status_code)}}{{('_' + suffix) if suffix else ''}}{{('_port') if port else ''}}
+  command_name check_http_vhost_{{method | lower}}{{'_dns' if dns else ''}}{{'_ssl' if ssl else ''}}{{(ssl | replace(".", "_")) if ssl is string else ''}}{{'_data' if data else ''}}_{{spec.name | default(spec.status_code)}}{{('_' + suffix) if suffix else ''}}{{('_port') if port else ''}}
   command_line /usr/lib/nagios/plugins/check_http \
 {%               if not dns %}
     -I '$HOSTADDRESS$' \
 {%               endif %}
     -H '$ARG1$' \
-{{'    --ssl \\\n' if ssl else ''}}    --method {{method}} \
+{{('    --ssl' + (('='+ssl) if ssl is string else '') + ' \\\n') if ssl else ''}}    --method {{method}} \
     -u '$ARG2$' \
     --expect '{{spec.status_code}} {{spec.message}}' \
     --string '$ARG3$' \
@@ -43,15 +43,15 @@ define command {
 {%     endfor %}
 {%   endfor %}
 {% endfor %}
+{% for ssl in [True, '1.1', '1', '3', '2', False] %}
+{%   for dns in [True, False] %}
 define command {
-  command_name check_http_vhost_cert
-  command_line /usr/lib/nagios/plugins/check_http -I '$HOSTADDRESS$' -H '$ARG1$' --ssl --sni --certificate=14,2
+  command_name check_http_vhost_cert{{'_dns' if dns else ''}}{{'_ssl' if ssl else ''}}{{(ssl | replace(".", "_")) if ssl is string else ''}}
+  command_line /usr/lib/nagios/plugins/check_http{{'' if dns else " -I '$HOSTADDRESS$'"}} -H '$ARG1$' {{('--ssl' + (('='+ssl) if ssl is string else '')) if ssl else ''}} --sni --certificate=14,2
 }
 
-define command {
-  command_name check_http_vhost_cert_dns
-  command_line /usr/lib/nagios/plugins/check_http -H '$ARG1$' --ssl --sni --certificate=14,2
-}
+{%   endfor %}
+{% endfor %}
 
 define command {
 	command_name	check_nrpe_timeout

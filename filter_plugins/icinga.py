@@ -116,6 +116,8 @@ def icinga_http_check(description, host, domain, expected_status_code=200,
         name += '_dns'
     if ssl:
         name += '_ssl'
+        if ssl is not True:
+            name += ssl
     arguments = [domain, uri, expected_content]
     if data:
         name += '_data'
@@ -177,6 +179,7 @@ def icinga_http_preconfigured_checks_get_config(web_host, configs):
         'protocols': ['http', 'https'],
         'max_https_reqs_per_second': 10,
         'max_http_reqs_per_second': 0.1,
+        'ssl': None,
         }
 
     config = {}
@@ -193,7 +196,7 @@ def icinga_http_preconfigured_checks_get_config(web_host, configs):
 
 def icinga_http_preconfigured_checks_check(host, site, name, config={},
                                            use_suffix=False, dns=False,
-                                           default_protocol='https'):
+                                           default_protocol='https', ssl=None):
     protocol = config.get('protocol', default_protocol)
 
     description = site + '/%s' % (protocol)
@@ -203,7 +206,7 @@ def icinga_http_preconfigured_checks_check(host, site, name, config={},
     variant = config.get('variant', '')
     method = config.get('method', 'GET')
     uri = config.get('uri', '/')
-    ssl = (protocol != 'http')
+    ssl = (protocol != 'http') if ssl is None else str(ssl)
     port = config.get('port', None)
     data = config.get('data', None)
     encode_data = config.get('encode_data', False)
@@ -233,6 +236,7 @@ def icinga_http_preconfigured_checks(host, apache_sites=[], nginx_sites=[],
                 site, configs)
 
             protocols = config['protocols']
+            ssl = config.get('ssl', None)
 
             default_protocol = 'https' if 'https' in protocols else 'http'
             use_suffix = (len(checks) > 1)
@@ -240,13 +244,16 @@ def icinga_http_preconfigured_checks(host, apache_sites=[], nginx_sites=[],
                 ret += icinga_http_preconfigured_checks_check(
                     host=host, site=site, name=check_name,
                     config=check_config, use_suffix=use_suffix, dns=dns,
-                    default_protocol=default_protocol)
+                    default_protocol=default_protocol, ssl=ssl)
 
             if 'https' in protocols:
                 description = site + '/cert'
                 check = 'http_vhost_cert'
                 if dns:
                     check += '_dns'
+                check += '_ssl'
+                if ssl is not None:
+                    check += str(ssl)
                 ret += '\n' + icinga_check(description=description, host=host,
                                            check=check, args=[site],
                                            interval='daily')

@@ -38,6 +38,12 @@ Sets up an Icinga server along with an Icinga 1 web application.
       check for certificate expiration is added automatically. If both 'http'
       and 'https' is present, a check that 'http' requests get forwarded to
       'https' urls gets added.
+    * `ssl`: (Default: None) If set, enforce a given SSL/TLS version
+      for https connections. The following mapping applies:
+      * 1: TLS 1
+      * 1.1: TLS 1.1
+      * 2: SSL 2
+      * 3: SSL 3
     * Each of the remaining key is considered the name of a check and the
       corresponding value in a dictionary that sepecifies how to check. It's
       key/values are:
