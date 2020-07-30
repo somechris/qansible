@@ -45,12 +45,12 @@ define command {
 {% endfor %}
 define command {
   command_name check_http_vhost_cert
-  command_line /usr/lib/nagios/plugins/check_http -I '$HOSTADDRESS$' -H '$ARG1$' --ssl --sni --certificate=70,56
+  command_line /usr/lib/nagios/plugins/check_http -I '$HOSTADDRESS$' -H '$ARG1$' --ssl --sni --certificate=14,2
 }
 
 define command {
   command_name check_http_vhost_cert_dns
-  command_line /usr/lib/nagios/plugins/check_http -H '$ARG1$' --ssl --sni --certificate=70,56
+  command_line /usr/lib/nagios/plugins/check_http -H '$ARG1$' --ssl --sni --certificate=14,2
 }
 
 define command {
