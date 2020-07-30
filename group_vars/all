@@ -128,5 +128,13 @@ icinga_server_preconfigured_web_host_health_checks_defaults:
     protocols: ['http'] # No https, as it's only served to the host itself.
     main:
       expected_status_code: 403
+  hp-jetdirect:
+    ssl: 1
+    main:
+      uri: /hp/device/this.LCDispatcher
+      expected_content: 'HP Instant Support'
+    device_status:
+      uri: /hp/device/this.LCDispatcher?nav=hp.DeviceStatus
+      expected_content: 'Ready'
 icinga_server_preconfigured_web_host_health_checks_extra: {}
 icinga_server_preconfigured_web_host_health_checks: '{{icinga_server_preconfigured_web_host_health_checks_defaults | update_dict(icinga_server_preconfigured_web_host_health_checks_extra)}}'

@@ -6,3 +6,8 @@
 {{inventory_hostname | icinga_http_preconfigured_checks(
     apache_sites=apache_websites,
     configs=icinga_server_preconfigured_web_host_health_checks) }}
+{% if 'hp_printers' in group_names %}
+{{inventory_hostname | icinga_http_preconfigured_checks(
+    unansiblized_sites=['hp-jetdirect'],
+    configs=icinga_server_preconfigured_web_host_health_checks) }}
+{% endif %}
