@@ -40,9 +40,10 @@ dependencies:
           - 'ARGS_NAMES:hostservice'
         - type: remove-target
           id: 942432
-          rationale: start_time may contain `2020-07-27`, which triggers this rule already.
+          rationale: start_time may contain `2020-07-27`, which triggers this rule already. Just as `foo-bar.lirum.at^` for hostservice.
           targets:
           - 'ARGS:start_time'
+          - 'ARGS:hostservice'
         - type: remove-target
           id: 942130
           rationale: hostservice is typically something like `foo.bar.de^SSH/Server`, which already triggers this check.
@@ -55,3 +56,19 @@ dependencies:
           rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
           targets:
           - 'ARGS:service'
+      - name: '/cgi-bin/icinga/config.cgi'
+        security_rules:
+        - type: remove-target
+          id: 920273
+          rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
+          targets:
+          - 'ARGS:expand'
+          - 'ARGS:item_name'
+          - 'ARGS:service'
+          - 'ARGS:search_string'
+        - type: remove-target
+          id: 942130
+          rationale: item_name is typically something like `foo.bar.de^SSH/Server`, which already triggers this check.
+          targets:
+          - 'ARGS:item_name'
+          - 'ARGS:search_string'
