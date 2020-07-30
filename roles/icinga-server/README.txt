@@ -24,11 +24,21 @@ Sets up an Icinga server along with an Icinga 1 web application.
   and the domain name from whose IP address NRPE calls are made.
 * `icinga_server_object_path`: The directory holding the object configuration
   files.
-* `icinga_server_preconfigured_web_host_health_checks`: Dictionary that defines
-  how to perform web domain checks. For a domain `foo.bar.baz`, the checks defined
-  by the following keys get added up (with the later overruling the earlier
-  ones): `foo`, `foo.bar.baz`. The value for each key is again a
-  dictionary holding the following key/value pairs:
+* `icinga_server_preconfigured_web_host_health_checks_defaults`: Default
+  preconfigured web domain checks. Unless you want to override defaults, you're
+  better off adding checks for your own domains to
+  `icinga_server_preconfigured_web_host_health_checks_extra`.
+* `icinga_server_preconfigured_web_host_health_checks`: (Default: merge of
+  `icinga_server_preconfigured_web_host_health_checks_defaults` and
+  `icinga_server_preconfigured_web_host_health_checks_extra`). This is the
+  configuration effectively used, but unless you want to hard override things,
+  you're better off add checks for your own domains to
+* `icinga_server_preconfigured_web_host_health_checks_extra`: Dictionary that
+  defines how to perform web domain checks for user domains. This is the
+  dictionary where you should add checks for your own domains. For a domain
+  `foo.bar.baz`, the checks defined by the following keys get added up (with the
+  later overruling the earlier ones): `foo`, `foo.bar.baz`. The value for each
+  key is again a dictionary holding the following key/value pairs:
     * `alias`: (Default: None) Merges the definition of another web host check
       in. So if the value of `alias` is `foo`, then the definitions of
       `icinga_server_preconfigured_web_host_health_checks['foo']` get added in.
