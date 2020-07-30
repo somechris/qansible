@@ -123,6 +123,10 @@ ldap_client_late_default_login_groups:
 #
 icinga_server_web_host: 'icinga.{{company_domain}}'
 icinga_server_object_path: /etc/icinga/objects
-icinga_server_preconfigured_web_host_health_checks_defaults: {}
+icinga_server_preconfigured_web_host_health_checks_defaults:
+  default:
+    protocols: ['http'] # No https, as it's only served to the host itself.
+    main:
+      expected_status_code: 403
 icinga_server_preconfigured_web_host_health_checks_extra: {}
 icinga_server_preconfigured_web_host_health_checks: '{{icinga_server_preconfigured_web_host_health_checks_defaults | update_dict(icinga_server_preconfigured_web_host_health_checks_extra)}}'
