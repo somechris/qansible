@@ -55,6 +55,8 @@ No Globals that are specific only for this role.
      net_access requirements on parents)
    * `cors`: (Default: ``) (Optional) If `allow-all-simple`, white-list simple
      requests through CORS.
+   * `deny`: (Default: False) (Optional) If True, unconditionally deny
+     all requests to this location.
    * `is_cgi`: If True, treat this location as cgi and allow to execute them.
    * `name`: The location's URL.
    * `net_accesses`: The net-accesses that may use the location

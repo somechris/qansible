@@ -111,6 +111,12 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
       </RequireAny>
 {%           endif %}
 {%         endif %}
+{%         if (location['deny'] is defined and (location['deny'] | bool)) %}
+      <RequireAll>
+        # Force denying all requests
+        Require all denied
+      </RequireAll>
+{%         endif %}
       Require all granted
       # ^ This 'Require all granted' makes sure that at least one rule
       # succeeds, hence RequireAll does not fail if there are no other
