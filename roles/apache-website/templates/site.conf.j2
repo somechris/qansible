@@ -112,6 +112,9 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
 {%           endif %}
 {%         endif %}
       Require all granted
+      # ^ This 'Require all granted' makes sure that at least one rule
+      # succeeds, hence RequireAll does not fail if there are no other
+      # conditions
     </RequireAll>
 {%         if (location['cors'] | default('')) == 'allow-all-simple' %}
 
