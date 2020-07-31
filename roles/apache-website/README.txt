@@ -57,7 +57,7 @@ No Globals that are specific only for this role.
      requests through CORS.
    * `is_cgi`: If True, treat this location as cgi and allow to execute them.
    * `name`: The location's URL.
-   * `net-accesses`: The net-accesses that may use the location
+   * `net_accesses`: The net-accesses that may use the location
    * `security_rules`: List of security adaptions for this
      location. Each security adaption is a dictionary with the
      following key/values:
