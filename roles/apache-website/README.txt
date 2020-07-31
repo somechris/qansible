@@ -59,7 +59,9 @@ No Globals that are specific only for this role.
      all requests to this location.
    * `expose_server_status`: (Default: False) (Optional) If True, return the
      server status for requests to this location.
-   * `is_cgi`: If True, treat this location as cgi and allow to execute them.
+   * `is_cgi`: (Default: Undefined) If undefined, do not interfer with cgi
+     config. If True, treat this location as cgi and allow to execute them. If
+     False, do not allow executing cgi scripts.
    * `name`: The location's URL.
    * `net_accesses`: The net-accesses that may use the location
    * `security_rules`: List of security adaptions for this

@@ -127,11 +127,17 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
 
     Header always set Access-Control-Allow-Origin "*"
 {%         endif %}
-{%         if location["is_cgi"] | default(False) | bool %}
-
+{%         if location["is_cgi"] is defined %}
+{%           if location["is_cgi"] | bool %}
     Options ExecCGI
-{%           if not handler %}
-{%             set handler = 'cgi-script' %}
+{%             if not handler %}
+{%               set handler = 'cgi-script' %}
+{%             endif %}
+{%           else %}
+    Options -ExecCGI
+{%             if not handler %}
+{%               set handler = 'None' %}
+{%             endif %}
 {%           endif %}
 {%         endif %}
 {%         if location["expose_server_status"] | default(False) | bool %}
