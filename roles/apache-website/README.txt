@@ -57,6 +57,8 @@ No Globals that are specific only for this role.
      requests through CORS.
    * `deny`: (Default: False) (Optional) If True, unconditionally deny
      all requests to this location.
+   * `expose_server_status`: (Default: False) (Optional) If True, return the
+     server status for requests to this location.
    * `is_cgi`: If True, treat this location as cgi and allow to execute them.
    * `name`: The location's URL.
    * `net_accesses`: The net-accesses that may use the location
