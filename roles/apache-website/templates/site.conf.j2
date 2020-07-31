@@ -52,6 +52,7 @@
 {%         set location_type = (location['type'] | default('static')) %}
 {%         set location_suffix = '' %}
 {%         set location_start_extra = '' %}
+{%         set handler = '' %}
 {%         if location_type == 'regexp' %}
 {%           set location_suffix = 'Match' %}
 {%           set location_start_extra = '^' %}
@@ -129,13 +130,15 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
 {%         if location["is_cgi"] | default(False) | bool %}
 
     Options ExecCGI
-    SetHandler cgi-script
+{%           if not handler %}
+{%             set handler = 'cgi-script' %}
+{%           endif %}
 {%         endif %}
 {%         if location["expose_server_status"] | default(False) | bool %}
-
-    SetHandler server-status
-    # ExtendedStatus and ProxyStatus have to be turned on globally,
-    # and are turned on through mods-enabled.
+{%           set handler = 'server-status' %}
+{%         endif %}
+{%         if handler %}
+    SetHandler {{handler}}
 {%         endif %}
 {%         if (location["alias"] | default('')) != '' %}
     # This location has an alias (see below after the Locations)
