@@ -13,3 +13,4 @@
     - '{{common_directories_db}}'
     - '{{common_directories_data_base}}'
     - '{{common_directories_data_dir1}}'
+    - '{{common_directories_data_dir2}}'

@@ -25,6 +25,7 @@ Sets up commonly use directories on a host.
   directories. Data directories should hold all files/directories that
   might eventually be too big to fit on a small root partition.
 * `common_directories_data_dir1`: First data directory.
+* `common_directories_data_dir2`: Second data directory.
 
 
 

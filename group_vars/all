@@ -25,6 +25,7 @@ public_hostname: '{{inventory_hostname}}'
 common_directories_db: '/var/db'
 common_directories_data_base: /data
 common_directories_data_dir1: '{{common_directories_data_base}}/d1'
+common_directories_data_dir2: '{{common_directories_data_base}}/d2'
 
 
 #-----------------------------------------------------------------------
