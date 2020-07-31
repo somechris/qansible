@@ -4,6 +4,7 @@
 - import_playbook: rolebooks/vpn.yml
 
 - import_playbook: rolebooks/mail.yml
+- import_playbook: rolebooks/graphite.yml
 
 - import_playbook: rolebooks/local.yml
 - import_playbook: rolebooks/icinga-servers.yml

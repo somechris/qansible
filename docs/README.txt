@@ -121,6 +121,7 @@ agreements.
   - `firewall-early`: Sets up a basic firewall to be used while setting up the
     host
   - `firewall-late`: Sets up the system's firewall
+  - `graphite`: Sets up a Graphite/Carbon server as metrics host.
   - `hostnames`: Sets up host identifications.
   - `icinga-client`: Configures hosts for Icinga monitoring.
   - `icinga-server`: Sets up an Icinga server.

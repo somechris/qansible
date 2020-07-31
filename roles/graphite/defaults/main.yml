@@ -1,0 +1,26 @@
+graphite_var_lib_dir: /var/lib/graphite
+graphite_whisper_dir: /var/lib/graphite/whisper
+graphite_log_dir: '/var/log/graphite'
+graphite_alternate_log_dir: '/var/log/carbon'
+
+graphite_effective_data_disk: '{{common_directories_data_dir1}}'
+graphite_effective_data_dir: '{{graphite_effective_data_disk}}/graphite'
+graphite_effective_var_lib_dir: '{{graphite_effective_data_dir}}/var-lib-graphite'
+graphite_effective_whisper_dir: '{{graphite_effective_data_dir}}/whisper'
+graphite_effective_log_dir: '{{graphite_effective_data_dir}}/logs'
+
+graphite_database_backend: sqlite3
+graphite_database_name: '{{graphite_var_lib_dir}}/graphite.db'
+graphite_database_host: ''
+graphite_database_port: ''
+graphite_database_user: ''
+graphite_database_password: ''
+
+graphite_service_prefix_wo_service: 'services'
+
+graphite_line_receiver_port: 2003
+graphite_cache_query_port: 7002
+
+graphite_web_net_accesses: []
+graphite_receive_net_accesses: []
+graphite_query_net_accesses: []

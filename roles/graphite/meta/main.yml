@@ -1,0 +1,51 @@
+dependencies:
+  - role: motd
+    service_name: 'graphite'
+
+  - role: apache-website
+    apache_website_domain: '{{graphite_web_host}}'
+    apache_website_net_accesses: '{{graphite_web_net_accesses}}'
+    apache_website_mod_configs:
+      'wsgi':
+        - WSGIDaemonProcess _graphite processes=5 threads=5 display-name='%{GROUP}' inactivity-timeout=120 user=_graphite group=_graphite
+        - WSGIProcessGroup _graphite
+        - WSGIImportScript /usr/share/graphite-web/graphite.wsgi process-group=_graphite application-group=%{GLOBAL}
+    apache_website_locations:
+      - name: '/'
+        auth:
+          ldap_groups:
+            - staff
+        is_cgi: True
+        alias: /usr/share/graphite-web/graphite.wsgi/
+        security_rules:
+        - type: remove-target
+          id: 921170
+          rationale: When rendering a graph, `target` occurs for each line. So we whitelist the used arguments.
+          targets:
+          - 'ARGS_NAMES:target'
+      - name: '/static/'
+        is_cgi: False
+        alias: /usr/share/graphite-web/static/
+      - name: /admin
+        deny: True
+      - name: /metrics/find/
+        security_rules:
+        - type: remove-target
+          id: 920273
+          rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
+          targets:
+          - 'ARGS:query'
+      - name: /render/
+        security_rules:
+        - type: remove-target
+          id: 921170
+          rationale: When rendering a graph, `target` occurs for each line. So we whitelist the used arguments.
+          targets:
+          - 'ARGS_NAMES:target'
+      - name: /composer
+        security_rules:
+        - type: remove-target
+          id: 921170
+          rationale: When rendering a graph, `target` occurs for each line. So we whitelist the used arguments.
+          targets:
+          - 'ARGS_NAMES:target'

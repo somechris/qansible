@@ -1,0 +1,242 @@
+#!/bin/bash
+# {{ansible_managed}}
+
+set -e
+set -o pipefail
+
+SCRIPT_FILE_ABS="$0"
+if [ "${SCRIPT_FILE_ABS:0:1}" != "/" ]
+then
+    SCRIPT_FILE_ABS="$(pwd)/$SCRIPT_FILE_ABS"
+fi
+
+# -------------------------------------
+
+WHISPER_DIR_ABS="{{graphite_whisper_dir}}"
+DAYS_BEFORE_CLEANUP="28"
+MODE=
+FILE_TO_MOVE=
+ATTIC_PREFIX="attic"
+ENTITIES=(
+    '{{graphite_host_prefix_wo_host}}'
+    '{{graphite_service_prefix_wo_service}}'
+)
+FIND_ARGS=(
+    '-type' 'f'
+    '-name' '*.wsp'
+)
+VERBOSE=no
+
+# -------------------------------------
+
+print_help() {
+    cat <<EOF
+$SCRIPT_FILE_ABS [ OPTIONS ]
+
+Moves too old whisper files into the attic hierarchy.
+
+OPTIONS:
+  --help                 -- Prints this page
+  --list-stale-entities  -- Lists stale entities (hosts, services, ...)
+  --list-stale-files     -- Lists stale whisper files
+  --list-stale-hosts     -- Lists stale hosts
+  --list-stale-services  -- Lists stale hosts
+  --move-stale-entities  -- Moves stale entities (hosts, services, ...) to attic
+  --move-file FILE       -- Moves FILE to the attic and skips all other steps
+  --move-stale-hosts     -- Moves stale hosts to attic
+  --move-stale-services  -- Moves stale services to attic
+  --verbose              -- More verbose output
+EOF
+}
+
+# -------------------------------------
+log() {
+    echo "$(date +%Y-%m-%dT%H:%M:%S)" "$@"
+}
+# -------------------------------------
+
+error() {
+    log "Error:" "$@" >&2
+    exit 1
+}
+
+# -------------------------------------
+
+assert_unset_MODE() {
+    if [ -n "$MODE" ]
+    then
+        error "Mode is already set ('$MODE')"
+    fi
+}
+
+# -------------------------------------
+
+parse_arguments() {
+    while [ $# -gt 0 ]
+    do
+        local ARGUMENT="$1"
+        shift
+        case "$ARGUMENT" in
+            "--help")
+                print_help
+                exit 1
+                ;;
+            "--list-stale-entities" )
+                assert_unset_MODE
+                MODE="LIST_STALE_ENTITIES"
+                ;;
+            "--list-stale-files" )
+                assert_unset_MODE
+                MODE="LIST_STALE_FILES"
+                ;;
+            "--list-stale-hosts" )
+                assert_unset_MODE
+                MODE="LIST_STALE_HOSTS"
+                ;;
+            "--list-stale-services" )
+                assert_unset_MODE
+                MODE="LIST_STALE_SERVICES"
+                ;;
+            "--move-file" )
+                if [ $# -lt 1 ]
+                then
+                    error "$ARGUMENT expects 1 further argument"
+                fi
+                assert_unset_MODE
+                MODE="FILE_MOVE"
+                FILE_TO_MOVE="$1"
+                shift
+                ;;
+            "--move-stale-entities" )
+                assert_unset_MODE
+                MODE="MOVE_STALE_ENTITIES"
+                ;;
+            "--move-stale-hosts" )
+                assert_unset_MODE
+                MODE="MOVE_STALE_HOSTS"
+                ;;
+            "--move-stale-services" )
+                assert_unset_MODE
+                MODE="MOVE_STALE_SERVICES"
+                ;;
+            "--verbose" )
+                VERBOSE=yes
+                ;;
+            * )
+                error "Unknown argument '$ARGUMENT'"
+                ;;
+        esac
+    done
+}
+
+# -------------------------------------
+
+in_array() {
+    local NEEDLE="$1"
+    shift
+    local HAY
+    for HAY in "$@"
+    do
+        if [ "$HAY" = "$NEEDLE" ]
+        then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# -------------------------------------
+
+list_stale() {
+    local KIND="$1"
+    GOOD_PREFIXES=()
+    readarray -t GOOD_PREFIXES < <(find "$KIND" "${FIND_ARGS[@]}" -mtime -"$DAYS_BEFORE_CLEANUP" | cut -f 1,2 -d / | sort -u)
+    for CANDIDATE in "$KIND"/*
+    do
+        if ! in_array "$CANDIDATE" "${GOOD_PREFIXES[@]}"
+        then
+            echo "$CANDIDATE"
+        fi
+    done
+}
+
+# -------------------------------------
+
+move_stale() {
+    local KIND="$1"
+    for CANDIDATE in $(list_stale "$KIND")
+    do
+        log "Moving $CANDIDATE to attic ..."
+        find "$CANDIDATE" "${FIND_ARGS[@]}" -exec "$SCRIPT_FILE_ABS" --move-file {} \;
+        find "$CANDIDATE" -type d -empty -delete
+        log "Moving $CANDIDATE to attic done."
+    done
+}
+
+# -------------------------------------
+
+parse_arguments "$@"
+
+if [ "$VERBOSE" = "yes" ]
+then
+    log "Starting"
+fi
+
+cd "$WHISPER_DIR_ABS"
+
+case "$MODE" in
+    "" | "LIST_STALE_FILES" )
+        cd "$WHISPER_DIR_ABS"
+        find * "${FIND_ARGS[@]}" -mtime +"$DAYS_BEFORE_CLEANUP" | sort
+        ;;
+    "LIST_STALE_ENTITIES" )
+        for ENTITY in "${ENTITIES[@]}"
+        do
+            list_stale "$ENTITY"
+        done
+        ;;
+    "LIST_STALE_HOSTS" )
+        list_stale '{{graphite_host_prefix_wo_host}}'
+        ;;
+    "LIST_STALE_SERVICES" )
+        list_stale '{{graphite_service_prefix_wo_service}}'
+        ;;
+    "MOVE_STALE_ENTITIES" )
+        for ENTITY in "${ENTITIES[@]}"
+        do
+            move_stale "$ENTITY"
+        done
+        ;;
+    "MOVE_STALE_HOSTS" )
+        move_stale '{{graphite_host_prefix_wo_host}}'
+        ;;
+    "MOVE_STALE_SERVICES" )
+        move_stale '{{graphite_service_prefix_wo_service}}'
+        ;;
+    "FILE_MOVE" )
+        log "Moving '$FILE_TO_MOVE' to attic"
+        if [ ! -e "$FILE_TO_MOVE" ]
+        then
+            error "'$FILE_TO_MOVE' does not exist"
+        fi
+        ATTIC_FILE="$ATTIC_PREFIX/$FILE_TO_MOVE"
+        ATTIC_DIR="$(dirname "$ATTIC_FILE")"
+
+        mkdir -p "$ATTIC_DIR"
+        if [ -e "$ATTIC_FILE" ]
+        then
+	    whisper-merge "$FILE_TO_MOVE" "$ATTIC_FILE"
+	    rm "$FILE_TO_MOVE"
+        else
+            mv "$FILE_TO_MOVE" "$ATTIC_FILE"
+        fi
+        log "Done"
+        ;;
+    * )
+        error "Unknown mode '$MODE'"
+        ;;
+esac
+if [ "$VERBOSE" = "yes" ]
+then
+    log "Done"
+fi

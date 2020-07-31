@@ -1,0 +1,8 @@
+- name: reload carbon
+  service:
+    name: carbon-cache
+    state: restarted
+
+- name: sync carbon-database
+  command: graphite-manage migrate --no-input
+  become_user: _graphite

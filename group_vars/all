@@ -139,3 +139,12 @@ icinga_server_preconfigured_web_host_health_checks_defaults:
       expected_content: 'Ready'
 icinga_server_preconfigured_web_host_health_checks_extra: {}
 icinga_server_preconfigured_web_host_health_checks: '{{icinga_server_preconfigured_web_host_health_checks_defaults | update_dict(icinga_server_preconfigured_web_host_health_checks_extra)}}'
+
+#---------------------------------------------------------------------------
+# Graphite
+#
+graphite_collection_host: 'graphite.{{company_domain}}'
+graphite_line_receiver_port: 2003
+graphite_host_prefix_wo_host: 'hosts'
+graphite_host_prefix: '{{graphite_host_prefix_wo_host}}.{{inventory_hostname_short}}'
+graphite_web_host: '{{graphite_collection_host}}'

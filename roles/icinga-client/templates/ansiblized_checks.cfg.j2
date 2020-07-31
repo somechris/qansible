@@ -21,3 +21,6 @@
 {% if 'apache' in group_names %}
 {{"apache_httpd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=apache2")}}
 {% endif %}
+{% if 'graphites' in group_names %}
+{{"graphite_carbon_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --user=_graphite --command=carbon-cache")}}
+{% endif %}

@@ -24,3 +24,6 @@
 {% if 'apache' in group_names %}
 {{('Apache HTTPD/Server') | icinga_nrpe_check(inventory_hostname, 'apache_httpd_proc')}}
 {% endif %}
+{% if 'graphites' in group_names %}
+{{'Graphite/Carbon-cache' | icinga_nrpe_check(inventory_hostname, 'graphite_carbon_proc')}}
+{% endif %}
