@@ -6,6 +6,7 @@
 {{"nslcd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=nslcd")}}
 {{"atopacctd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=atopacctd")}}
 {{"atop_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=atop")}}
+{{"diamond_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --user=diamond --command=python --argument-array=/usr/bin/diamond")}}
 {% if 'ldap_servers' in group_names %}
 {{"slapd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --user=openldap --command=slapd")}}
 {% endif %}

@@ -1,0 +1,45 @@
+Role: diamond
+=============
+
+
+
+1. Description
+2. Globals
+3. Parameters
+
+
+
+1. Description
+--------------
+
+Sets up diamond on the host. Diamond is a framework for metric
+gathering on the host and reporting them to a metric service
+(`graphite` in our case).
+
+We use diamond to gather the baseline host metrics (CPU utilization,
+disk usage, ...) and extend it with some plugins that allow analyzing
+apache/nginx log files, gather metrics from data in databases, ...
+
+
+
+2. Globals
+----------
+
+No Globals that are specific only for this role.
+
+
+
+3. Parameters
+-------------
+
+* `diamond_collector_dir`: Directory to store additional diamond collectors
+  (plugins that gather metrics) in.
+* `diamond_collector_conf_dir`: Directory to store collector configs in.
+* `diamond_collector_conf_extension`: File extension used for files within
+  `diamond_collector_conf_dir`.
+* `diamond_effective_log_dir`: Directory where logs effectively get stored in.
+* `diamond_log_dir`: Directory proccesses will write logs to.
+* `diamond_effective_data_disk`: Directory for data disk where data effectively
+  gets stored in.
+* `diamond_effective_data_dir`: Directory where data effectively gets stored in.
+

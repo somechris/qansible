@@ -9,6 +9,7 @@
 {{'atop/Accounting monitor' | icinga_nrpe_check(inventory_hostname,
                               'atopacctd_proc')}}
 {{'atop/Daemon' | icinga_nrpe_check(inventory_hostname, 'atop_proc')}}
+{{'Diamond' | icinga_nrpe_check(inventory_hostname, 'diamond_proc')}}
 {% if 'ldap_servers' in group_names %}
 {{'LDAP/Server' | icinga_nrpe_check(inventory_hostname, 'slapd_proc')}}
 {% endif %}

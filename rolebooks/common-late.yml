@@ -7,6 +7,10 @@
         - apache-website-default
         - website
 
+    - role: diamond
+      tags:
+        - diamond
+
 - name: common-late (generic for all, even unmanaged)
   hosts: all
   gather_facts: no

@@ -1,0 +1,9 @@
+diamond_log_dir: '/var/log/diamond'
+
+diamond_effective_data_disk: '{{common_directories_data_dir1}}'
+diamond_effective_data_dir: '{{diamond_effective_data_disk}}/diamond'
+diamond_effective_log_dir: '{{diamond_effective_data_dir}}/logs'
+
+diamond_collector_conf_extension: .conf
+diamond_collector_conf_dir: /etc/diamond/collectors
+diamond_collector_dir: /usr/share/diamond/collectors

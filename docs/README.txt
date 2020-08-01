@@ -115,6 +115,8 @@ agreements.
   - `dhparams`: Handles files holding Diffie Hellman parameters for secure
     handshakes. This is needed for applications doing encryption (Websites,
     LDAP, ...)
+  - `diamond`: Handles the diamond application, which collects
+    system/application metrics and sends them to graphite.
   - `smtp-server`: Sets up an SMTP server.
   - `emergency-user`: Sets up a local user that allows login even if
   - `fail`: Fails a playbook. This can be used to fail early in `meta` parts.

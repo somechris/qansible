@@ -1,0 +1,70 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
+  when: 'qhost_distribution not in ["Debian"]'
+
+- name: Create data directory
+  file:
+    state: directory
+    dest: '{{item}}'
+    owner: diamond
+    group: diamond
+    mode: 0755
+  with_items:
+    - '{{diamond_effective_data_dir}}'
+    - '{{diamond_effective_log_dir}}'
+
+- name: Link logical directories
+  file:
+    state: link
+    path: "{{item['logical']}}"
+    owner: diamond
+    group: diamond
+    src: "{{item['effective']}}"
+    follow: no
+  with_items:
+    - {'logical': '{{diamond_log_dir}}', 'effective': '{{diamond_effective_log_dir}}'}
+
+- name: Install diamond packages
+  apt:
+    name:
+      - diamond
+    state: present
+
+- name: Grant diamond user access to log files
+  user:
+    state: present
+    name: diamond
+    append: yes
+    createhome: no
+    groups: adm
+  when: '"apache" in group_names or "nginx" in group_names'
+
+- name: Configure diamond
+  template:
+    dest: /etc/diamond/diamond.conf
+    src: diamond.conf.j2
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload diamond
+
+- name: Prepare directory for mergable confs
+  file:
+    state: directory
+    path: '{{diamond_collector_conf_dir}}'
+    owner: diamond
+    group: diamond
+    mode: 0755
+
+- name: Configure collectors
+  template:
+    dest: '{{diamond_collector_conf_dir}}/{{item}}Collector{{diamond_collector_conf_extension}}'
+    src: '{{item}}Collector{{diamond_collector_conf_extension}}.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - DiskUsage
+  notify:
+    reload diamond
