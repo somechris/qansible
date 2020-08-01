@@ -11,6 +11,7 @@
   ServerSignature Off
   ServerAdmin {{webmaster_email_address}}
 
+{%     set cgi_handler = 'cgi-script' %}
 {%     if port in apache_webserver_ports_encrypted %}
 {%       set ssl_config = (default_ssl_setup | ssl_config(variant='openssl')) %}
   SSLEngine on
@@ -48,6 +49,24 @@
 {%         endfor %}
 {%       endif %}
 
+{%       if apache_website_mod_configs['wsgi'] is defined %}
+{%         set cgi_handler = 'wsgi-script' %}
+{%         for wsgi_option in apache_website_mod_configs['wsgi'] %}
+{%           if wsgi_option is starts_with 'WSGI' %}
+  {{wsgi_option}}
+{%           else %}
+#####################################################
+Config error!
+
+wsgi option
+
+{{wsgi_option}}
+
+does not start in 'WSGI'
+#####################################################
+{%           endif %}
+{%         endfor %}
+{%       endif %}
 {%       for location in (location_root_shim + apache_website_locations)%}
 {%         set location_type = (location['type'] | default('static')) %}
 {%         set location_suffix = '' %}
@@ -131,7 +150,7 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
 {%           if location["is_cgi"] | bool %}
     Options ExecCGI
 {%             if not handler %}
-{%               set handler = 'cgi-script' %}
+{%               set handler = cgi_handler %}
 {%             endif %}
 {%           else %}
     Options -ExecCGI

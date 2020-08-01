@@ -119,3 +119,10 @@ No Globals that are specific only for this role.
     * `from`: A match for the part of the current URI to rewrite.
     * `to`: The target to rewrite to.
     * `flags`: A list of flags for this rewrite rule (E.g.: `['END']`)
+* `apache_website_mod_configs`: (optional) (default: {}) A dictionary for
+  configs for additional server mods. The keys of this dictionary are the names
+  of the mod, (E.g.: `wsgi`) and the corresponding values hold the config for
+  that module. Possible key/values are:
+  * `wsgi`: Configures a WSGI site. The value is a list of configuration lines
+    to add to the VirtualHost. Each line has to start in `WSGI`. Configuring
+    wsgi automatically switches cgi scripts to wsgi for this VirtualHost.
