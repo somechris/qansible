@@ -1,0 +1,48 @@
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{grafana_common_role_tasks_config}}'
+
+- name: Load secrets
+  include_vars: secrets.yml
+
+- name: Configure Grafana
+  template:
+    dest: /etc/grafana/grafana.ini
+    src: grafana.ini.j2
+    owner: grafana
+    group: grafana
+    mode: 0440 # Not world visible, as it contains a salt
+  notify:
+    reload grafana
+
+- name: Load credentials
+  include_vars: credentials.yml
+
+- name: Render provisioning files
+  template:
+    dest: "{{grafana_provisioning_dir}}/{{item['kind']}}/{{item['name']}}.yaml"
+    src: "{{item['kind']}}-{{item['name']}}.yaml.j2"
+    owner: grafana
+    group: grafana
+    mode: 0440 # Not world visible, as it may contain passwords
+  with_items:
+    - {kind: datasources, name: graphite}
+  notify:
+    reload grafana
+
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{grafana_common_role_tasks_config}}'
+
+- name: Set company name if needed
+  command: /usr/bin/sqlite3 --batch '{{grafana_var_lib_dir}}/{{grafana_sqlite_db}}' 'UPDATE org SET name="{{company_name}}", updated=datetime("now") WHERE id=1 AND name != "{{company_name}}"'
+
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{grafana_common_role_tasks_config}}'

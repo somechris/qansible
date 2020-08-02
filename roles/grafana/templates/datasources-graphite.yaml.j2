@@ -1,0 +1,23 @@
+# {{ansible_managed}}
+
+apiVersion: 1
+
+datasources:
+  - name: Graphite
+    type: graphite
+    access: proxy
+    orgId: 1
+    # <string> custom UID which can be used to reference this datasource in other parts of the configuration, if not specified will be generated automatically
+    # uid: my_unique_uid
+    url: 'https://{{graphite_web_host}}/'
+    basicAuth: true
+    basicAuthUser: '{{grafana_websites_service_user}}'
+    isDefault: true
+    jsonData:
+      graphiteVersion: '1.1'
+      tlsAuth: false
+      tlsAuthWithCACert: false
+    secureJsonData:
+      basicAuthPassword: '{{website_common_users[grafana_websites_service_user]['password']}}'
+    version: 1
+    editable: false

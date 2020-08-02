@@ -1,0 +1,6 @@
+- name: Graphite Server
+  hosts: grafanas
+  roles:
+    - grafana
+  tags:
+    - grafana

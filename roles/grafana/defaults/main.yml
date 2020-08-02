@@ -1,0 +1,49 @@
+grafana_var_lib_dir: '/var/lib/grafana'
+grafana_log_dir: '/var/log/grafana'
+grafana_provisioning_dir: '/etc/grafana/provisioning'
+grafana_dashboard_dir: '{{grafana_var_lib_dir}}/dashboards'
+
+grafana_effective_data_disk: '{{common_directories_data_dir2}}'
+grafana_effective_data_dir: '{{grafana_effective_data_disk}}/grafana'
+grafana_effective_var_lib_dir: '{{grafana_effective_data_dir}}/var-lib-grafana'
+grafana_effective_log_dir: '{{grafana_effective_data_dir}}/logs'
+
+grafana_common_role_tasks_config:
+  role: grafana
+  supported_distributions:
+    - 'Debian'
+  user: grafana
+  paths:
+    - '{{grafana_effective_data_dir}}'
+    - '{{grafana_effective_var_lib_dir}}'
+    - '{{grafana_effective_log_dir}}'
+    - {state: link, path: '{{grafana_var_lib_dir}}', source: '{{grafana_effective_var_lib_dir}}'}
+    - {state: link, path: '{{grafana_log_dir}}', source: '{{grafana_effective_log_dir}}'}
+    - '{{grafana_provisioning_dir}}'
+    - '{{grafana_provisioning_dir}}/dashboards'
+    - '{{grafana_provisioning_dir}}/datasources'
+    - '{{grafana_provisioning_dir}}/notifiers'
+    - '{{grafana_dashboard_dir}}'
+    - /etc/grafana
+  packages:
+    - grafana
+    - sqlite3 # Only needed by this playbook, not by grafana itself
+  notifications:
+    - reload grafana
+  port_configs:
+    - name: GRAFANA
+      port: '{{grafana_port}}'
+      incoming_net_accesses: '{{grafana_server_net_accesses}}'
+  services:
+    - grafana-server
+  monitoring_checks:
+    - services
+
+grafana_web_host: 'grafana.{{company_domain}}'
+grafana_port: 3000
+grafana_sqlite_db: grafana.db
+grafana_initial_admin: '{{admin_user}}'
+
+grafana_net_accesses: []
+grafana_server_net_accesses: []
+grafana_websites_service_user: service-grafana

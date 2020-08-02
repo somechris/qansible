@@ -127,6 +127,7 @@ agreements.
   - `firewall-early`: Sets up a basic firewall to be used while setting up the
     host
   - `firewall-late`: Sets up the system's firewall
+  - `grafana`: Sets up a Grafana server to dashboard metrics.
   - `graphite`: Sets up a Graphite/Carbon server as metrics host.
   - `gnupg-public-key`: Installs a GnuPG public key.
   - `hostnames`: Sets up host identifications.

@@ -1,0 +1,93 @@
+dependencies:
+  - role: remote-apt-repository
+    remote_apt_repository_distribution: stable
+    remote_apt_repository_signing_key_name: 'grafana-apt-repo'
+    remote_apt_repository_signing_key_id: '0x24098CB6'
+    remote_apt_repository_url: https://packages.grafana.com/enterprise/deb
+
+  - role: apache-website
+    apache_website_domain: '{{grafana_web_host}}'
+    apache_website_net_accesses: '{{grafana_net_accesses}}'
+    apache_website_locations:
+      - name: '/'
+        auth:
+          ldap_groups:
+            - staff
+        proxy:
+          protocol: http
+          host: localhost
+          port: '{{grafana_port}}'
+          path: /
+      - name: '/login'
+        deny: True
+      - name: '/api/'
+        security_rules:
+        - type: append-to-variable
+          rationale: API uses PUT and DELETE, so we whitelist them
+          variable: 'tx.allowed_methods'
+          value: 'PUT DELETE'
+      - name: '/api/datasources/'
+        security_rules:
+        - type: remove-target
+          id: 942432
+          rationale: Proxying find requests for host.*.* would trigger 942432
+          targets:
+            - 'ARGS:query'
+            - 'REQUEST_BODY'
+        - type: remove-target
+          id: 942460
+          rationale: Proxying find requests for host.*.* would trigger 942432
+          targets:
+            - 'ARGS:query'
+            - 'REQUEST_BODY'
+        - type: remove-target
+          id: 920273
+          rationale: Limit on allowed characters in arguments is too strict for our backend requests, like querying for `*`. We're covered by id:920271, which has a more loose character set.
+          targets:
+            - 'ARGS:url'
+            - 'ARGS:query'
+            - 'ARGS:target'
+            - 'REQUEST_BODY'
+      - name: '/api/datasources/proxy/[0-9]+/render'
+        type: regexp
+        security_rules:
+        - type: remove-target
+          id: 942432
+          rationale: metrics for host.*.* would trigger 942432
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942460
+          rationale: metrics 'host.*.*' have 4 non-word characters in a row and would trigger this check.
+          targets:
+          - 'ARGS:target'
+        - type: remove-target
+          id: 921170
+          rationale: When rendering a graph, `target` occurs for each line. So we whitelist the used arguments.
+          targets:
+            - 'ARGS_NAMES:target'
+        - type: remove-target
+          id: 942200
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers for example on `,aliasByMetric(hosts.foo.memory.Buffers),aliasByMetric(hosts.foo.memory.Cached),alias(hosts.foo.memory.MemFree, 'Free'))
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942370
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers for example on `alias(diffSeries(hosts.foo.memory.MemTotal,aliasByMetric(hosts.foo.memory.Buffers),aliasByMetric(hosts.foo.memory.Cached),alias(hosts.foo.memory.MemFree, 'Free')), 'Used w/o Buffers and Cache')`
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942430
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers for example on `(diffSeries(hosts.foo.memory.MemTotal,aliasByMetric(hosts.foo.memory.Buffers),aliasByMetric(hosts.foo.memory.Cached),alias(hosts.foo.memory.MemFree, 'Free')),`
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942431
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers for example on `(scale(sumSeries(hosts.foo.cpu.total.*), 0.010000)`
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942432
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers for example on `(scale(sumSeries(hosts.foo.cpu.total.*), 0.010000)`
+          targets:
+            - 'ARGS:target'
