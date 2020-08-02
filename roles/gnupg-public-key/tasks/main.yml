@@ -1,0 +1,34 @@
+# lint-distribution-independent
+
+- name: Install gnupg
+  apt:
+    name: 'gnupg'
+    state: present
+  when: 'gnupg_public_key_add_to_keyring'
+
+- name: Create GnuPG conf directory
+  file:
+    state: directory
+    path: '/root/.gnupg'
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Bring key into place
+  copy:
+    dest: '/root/.gnupg/{{gnupg_public_key_name}}-{{gnupg_public_key_id}}-public.asc'
+    src: '{{gnupg_public_key_name}}-{{gnupg_public_key_id}}-public.asc'
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Check key presence
+  command: /usr/bin/gpg --list-key '{{gnupg_public_key_id}}'
+  ignore_errors: yes
+  register: gnupg_public_key_reg_listing
+  changed_when: False
+  when: 'gnupg_public_key_add_to_keyring'
+
+- name: Import public key
+  shell: /usr/bin/gpg --import <'/root/.gnupg/{{gnupg_public_key_name}}-{{gnupg_public_key_id}}-public.asc'
+  when: gnupg_public_key_add_to_keyring and gnupg_public_key_reg_listing.rc != 0

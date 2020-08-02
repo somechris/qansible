@@ -128,6 +128,7 @@ agreements.
     host
   - `firewall-late`: Sets up the system's firewall
   - `graphite`: Sets up a Graphite/Carbon server as metrics host.
+  - `gnupg-public-key`: Installs a GnuPG public key.
   - `hostnames`: Sets up host identifications.
   - `icinga-client`: Configures hosts for Icinga monitoring.
   - `icinga-server`: Sets up an Icinga server.
