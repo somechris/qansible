@@ -1,0 +1,5 @@
+dependencies:
+  - role: gnupg-public-key
+    gnupg_public_key_id: '{{remote_apt_repository_signing_key_id}}'
+    gnupg_public_key_name: '{{remote_apt_repository_signing_key_name}}'
+    gnupg_public_key_add_to_keyring: False

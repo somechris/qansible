@@ -145,6 +145,7 @@ agreements.
     conditionals for role names and needing to "do nothing" in certain
     cases.
   - `pop3-server`: Sets up a POP3 server.
+  - `remote-apt-repository`: Configures APT to also use a remote repository.
   - `ssh-client-expect-authorized-key`: Configures expected authorized
     keys for ssh clients.
   - `ssh-server`: Sets up an SSH server

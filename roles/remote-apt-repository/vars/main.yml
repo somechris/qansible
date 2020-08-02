@@ -1,0 +1,7 @@
+remote_apt_repository_components: ['main']
+remote_apt_repository_distribution: ''
+remote_apt_repository_has_sources: False
+remote_apt_repository_name: "{{remote_apt_repository_url | default('') | regex_replace('^[^/]*://[^.]*\\.([^/]*)\\.[^./]*/.*', '\\1') | regex_replace('[^a-zA-Z0-9]', '-')}}"
+remote_apt_repository_signing_key_id: ''
+remote_apt_repository_signing_key_name: ''
+remote_apt_repository_url: ''

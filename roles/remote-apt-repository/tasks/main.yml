@@ -1,0 +1,16 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
+  when: 'qhost_distribution not in ["Debian"]'
+
+- name: Add repo key to keyring
+  apt_key:
+    state: present
+    id: '{{remote_apt_repository_signing_key_id}}'
+    file: '/root/.gnupg/{{remote_apt_repository_signing_key_name}}-{{remote_apt_repository_signing_key_id}}-public.asc'
+
+- name: Configure apt repo source lines
+  apt_repository:
+    filename: '{{remote_apt_repository_name}}'
+    repo: "{{item}} {{remote_apt_repository_url}} {{remote_apt_repository_distribution}} {{remote_apt_repository_components | join(' ')}}"
+    state: present
+  with_items: "{{['deb'] + (['deb-src'] if remote_apt_repository_has_sources else [])}}"
