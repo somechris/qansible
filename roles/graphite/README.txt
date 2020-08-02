@@ -67,16 +67,7 @@ Sets up Graphite backend and web application.
 * `graphite_effective_whisper_dir`: Directory where whisper files effectively
   get stored in.
 * `graphite_log_dir`: Directory graphite proccess will write logs to.
-* `graphite_path_config`: Config for paths and links needed by this cole. This is
-  a list of directory/link definitions. Each definition is a either a string or
-  a dictionary. A string `foo` is an abbreviation for a dictionary `{type:
-  'directory', 'path': 'foo'}`. Dictionaries can have the following key/values:
-  * `state`: (Default: 'directory') the state of the path to generate. See the
-    `state` parameter of Ansible's file module.
-  * `path`: the path of the directory/link to define. See the `path` parameter
-    of Ansible's file module.
-  * `source`: the source for links. See the `src` parameter of Ansible's file
-    module.
+* `graphite_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `graphite_query_net_accesses`: List of net accesses of which hosts can reach
   the cache query service.
 * `graphite_receive_net_accesses`: List of net accesses of which hosts can

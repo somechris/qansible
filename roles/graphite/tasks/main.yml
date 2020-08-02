@@ -1,16 +1,8 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
-
-- name: Create paths without ownership
-  file:
-    state: "{{item['state'] | default('directory')}}"
-    path: "{{item['path'] | default(item)}}"
-    src: "{{item['source'] | default('')}}"
-    mode: 0755
-  with_items: "{{graphite_path_config['paths']}}"
-  notify:
-    reload carbon
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{graphite_common_role_tasks_config}}'
 
 - name: Configure carbon storage schemas
   template:
@@ -45,25 +37,11 @@
     group: root
     mode: 0555
 
-- name: Install graphite packages
-  apt:
-    name:
-      - graphite-web
-      - graphite-carbon
-      - libapache2-mod-wsgi-py3
-    state: present
-
-- name: Set file ownership
-  file:
-    state: "{{item['state'] | default('directory')}}"
-    path: "{{item['path'] | default(item)}}"
-    owner: "{{graphite_path_config['owner']}}"
-    group: "{{graphite_path_config['group'] | default(graphite_path_config['owner'])}}"
-    src: "{{item['source'] | default('')}}"
-    mode: 0755
-  with_items: "{{graphite_path_config['paths']}}"
-  notify:
-    reload carbon
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{graphite_common_role_tasks_config}}'
 
 - name: Load salt
   include_vars: salt.yml
@@ -87,20 +65,8 @@
     minute: "{{inventory_hostname | hashing_mod(60, 11)}}"
     job: "/usr/bin/graphite-manage-attic --move-stale-entities --verbose >>{{graphite_log_dir}}/graphite-manage-attic.log 2>&1"
 
-- name: Updating port config
-  set_fact:
-    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
-      graphite_line_receiver_port: {
-        "name": "GRAPHITE_LINE_RECEIVER",
-        "protocol": "tcp",
-        "incoming_net_accesses": graphite_receive_net_accesses,
-      },
-      graphite_cache_query_port: {
-        "name": "GRAPHITE_CACHE",
-        "protocol": "tcp",
-        "incoming_net_accesses": graphite_query_net_accesses,
-      }
-    }, merge_lists=True)}}'
-  changed_when: False
-  tags:
-    - always
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{graphite_common_role_tasks_config}}'
