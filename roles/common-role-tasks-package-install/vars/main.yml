@@ -1,0 +1,2 @@
+common_role_tasks_package_install_config: {}
+common_role_tasks_package_install_parent_role: "{{common_role_tasks_package_install_config['role'] | default('<undefined parent>')}}"

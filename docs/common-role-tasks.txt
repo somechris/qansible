@@ -1,0 +1,49 @@
+common-role-tasks
+=================
+
+Typically in Ansible, many roles follow the same structure. First some
+preparations, then package installation and finally some fixups. This typically
+leads to lots of duplication. To dedupe this, we try to put common tasks
+(updating the firewall, guarding against unsupported distributions, ...) into
+dedicated roles and re-use them in newly written roles. This helps with
+deduplication and increases re-use. The names of these roles starts in
+`common-role-tasks`.
+
+At the core of each of these rules is a single configuration dictionary. It
+supports the following key/values:
+* `group`: The name of the group for the service. This will be the owner group
+  of the files (after the packages got installed). The group will not get
+  created automatically, but relies on external means to create it (E.g.:
+  Installing packages will typically set up the users).
+* `notifications`: A list of handlers to notify upon changes.
+* `packages`: A list of packages to install for the including role.
+* `paths`: A list of directory/link definitions set up. Each definition is a
+  either a string or a dictionary. A string `foo` is an abbreviation for a
+  dictionary `{type: 'directory', 'path': 'foo'}`. Dictionaries can have the
+  following key/values:
+  * `state`: (Default: 'directory') the state of the path to generate. See the
+    `state` parameter of Ansible's file module.
+  * `path`: the path of the directory/link to define. See the `path` parameter
+    of Ansible's file module.
+  * `source`: the source for links. See the `src` parameter of Ansible's file
+    module.
+* `port_configs`: A list of firewall port configurations. Each item is a
+  dictionary and covers a single port. Each such dictionary can have the
+  following key/values.
+  * `name`: The name of this rule. This will get use as name of the firewall
+    chain..
+  * `port`: The port to use for this config.
+  * `protocol`: (Default: `tcp`) The protocol to use for this config.
+  * `incoming_net_accesses`: (Default: []) The net-accesses that can access the
+    port.
+* `role`: The name of the role that includes the `common-role-tasks-*` role. We
+  need to hard-wire this, as `{{role_path|basename}}` would get evaluated in the
+  context of the `common-role-task-*` and hence would not give the including,
+  but the included role name. As this would be undesired, we explicitly have to
+  give the including role name.
+* `supported_distributions`: List of distributions that the including role
+  supports.
+* `user`: The name of the user for the service. This will be the owner of the
+  files (after the packages got installed). The user will not get created
+  automatically, but relies on external means to create it (E.g.: Installing
+  packages will typically set up the users).

@@ -110,6 +110,10 @@ agreements.
   - `apache-website-default`: Configures apache's default website.
   - `add-host-to-group`: Dynamically adds a host to a group in Ansible.
   - `common-directories`: Sets up common directories needed on all hosts.
+  - `common-role-tasks-start`: Runs common role start tasks
+  - `common-role-tasks-package-install`: Runs common role tasks for installing
+    packages
+  - `common-role-tasks-end`: Runs common role end tasks
   - `common-packages`: Sets up common packages needed on all hosts.
   - `debug`: Allows to prints debug messages between roles in `meta`
   - `dhparams`: Handles files holding Diffie Hellman parameters for secure

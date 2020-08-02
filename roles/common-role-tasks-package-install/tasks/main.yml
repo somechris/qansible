@@ -1,0 +1,18 @@
+- name: Drop-out for unsupported distributions in common-role-tasks-package-install
+  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{common_role_tasks_package_install_parent_role}}' role. Supported are ['Debian']"
+  when: "qhost_distribution not in ['Debian']"
+
+- name: '{{common_role_tasks_package_install_parent_role}}: Install packages'
+  apt:
+    name: "{{common_role_tasks_package_install_config['packages']}}"
+    state: present
+  when: "common_role_tasks_package_install_config['packages'] is defined"
+  notify: "{{common_role_tasks_package_install_config['notifications'] | default([])}}"
+
+- name: '{{common_role_tasks_package_install_parent_role}}: Set path ownership'
+  file:
+    path: "{{item['path'] | default(item)}}"
+    owner: "{{common_role_tasks_package_install_config['user']}}"
+    group: "{{common_role_tasks_package_install_config['group'] | default(common_role_tasks_package_install_config['user'])}}"
+  with_items: "{{common_role_tasks_package_install_config['paths']}}"
+  notify: "{{common_role_tasks_package_install_config['notifications'] | default([])}}"

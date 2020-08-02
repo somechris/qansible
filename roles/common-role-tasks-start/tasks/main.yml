@@ -1,0 +1,12 @@
+- name: '{{common_role_tasks_start_parent_role}}: Drop-out for unsupported distributions'
+  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{common_role_tasks_start_parent_role}}' role. Supported are {{common_role_tasks_start_config['supported_distributions'] | default([])}}"
+  when: "qhost_distribution not in (common_role_tasks_start_config['supported_distributions'] | default([]))"
+
+- name: '{{common_role_tasks_start_parent_role}}: Create paths without ownership'
+  file:
+    state: "{{item['state'] | default('directory')}}"
+    path: "{{item['path'] | default(item)}}"
+    src: "{{item['source'] | default('')}}"
+    mode: 0755
+  with_items: "{{common_role_tasks_start_config['paths']}}"
+  notify: "{{common_role_tasks_start_config['notifications'] | default([])}}"

@@ -1,0 +1,2 @@
+common_role_tasks_start_config: {}
+common_role_tasks_start_parent_role: "{{common_role_tasks_start_config['role'] | default('<undefined parent>')}}"

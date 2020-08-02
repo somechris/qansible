@@ -1,0 +1,2 @@
+common_role_tasks_end_config: {}
+common_role_tasks_end_parent_role: "{{common_role_tasks_end_config['role'] | default('<undefined parent>')}}"
