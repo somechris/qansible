@@ -8,11 +8,18 @@ diamond_collector_conf_extension: .conf
 diamond_collector_conf_dir: /etc/diamond/collectors
 diamond_collector_dir: /usr/share/diamond/collectors
 
-diamond_path_config:
-  owner: diamond
+diamond_common_role_tasks_config:
+  role: diamond
+  supported_distributions:
+    - 'Debian'
+  user: diamond
   paths:
     - '{{diamond_effective_data_dir}}'
     - '{{diamond_effective_log_dir}}'
     - {state: link, path: '{{diamond_log_dir}}', source: '{{diamond_effective_log_dir}}'}
     - '{{diamond_collector_conf_dir}}'
     - /etc/diamond
+  packages:
+    - diamond
+  notifications:
+    - reload diamond

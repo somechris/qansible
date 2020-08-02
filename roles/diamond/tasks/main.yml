@@ -1,16 +1,8 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
-
-- name: Create paths without ownership
-  file:
-    state: "{{item['state'] | default('directory')}}"
-    path: "{{item['path'] | default(item)}}"
-    src: "{{item['source'] | default('')}}"
-    mode: 0755
-  with_items: "{{diamond_path_config['paths']}}"
-  notify:
-    reload diamond
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{diamond_common_role_tasks_config}}'
 
 - name: Grant diamond user access to log files
   user:
@@ -43,20 +35,14 @@
   notify:
     reload diamond
 
-- name: Install diamond packages
-  apt:
-    name:
-      - diamond
-    state: present
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{diamond_common_role_tasks_config}}'
 
-- name: Set file ownership
-  file:
-    state: "{{item['state'] | default('directory')}}"
-    path: "{{item['path'] | default(item)}}"
-    owner: "{{diamond_path_config['owner']}}"
-    group: "{{diamond_path_config['group'] | default(diamond_path_config['owner'])}}"
-    src: "{{item['source'] | default('')}}"
-    mode: 0755
-  with_items: "{{diamond_path_config['paths']}}"
-  notify:
-    reload diamond
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{diamond_common_role_tasks_config}}'
