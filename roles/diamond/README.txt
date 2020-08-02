@@ -42,4 +42,13 @@ No Globals that are specific only for this role.
 * `diamond_effective_data_disk`: Directory for data disk where data effectively
   gets stored in.
 * `diamond_effective_data_dir`: Directory where data effectively gets stored in.
-
+* `diamond_path_config`: Config for paths and links needed by this cole. This is
+  a list of directory/link definitions. Each definition is a either a string or
+  a dictionary. A string `foo` is an abbreviation for a dictionary `{type:
+  'directory', 'path': 'foo'}`. Dictionaries can have the following key/values:
+  * `state`: (Default: 'directory') the state of the path to generate. See the
+    `state` parameter of Ansible's file module.
+  * `path`: the path of the directory/link to define. See the `path` parameter
+    of Ansible's file module.
+  * `source`: the source for links. See the `src` parameter of Ansible's file
+    module.

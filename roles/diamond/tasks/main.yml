@@ -2,33 +2,15 @@
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
   when: 'qhost_distribution not in ["Debian"]'
 
-- name: Create data directory
+- name: Create paths without ownership
   file:
-    state: directory
-    dest: '{{item}}'
-    owner: diamond
-    group: diamond
+    state: "{{item['state'] | default('directory')}}"
+    path: "{{item['path'] | default(item)}}"
+    src: "{{item['source'] | default('')}}"
     mode: 0755
-  with_items:
-    - '{{diamond_effective_data_dir}}'
-    - '{{diamond_effective_log_dir}}'
-
-- name: Link logical directories
-  file:
-    state: link
-    path: "{{item['logical']}}"
-    owner: diamond
-    group: diamond
-    src: "{{item['effective']}}"
-    follow: no
-  with_items:
-    - {'logical': '{{diamond_log_dir}}', 'effective': '{{diamond_effective_log_dir}}'}
-
-- name: Install diamond packages
-  apt:
-    name:
-      - diamond
-    state: present
+  with_items: "{{diamond_path_config['paths']}}"
+  notify:
+    reload diamond
 
 - name: Grant diamond user access to log files
   user:
@@ -49,14 +31,6 @@
   notify:
     reload diamond
 
-- name: Prepare directory for mergable confs
-  file:
-    state: directory
-    path: '{{diamond_collector_conf_dir}}'
-    owner: diamond
-    group: diamond
-    mode: 0755
-
 - name: Configure collectors
   template:
     dest: '{{diamond_collector_conf_dir}}/{{item}}Collector{{diamond_collector_conf_extension}}'
@@ -66,5 +40,23 @@
     mode: 0444
   with_items:
     - DiskUsage
+  notify:
+    reload diamond
+
+- name: Install diamond packages
+  apt:
+    name:
+      - diamond
+    state: present
+
+- name: Set file ownership
+  file:
+    state: "{{item['state'] | default('directory')}}"
+    path: "{{item['path'] | default(item)}}"
+    owner: "{{diamond_path_config['owner']}}"
+    group: "{{diamond_path_config['group'] | default(diamond_path_config['owner'])}}"
+    src: "{{item['source'] | default('')}}"
+    mode: 0755
+  with_items: "{{diamond_path_config['paths']}}"
   notify:
     reload diamond
