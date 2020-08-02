@@ -302,7 +302,7 @@ lint_role() {
 
     if [ -e "roles/$ROLE/tasks/main.yml" ]
     then
-        if ! grep --quiet "fail: msg=\"Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role\"" "roles/$ROLE/tasks/main.yml"
+        if ! grep --quiet "fail: msg=\"Unsupported distribution" "roles/$ROLE/tasks/main.yml"
         then
             if ! grep --quiet "^# lint-distribution-independent" "roles/$ROLE/tasks/main.yml"
             then
