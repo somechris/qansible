@@ -2,40 +2,15 @@
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
   when: 'qhost_distribution not in ["Debian"]'
 
-- name: Create data directory
+- name: Create paths without ownership
   file:
-    state: directory
-    dest: '{{item}}'
-    owner: _graphite
-    group: _graphite
+    state: "{{item['state'] | default('directory')}}"
+    path: "{{item['path'] | default(item)}}"
+    src: "{{item['source'] | default('')}}"
     mode: 0755
-  with_items:
-    - '{{graphite_effective_data_dir}}'
-    - '{{graphite_effective_var_lib_dir}}'
-    - '{{graphite_effective_whisper_dir}}'
-    - '{{graphite_effective_log_dir}}'
-
-- name: Link logical directories
-  file:
-    state: link
-    path: "{{item['logical']}}"
-    owner: _graphite
-    group: _graphite
-    src: "{{item['effective']}}"
-    follow: no
-  with_items:
-    - {'logical': '{{graphite_var_lib_dir}}', 'effective': '{{graphite_effective_var_lib_dir}}'}
-    - {'logical': '{{graphite_whisper_dir}}', 'effective': '{{graphite_effective_whisper_dir}}'}
-    - {'logical': '{{graphite_log_dir}}', 'effective': '{{graphite_effective_log_dir}}'}
-    - {'logical': '{{graphite_alternate_log_dir}}', 'effective': '{{graphite_effective_log_dir}}'}
-
-- name: Install graphite packages
-  apt:
-    name:
-      - graphite-web
-      - graphite-carbon
-      - libapache2-mod-wsgi-py3
-    state: present
+  with_items: "{{graphite_path_config['paths']}}"
+  notify:
+    reload carbon
 
 - name: Configure carbon storage schemas
   template:
@@ -62,6 +37,34 @@
   notify:
     reload carbon
 
+- name: Set up attic management script
+  template:
+    dest: '/usr/bin/graphite-manage-attic'
+    src: graphite-manage-attic.j2
+    owner: root
+    group: root
+    mode: 0555
+
+- name: Install graphite packages
+  apt:
+    name:
+      - graphite-web
+      - graphite-carbon
+      - libapache2-mod-wsgi-py3
+    state: present
+
+- name: Set file ownership
+  file:
+    state: "{{item['state'] | default('directory')}}"
+    path: "{{item['path'] | default(item)}}"
+    owner: "{{graphite_path_config['owner']}}"
+    group: "{{graphite_path_config['group'] | default(graphite_path_config['owner'])}}"
+    src: "{{item['source'] | default('')}}"
+    mode: 0755
+  with_items: "{{graphite_path_config['paths']}}"
+  notify:
+    reload carbon
+
 - name: Load salt
   include_vars: salt.yml
 
@@ -74,14 +77,6 @@
     mode: 0440
   notify:
     - sync carbon-database
-
-- name: Set up attic management script
-  template:
-    dest: '/usr/bin/graphite-manage-attic'
-    src: graphite-manage-attic.j2
-    owner: _graphite
-    group: _graphite
-    mode: 0555
 
 - name: Set up cron job move stale entities to attic
   cron:

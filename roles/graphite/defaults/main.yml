@@ -24,3 +24,18 @@ graphite_cache_query_port: 7002
 graphite_web_net_accesses: []
 graphite_receive_net_accesses: []
 graphite_query_net_accesses: []
+
+
+graphite_path_config:
+  owner: _graphite
+  paths:
+    - '{{graphite_effective_data_dir}}'
+    - '{{graphite_effective_var_lib_dir}}'
+    - '{{graphite_effective_whisper_dir}}'
+    - '{{graphite_effective_log_dir}}'
+    - {state: link, path: '{{graphite_var_lib_dir}}', source: '{{graphite_effective_var_lib_dir}}'}
+    - {state: link, path: '{{graphite_whisper_dir}}', source: '{{graphite_effective_whisper_dir}}'}
+    - {state: link, path: '{{graphite_log_dir}}', source: '{{graphite_effective_log_dir}}'}
+    - {state: link, path: '{{graphite_alternate_log_dir}}', source: '{{graphite_effective_log_dir}}'}
+    - /etc/carbon
+    - /etc/graphite
