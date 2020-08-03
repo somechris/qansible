@@ -253,6 +253,7 @@ Aliases are only supported for static locations, but "{{location["name"]}}" is "
          ] + (actions | select("starts_with_any", [
              "block",
              "deny",
+             "pass",
              "id:",
              "logdata:",
              "msg:",
@@ -291,13 +292,17 @@ Unknown location type {{location_type}} for location {{location}} is security ru
 {%     endif %}
 {%     for rule in location["security_rules"] %}
 {%       set rationale = rule['rationale']%}
-#{{rule['type']}} id:{{rule['id']|default('')}} rationale: {{rationale}}
+#{{rule['type']}}{% for key in ['id', 'variable'] %}{% if key in rule %} {{key}}:{{rule[key]}}{% endif %}{% endfor %} rationale: {{rationale}}
 {%       if rule['type'] == 'remove-target' %}
 {%         for target in rule['targets'] %}
 {{           sec_rule(rationale, 1, match, [], ["nolog", "ctl:ruleRemoveTargetById=" ~ rule['id'] ~ ";" ~ target]) }}
 {%         endfor %}
 {%       elif rule['type'] == 'add-rule' %}
 {{         sec_rule(rationale, 2, match, [{'targets': rule['targets'], 'operator': rule['operator']}], rule['actions']) }}
+{%       elif rule['type'] == 'set-variable' %}
+{{         sec_rule(rationale, 1, match, [], ['pass', 't:none', 'nolog', "setvar:'" + rule['variable'] + "=" + rule['value'] + "'"]) }}
+{%       elif rule['type'] == 'append-to-variable' %}
+{{         sec_rule(rationale, 1, match, [], ['pass', 't:none', 'nolog', "setvar:'" + rule['variable'] + "=%{" + rule['variable'] + "} " + rule['value'] + "'"]) }}
 {%       else %}
 ERROR: Unknown type {{rule['type']}} for security rule {{rule}}
 {%       endif %}

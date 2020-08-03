@@ -90,7 +90,13 @@ No Globals that are specific only for this role.
        ['ARGS:url', 'REQUEST_URI'])
      * `type`: The type of adaption. Possible adaptions are:
        * `add-rule`: adds a new rule
+       * `append-to-variable`: appends a value to a variable
        * `remove-target`: removes targets from an existing rule
+       * `set-variable`: sets a variable to a value
+     * `value`: The value set or append, in types `append-to-variable` and
+       `set_variable`.
+     * `variable`: The name of the variable to set or append to, in types
+       `append-to-variable` and `set_variable`.
    * `type`: (Default: `static`) If `static`, `name` is the literal
      name of the location to match. If `regexp` take `name` as
      regular expression to match with. This regular expression will
