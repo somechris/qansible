@@ -27,6 +27,9 @@
 {%     if (port in apache_webserver_ports_plain and (apache_website_is_https | bool)) or prefix %}
   Redirect permanent / http{{"s" if apache_website_is_https else ""}}://{{apache_website_domain}}/
 {%     else %}
+{%       if 'https' in ((location_root_shim + apache_website_locations) | attrs('proxy') | attrs('protocol')) %}
+  SSLProxyEngine on
+{%       endif %}
 {%       if apache_website_rewrites %}
   RewriteEngine on
 
@@ -164,6 +167,20 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
 {%         endif %}
 {%         if handler %}
     SetHandler {{handler}}
+{%         endif %}
+{%         if (location['proxy'] | default('')) != '' %}
+{%           set proxy = location['proxy'] %}
+{%           set protocol = (proxy['protocol'] | default('http')) %}
+{%           set host = (proxy['host'] | default('localhost')) %}
+{%           set port = proxy['port'] %}
+{%           set path = (proxy['path'] | default('/')) %}
+    ProxyPreserveHost On
+    ProxyPass{{location_suffix}} "{{protocol}}://{{host}}:{{port}}{{path}}"
+    ProxyPassReverse "{{protocol}}://{{host}}:{{port}}{{path}}"
+    ProxyPassReverseCookieDomain "{{host}}" "{{apache_website_domain}}"
+{%           if location['name'] != path %}
+    ProxyPassReverseCookiePath "{{path}}" "{{location['name']}}"
+{%           endif %}
 {%         endif %}
 {%         if (location["alias"] | default('')) != '' %}
     # This location has an alias (see below after the Locations)

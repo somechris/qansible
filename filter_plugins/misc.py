@@ -19,6 +19,10 @@ def merge_list_of_lists(list_of_lists):
     return [i for i in itertools.chain.from_iterable(list_of_lists)]
 
 
+def attrs(iterable, name):
+    return [e[name] for e in iterable if name in e]
+
+
 def slug(name, delimiter='-', title=False, capital=False):
     slug = name
     slug = re.sub('[^a-zA-Z0-9 ]+', ' ', slug)
@@ -61,6 +65,7 @@ class FilterModule(object):
 
     def filters(self):
         return {
+            'attrs': attrs,
             'update_dict': update_dict,
             'merge_list_of_lists': merge_list_of_lists,
             'slug': slug,

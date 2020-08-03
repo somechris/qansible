@@ -64,6 +64,15 @@ No Globals that are specific only for this role.
      False, do not allow executing cgi scripts.
    * `name`: The location's URL.
    * `net_accesses`: The net-accesses that may use the location
+   * `proxy`: Proxies requests to this location to a backend
+     server. The value at this key has to be a dictionary with the
+     following key/values:
+     * `host`: (Default: `localhost`) The IP address or host name of the backend
+       server.
+     * `path`: (Default: `/`) The path to proxy to on the backend server.
+     * `port`: The port number to connect the backend server on.
+     * `protocol`: (Default: `http`) Protocol to use to connect to the backend
+       server. Typically `http` or `https`.
    * `security_rules`: List of security adaptions for this
      location. Each security adaption is a dictionary with the
      following key/values:
