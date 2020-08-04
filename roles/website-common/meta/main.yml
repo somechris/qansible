@@ -16,7 +16,7 @@ dependencies:
     when: '(website_common_is_https | bool) and (website_common_add_www_redirects | bool)'
 
   - role: add-host-to-group
-    new_groups:
+    add_host_to_group_new_groups:
     - '{{website_common_kind}}'
     - 'website_{{website_common_domain}}_server'
     - 'website_{{website_common_domain}}_server_{{website_common_kind}}'

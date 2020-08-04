@@ -1,6 +1,6 @@
 # lint-distribution-independent
 
-# If the `new_groups` parameter contains a Jinja2 template, starting
+# If the `add_host_to_group_new_groups` parameter contains a Jinja2 template, starting
 # with Ansible 2, add_hosts no longer renders the template afresh for
 # each host, but the template from the first element in `play_hosts`
 # is reused for all hosts. This breaks grouping for example for Reds,
@@ -13,7 +13,7 @@
 # where web_host is `content.[...]` for some reds and
 # `content-alt.[...]` for some other.
 #
-# So if we used the `new_groups` variable directly in the `add_host`
+# So if we used the `add_host_to_group_new_groups` variable directly in the `add_host`
 # task, (starting with Ansible 2.0) all reds either get added to the
 # `website_conifer.[...]_server` group or the
 # `website_conifer-alt.[...]_server` group, depending only on the
@@ -30,7 +30,7 @@
 
 - name: Registering fact to work around template rendering issue
   set_fact:
-    add_host_to_group_fact_new_groups: '{{((new_groups | to_group_names) if new_groups else []) + ([new_group | to_group_name] if new_group else [])}}'
+    add_host_to_group_fact_new_groups: '{{((add_host_to_group_new_groups | to_group_names) if add_host_to_group_new_groups else []) + ([add_host_to_group_new_group | to_group_name] if add_host_to_group_new_group else [])}}'
   changed_when: False
   tags:
     - always
