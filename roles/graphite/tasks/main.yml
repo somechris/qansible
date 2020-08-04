@@ -37,12 +37,6 @@
     group: root
     mode: 0555
 
-- name: Common role tasks for installing packages
-  import_role:
-    name: common-role-tasks-package-install
-  vars:
-    common_role_tasks_package_install_config: '{{graphite_common_role_tasks_config}}'
-
 - name: Load salt
   include_vars: salt.yml
 
@@ -55,6 +49,12 @@
     mode: 0440
   notify:
     - sync carbon-database
+
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{graphite_common_role_tasks_config}}'
 
 - name: Set up cron job move stale entities to attic
   cron:
