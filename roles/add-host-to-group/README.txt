@@ -35,9 +35,12 @@ No Globals that are specific only for this role.
 3. Parameters
 -------------
 
-* `new_groups`: The group(s) to add the play hosts (see Caveat below)
-  to. Has to be a string. Groups have to be comma separated.
-
+* `new_group`: (Default: '') The group(s) to add the play hosts (see Caveat
+  below) to. Has to be empty, or a single group name. Use this parameter, if you
+  only want to add the hosts to a single group.
+* `new_groups`: (Default: []) A list of group(s) to add the play hosts (see
+  Caveat below) to. Has to be a string. Groups have to be comma separated. Use
+  this parameter, if you want to add a host to multiple groups in one go.
 
 
 4. Caveat

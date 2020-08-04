@@ -30,7 +30,7 @@
 
 - name: Registering fact to work around template rendering issue
   set_fact:
-    add_host_to_group_fact_new_groups: '{{new_groups | to_group_name}}'
+    add_host_to_group_fact_new_groups: '{{((new_groups | to_group_names) if new_groups else []) + ([new_group | to_group_name] if new_group else [])}}'
   changed_when: False
   tags:
     - always
