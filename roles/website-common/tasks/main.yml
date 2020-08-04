@@ -2,13 +2,18 @@
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
   when: 'qhost_distribution not in ["Debian", "Gentoo"]'
 
-- name: Create effective site directory
+- name: Create directories
   file:
     state: directory
-    dest: '{{common_directories_data_dir1}}/website-{{website_common_domain}}'
-    owner: root
-    group: root
-    mode: 0555
+    dest: "{{item['path']}}"
+    owner: "{{item['user'] | default('root')}}"
+    group: "{{item['user'] | default('root')}}"
+    mode: "{{'775' if (item['writable'] | default(False)) else '555'}}"
+  with_items:
+    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}' }
+    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/htdocs', user: www-data }
+    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/htpasswds' }
+    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/logs', user: www-data, writable: True }
   notify:
     reload webserver
 
@@ -17,36 +22,6 @@
     state: link
     dest: '{{web_site_root_dir}}/{{website_common_domain}}'
     src: '{{common_directories_data_dir1}}/website-{{website_common_domain}}'
-  notify:
-    reload webserver
-
-- name: Create htdocs site directories
-  file:
-    state: directory
-    dest: '{{web_site_root_dir}}/{{website_common_domain}}/htdocs'
-    owner: www-data
-    group: www-data
-    mode: 0555
-  notify:
-    reload webserver
-
-- name: Create htpasswds site directories
-  file:
-    state: directory
-    dest: '{{web_site_root_dir}}/{{website_common_domain}}/htpasswds'
-    owner: root
-    group: root
-    mode: 0555
-  notify:
-    reload webserver
-
-- name: Create log directories
-  file:
-    state: directory
-    dest: '{{web_site_root_dir}}/{{website_common_domain}}/logs'
-    owner: www-data
-    group: www-data
-    mode: 0775
   notify:
     reload webserver
 
