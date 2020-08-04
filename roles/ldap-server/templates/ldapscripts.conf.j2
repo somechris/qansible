@@ -76,7 +76,7 @@ GCLASS="groupOfNames"
 # When using  groupOfNames or groupOfUniqueNames, creating a group requires an initial
 # member. Specify it below, you will be able to remove it once groups are populated.
 #GDUMMYMEMBER="uid=dummy,$USUFFIX,$SUFFIX"
-GDUMMYMEMBER="uid=dummy,$USUFFIX,$SUFFIX"
+GDUMMYMEMBER="uid={{admin_user}},$USUFFIX,$SUFFIX"
 
 # User properties
 # DEBIAN: values from /etc/adduser.conf are used.
