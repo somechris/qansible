@@ -1,9 +1,0 @@
-# {{ansible_managed}}
-dn: cn=auxiliary-posix-group,cn=schema,cn=config
-objectClass: olcSchemaConfig
-cn: auxiliary-posix-group
-olcObjectClasses: {0}( 2.25.339083012180962215434722360736538961521 NAME 'auxiliaryPosixGroup' SUP top AUXILIARY
-  DESC 'Auxiliary posixGroup'
-  MUST ( cn $ gidNumber )
-  MAY ( userPassword $ memberUid $ description )
-  )

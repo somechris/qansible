@@ -60,6 +60,10 @@ def whitespace(length):
     return repeat(' ', length)
 
 
+def prepend_all_items(list, prepend):
+    return [prepend + item for item in list]
+
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
@@ -74,4 +78,5 @@ class FilterModule(object):
             'is_list': is_list,
             'repeat': repeat,
             'whitespace': whitespace,
+            'prepend_all_items': prepend_all_items,
         }

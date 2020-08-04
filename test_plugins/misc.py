@@ -14,6 +14,10 @@ def starts_different_from_all(value, starts):
     return not value.starts_with_any(starts)
 
 
+def ending_with(value, start):
+    return value.endswith(start)
+
+
 def not_in(needle, haystack):
     return needle not in haystack
 
@@ -28,4 +32,5 @@ class TestModule(object):
             'starts_different_from': starts_different_from,
             'starts_different_from_all': starts_different_from_all,
             'not_in': not_in,
+            'ending_with': ending_with,
             }

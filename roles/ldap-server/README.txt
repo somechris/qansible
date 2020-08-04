@@ -37,8 +37,14 @@ Sets up an LDAP server.
 
 * `ldap_server_admin_password`: Password for the LDAP admin account.
 * `ldap_server_admin_salt`: Salt for the LDAP admin password.
-* `ldap_server_log_level`: Log level for the LDAP server
+* `ldap_server_log_level`: Log level for the LDAP server. You probably want one
+  of `none`, `stats`, or (for debugging) `-1`.
 * `ldap_server_ldapscripts_log_file`: Log file for ldapscripts.
+* `ldap_server_extra_schemas`: A list of schemas definitions to inject to the
+  database. Each schema is defined as dictionary with the following key/values:
+  * `cn`: The common name of the schema.
+  * `attributes: A dictionary holding the attributes of the schema. The keys are
+    the attribute names, the values are the attribute values.
 * `ldap_server_mdb_access`: List of specifications of who can access resources.
 * `ldap_server_net_accesses`: List of net accesses of which hosts can reach
   the service.

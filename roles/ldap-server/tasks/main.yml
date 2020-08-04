@@ -19,6 +19,7 @@
       - slapd
       - ldap-utils
       - ldapscripts
+      - python-ldap # Needed only for Ansible's LDAP modules
     state: present
 
 - name: Make sure openldap user can access certs
@@ -39,82 +40,97 @@
   notify:
     - reload slapd
 
-- name: Create directory for bootstrapping ldifs
-  file:
-    state: directory
-    path: /etc/ldap/bootstrapping
-    owner: root
-    group: root
-    mode: 0700
-
 - name: Load credentials
   include_vars: credentials.yml
 
-- name: Create bootstrapping ldifs
-  template:
-    dest: '/etc/ldap/bootstrapping/setup-{{item}}.ldif'
-    src: 'setup-{{item}}.ldif.j2'
-    owner: root
-    group: root
-    mode: 0400
+- name: Injecting LDAP configuration
+  ldap_attr:
+    dn: "{{item['dn']}}"
+    name: "{{item['name']}}"
+    values: "{{item['values']}}"
+    state: exact
   with_items:
-    - tls
-    - logging
-    - password-hashing
-    - root-password
-    - index
-    - mdb-access-w-root
-    - dc-main
-    - ou-people
-    - ou-groups
-    - ou-machines
-    - ou-services
-    - mdb-access
-    - ssh-public-key-schema
-    - auxiliary-posix-group
-    - memberof-loading
-    - memberof-overlaying
-
-- name: Update cn=config
-  shell: 'ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/bootstrapping/setup-{{item}}.ldif ; test $? -eq 0 -o $? -eq 68 -o $? -eq 80'
-  # 0 is ok
-  # 68 is entry already exists
-  # 80 is other (Needed for ssh public key scheme)
-  with_items:
-    - logging
-    - password-hashing
-    - root-password
-    - tls
-    - index
-    - mdb-access-w-root
-    - dc-main
-    - ou-people
-    - ou-groups
-    - ou-machines
-    - ou-services
-    - mdb-access
-    - ssh-public-key-schema
-    - auxiliary-posix-group
+    - {dn: cn=config, name: olcLogLevel, values: '{{ldap_server_log_level}}' }
+    - {dn: cn=config, name: olcTLSDHParamFile, values: '{{dhparams_file}}' }
+    - {dn: cn=config, name: olcTLSCACertificateFile, values: '{{ssl_cert_dir}}/{{ldap_server_host}}__chain.pem' }
+    - {dn: cn=config, name: olcTLSCertificateFile, values: '{{ssl_cert_dir}}/{{ldap_server_host}}__cert.pem' }
+    - {dn: cn=config, name: olcTLSCertificateKeyFile, values: '{{ssl_private_dir}}/{{ldap_server_host}}__key.pem' }
+    - {dn: cn=config, name: olcLocalSSF, values: 256 }
+    - {dn: cn=config, name: olcSaslSecProps, values: 'noplain,minssf=256' }
+    - {dn: cn=config, name: olcSecurity, values: 'ssf=256' }
+    - {dn: cn=config, name: olcTLSCipherSuite, values: "{{(ldap_server_ssl_type | ssl_config('gnutls'))['ciphers']}}" }
+    - {dn: 'olcDatabase={-1}frontend,cn=config', name: olcPasswordHash, values: "{{'{'}}{{ldap_server_password_scheme}}}" }
+    - {dn: 'olcDatabase={1}mdb,cn=config', name: olcRootPW, values: "{{ldap_server_admin_password | mkpasswd(ldap_server_admin_salt, method=ldap_server_password_scheme)}}" }
+    - {dn: 'olcDatabase={1}mdb,cn=config', name: olcDbIndex, values: ['default pres,eq,sub', 'uid,cn,givenName,sn,email', 'objectClass eq']}
   notify:
     - reload slapd
 
-- name: Drop bootstrapping ldifs
-  file:
-    state: absent
-    path: '/etc/ldap/bootstrapping/setup-{{item}}.ldif'
+- name: Getting configured schemas
+  command: ldapsearch -Q -Y EXTERNAL -H ldapi:/// -b 'cn=schema,cn=config' cn
+  changed_when: False
+  register: ldap_server_reg_schemas
+
+- name: Injecting missing schema
+  ldap_entry:
+    dn: "cn={{item['cn']}},cn=schema,cn=config"
+    objectClass: olcSchemaConfig
+    attributes: "{{item['attributes']}}"
+    state: present
+  when: "not (ldap_server_reg_schemas['stdout_lines'] | select('ending_with', '}' + item['cn']) | list)"
+  with_items: '{{ldap_server_extra_schemas}}'
+
+- name: Setting access with root
+  ldap_attr:
+    dn: "olcDatabase={1}mdb,cn=config"
+    name: "olcAccess"
+    values: "{{['to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth write'] + (ldap_server_mdb_access | prepend_all_items('to '))}}"
+    state: exact
+  changed_when: False
+
+- name: Configuring base
+  ldap_attr:
+    dn: "{{ldap_server_base_dn}}"
+    name: "o"
+    values: "{{ldap_server_organization}}"
+    state: exact
+  notify:
+    - reload slapd
+
+- name: Creating ou entities
+  ldap_entry:
+    dn: 'ou={{item}},{{ldap_server_base_dn}}'
+    objectClass: organizationalUnit
+    state: present
   with_items:
-    - root-password
+    - '{{ldap_server_ou_people}}'
+    - '{{ldap_server_ou_groups}}'
+    - '{{ldap_server_ou_machines}}'
+    - '{{ldap_server_ou_services}}'
+  notify:
+    - reload slapd
+
+- name: Setting access without root
+  ldap_attr:
+    dn: "olcDatabase={1}mdb,cn=config"
+    name: "olcAccess"
+    values: "{{(ldap_server_mdb_access | prepend_all_items('to '))}}"
+    state: exact
+  changed_when: False
 
 # Loading the member module if it is loaded already will fail. Hence,
 # we have to check if it is already there before trying to add it
 - name: Check if the memberof module is loaded
   command: ldapsearch -Q -Y EXTERNAL -H ldapi:/// -LLL -b 'cn=module{0},cn=config' olcModuleLoad
   changed_when: False
-  register: memberof_loading
+  register: ldap_server_reg_memberof_loading
 
 - name: Setup loading of memberof module
-  command: 'ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/bootstrapping/setup-memberof-loading.ldif'
-  when: '"memberof" not in memberof_loading.stdout'
+  ldap_attr:
+    dn: 'cn=module{0},cn=config'
+    name: olcModuleLoad
+    values: "memberof"
+    state: present
+  when: '"memberof" not in ldap_server_reg_memberof_loading.stdout'
   notify:
     - reload slapd
 
@@ -123,11 +139,17 @@
 - name: Check if the memberof module is included in mdb
   command: ldapsearch -Q -Y EXTERNAL -H ldapi:/// -LLL -b 'olcDatabase={1}mdb,cn=config' olcOverlay
   changed_when: False
-  register: memberof_overlaying
+  register: ldap_server_reg_memberof_overlaying
 
 - name: Setup memberof overlay
-  command: 'ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/bootstrapping/setup-memberof-overlaying.ldif'
-  when: '"memberof" not in memberof_overlaying.stdout'
+  ldap_entry:
+    dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcConfig
+      - olcMemberOf
+      - olcOverlayConfig
+    state: present
+  when: '"memberof" not in ldap_server_reg_memberof_overlaying.stdout'
   notify:
     - reload slapd
 
