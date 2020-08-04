@@ -2,6 +2,25 @@
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{common_role_tasks_start_parent_role}}' role. Supported are {{common_role_tasks_start_config['supported_distributions'] | default([])}}"
   when: "qhost_distribution not in (common_role_tasks_start_config['supported_distributions'] | default([]))"
 
+- name: 'Create service group'
+  group:
+    name: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user'])}}"
+    state: present
+    system: yes
+
+- name: 'Create service user'
+  user:
+    name: "{{common_role_tasks_start_config['user']}}"
+    state: present
+    comment: "Service user for {{common_role_tasks_start_config['role']}}"
+    group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user'])}}"
+    groups: ''
+    home: "/var/lib/{{common_role_tasks_start_config['role']}}"
+    create_home: no
+    shell: /usr/sbin/nologin
+    password: '!'
+    system: yes
+
 - name: '{{common_role_tasks_start_parent_role}}: Create paths without ownership'
   file:
     state: "{{item['state'] | default('directory')}}"
