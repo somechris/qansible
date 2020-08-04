@@ -21,11 +21,13 @@
     password: '!'
     system: yes
 
-- name: '{{common_role_tasks_start_parent_role}}: Create paths without ownership'
+- name: '{{common_role_tasks_start_parent_role}}: Create paths'
   file:
     state: "{{item['state'] | default('directory')}}"
     path: "{{item['path'] | default(item)}}"
     src: "{{item['source'] | default('')}}"
+    owner: "{{common_role_tasks_start_config['user']}}"
+    group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user'])}}"
     mode: 0755
   with_items: "{{common_role_tasks_start_config['paths']}}"
   notify: "{{common_role_tasks_start_config['notifications'] | default([])}}"

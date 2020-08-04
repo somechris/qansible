@@ -8,11 +8,3 @@
     state: present
   when: "common_role_tasks_package_install_config['packages'] is defined"
   notify: "{{common_role_tasks_package_install_config['notifications'] | default([])}}"
-
-- name: '{{common_role_tasks_package_install_parent_role}}: Set path ownership'
-  file:
-    path: "{{item['path'] | default(item)}}"
-    owner: "{{common_role_tasks_package_install_config['user']}}"
-    group: "{{common_role_tasks_package_install_config['group'] | default(common_role_tasks_package_install_config['user'])}}"
-  with_items: "{{common_role_tasks_package_install_config['paths']}}"
-  notify: "{{common_role_tasks_package_install_config['notifications'] | default([])}}"
