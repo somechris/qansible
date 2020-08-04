@@ -15,11 +15,23 @@
 
 - name: Configure {{apache_website_domain}} site
   template:
-    dest: /etc/apache2/sites-available/{{apache_website_domain}}.conf
+    dest: '{{web_site_root_dir}}/{{apache_website_domain}}/conf/{{apache_website_domain}}.conf'
     src: 'site.conf.j2'
     owner: root
     group: root
     mode: 0444
+  notify:
+    reload apache
+
+- name: Link site conf to available site confs
+  file:
+    state: link
+    dest: '/etc/apache2/sites-available/{{apache_website_domain}}.conf'
+    src: '{{web_site_root_dir}}/{{apache_website_domain}}/conf/{{apache_website_domain}}.conf'
+    owner: root
+    group: root
+    mode: 0444
+    force: yes
   notify:
     reload apache
 

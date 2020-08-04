@@ -12,6 +12,7 @@
   with_items:
     - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}' }
     - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/htdocs', user: www-data }
+    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/conf' }
     - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/htpasswds' }
     - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/logs', user: www-data, writable: True }
   notify:
