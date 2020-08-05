@@ -339,12 +339,26 @@ lint_yaml() {
 
 
 #-----------------------------------------------------------------------
+lint_roles_common_role_tasks() {
+    while IFS=: read FILE LINE_NO LINE
+    do
+        warn "$FILE has a task without a '{{common_role_task_...' name in line $LINE_NO. The full line is: $LINE"
+    done < <(grep -n ^'-' roles/common-role-tasks-*/tasks/* | grep -v ':- name: \(.{{common_role_tasks_\|Drop-out for.*common-role-tasks-\)' )
+}
+
+#-----------------------------------------------------------------------
+lint_roles_specific() {
+    lint_roles_common_role_tasks
+}
+
+#-----------------------------------------------------------------------
 lint_roles() {
     local ROLE
     for ROLE in $(echo_non_local_roles)
     do
         lint_role "$ROLE"
     done
+    lint_roles_specific
 }
 
 #-----------------------------------------------------------------------
