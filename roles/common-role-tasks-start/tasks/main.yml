@@ -4,30 +4,32 @@
 
 - name: 'Create service group'
   group:
-    name: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user'])}}"
+    name: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user']) }}"
     state: present
     system: yes
+  when: "common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user']) != 'omit'"
 
 - name: 'Create service user'
   user:
     name: "{{common_role_tasks_start_config['user']}}"
     state: present
     comment: "Service user for {{common_role_tasks_start_config['role']}}"
-    group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user'])}}"
+    group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user']) | replace_omit_string(omit)}}"
     groups: ''
     home: "/var/lib/{{common_role_tasks_start_config['role']}}"
     create_home: no
     shell: /usr/sbin/nologin
     password: '!'
     system: yes
+  when: "common_role_tasks_start_config['user'] != 'omit'"
 
 - name: '{{common_role_tasks_start_parent_role}}: Create paths'
   file:
     state: "{{item['state'] | default('directory')}}"
     path: "{{item['path'] | default(item)}}"
-    src: "{{item['source'] | default('')}}"
-    owner: "{{common_role_tasks_start_config['user']}}"
-    group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user'])}}"
+    src: "{{item['source'] | default(omit)}}"
+    owner: "{{common_role_tasks_start_config['user'] | replace_omit_string(omit)}}"
+    group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user']) | replace_omit_string(omit)}}"
     mode: 0755
   with_items: "{{common_role_tasks_start_config['paths']}}"
-  notify: "{{common_role_tasks_start_config['notifications'] | default([])}}"
+  notify: "{{common_role_tasks_start_config['notifications']}}"

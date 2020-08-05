@@ -6,10 +6,10 @@
       item["port"]: {
         "name": item["name"],
         "protocol": (item["protocol"] | default("tcp")),
-        "incoming_net_accesses": (item["incoming_net_accesses"] | default([])),
+        "incoming_net_accesses": item["incoming_net_accesses"],
       }
     }, merge_lists=True)}}'
   changed_when: False
-  with_items: "{{common_role_tasks_end_config['port_configs'] | default([])}}"
+  with_items: "{{common_role_tasks_end_config['port_configs']}}"
   tags:
     - always

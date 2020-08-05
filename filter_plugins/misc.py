@@ -64,6 +64,12 @@ def prepend_all_items(list, prepend):
     return [prepend + item for item in list]
 
 
+def replace_if_whole_string_matches(source, needle, replacement):
+    return replacement if source == needle else source
+
+def replace_omit_string(source, replacement):
+    return replace_if_whole_string_matches(source, 'omit', replacement)
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
@@ -79,4 +85,6 @@ class FilterModule(object):
             'repeat': repeat,
             'whitespace': whitespace,
             'prepend_all_items': prepend_all_items,
+            'replace_if_whole_string_matches': replace_if_whole_string_matches,
+            'replace_omit_string': replace_omit_string,
         }

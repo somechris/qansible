@@ -9,12 +9,20 @@ dedicated roles and re-use them in newly written roles. This helps with
 deduplication and increases re-use. The names of these roles starts in
 `common-role-tasks`.
 
-At the core of each of these rules is a single configuration dictionary. It
-supports the following key/values:
-* `group`: The name of the group for the service. This will be the owner group
-  of the files (after the packages got installed). The group will not get
-  created automatically, but relies on external means to create it (E.g.:
-  Installing packages will typically set up the users).
+At the core of each of these rules is a single configuration dictionary. The
+following key/values are supported (Many of these would allow for good
+defaults. E.g.: The empty list as default for the list of notifications. We on
+purpose do not provide them, as it would then be too easy to miss defining them
+in new roles. And that need not be immediately noticable, and maybe needlessly
+tricky to debug. Hence, we omit most defaults. That way, we users are forced to
+think about them and cannot easily overlook them. We only provide defaults, when
+a field has almost always the same value. For example ports are almost always
+`tcp`, and the name of a user group is almost always the same as the user
+name.):
+* `group`: (Default: value at key `user`) The name of the group for the
+  service. The group will get created, if it's missing. Use the string 'omit'
+  (not `{{omit}}`) to omit all group actions (group creation, setting owner
+  groups on files, ...).
 * `notifications`: A list of handlers to notify upon changes.
 * `packages`: A list of packages to install for the including role.
 * `paths`: A list of directory/link definitions set up. Each definition is a
@@ -34,8 +42,7 @@ supports the following key/values:
     chain..
   * `port`: The port to use for this config.
   * `protocol`: (Default: `tcp`) The protocol to use for this config.
-  * `incoming_net_accesses`: (Default: []) The net-accesses that can access the
-    port.
+  * `incoming_net_accesses`: List of net-accesses that can access the port.
 * `role`: The name of the role that includes the `common-role-tasks-*` role. We
   need to hard-wire this, as `{{role_path|basename}}` would get evaluated in the
   context of the `common-role-task-*` and hence would not give the including,
@@ -44,6 +51,6 @@ supports the following key/values:
 * `supported_distributions`: List of distributions that the including role
   supports.
 * `user`: The name of the user for the service. This will be the owner of the
-  files (after the packages got installed). The user will not get created
-  automatically, but relies on external means to create it (E.g.: Installing
-  packages will typically set up the users).
+  files (after the packages got installed). The user get created as system user
+  automatically, if it is missing. Use the string 'omit' (not `{{omit}}`) to
+  omit all user actions (user creation, setting file owners, ...).

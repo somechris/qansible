@@ -7,4 +7,4 @@
     name: "{{common_role_tasks_package_install_config['packages']}}"
     state: present
   when: "common_role_tasks_package_install_config['packages'] is defined"
-  notify: "{{common_role_tasks_package_install_config['notifications'] | default([])}}"
+  notify: "{{common_role_tasks_package_install_config['notifications']}}"
