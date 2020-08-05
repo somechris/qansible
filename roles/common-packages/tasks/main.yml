@@ -1,26 +1,17 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{common_packages_common_role_tasks_config}}'
 
-- name: Install common packages
-  apt:
-    name:
-      - atop
-      - psmisc # provides pstree
-      - net-tools # provides netstat
-      - aptitude # Ansible prefers `aptitude` over `apt-get`
-    state: present
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{common_packages_common_role_tasks_config}}'
 
-- name: Ensure uninstalled packages are uninstalled
-  apt:
-    name:  '{{item}}'
-    state: absent
-  with_items: []
-
-- name: Enable common package services
-  service:
-    name: '{{item}}'
-    state: started
-    enabled: yes
-  with_items:
-    - atop
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{common_packages_common_role_tasks_config}}'

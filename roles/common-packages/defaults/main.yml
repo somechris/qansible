@@ -1,0 +1,15 @@
+common_packages_common_role_tasks_config:
+  role: common_packages
+  supported_distributions:
+    - 'Debian'
+  user: omit
+  paths: []
+  packages:
+    - atop
+    - psmisc # provides pstree
+    - net-tools # provides netstat
+    - aptitude # Ansible prefers `aptitude` over `apt-get`
+  notifications: []
+  port_configs: []
+  services:
+    - atop
