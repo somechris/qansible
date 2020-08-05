@@ -54,3 +54,5 @@ graphite_common_role_tasks_config:
     - name: GRAPHITE_CACHE
       port: '{{graphite_cache_query_port}}'
       incoming_net_accesses: '{{graphite_query_net_accesses}}'
+  services:
+    - carbon-cache

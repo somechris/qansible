@@ -24,3 +24,5 @@ diamond_common_role_tasks_config:
   notifications:
     - reload diamond
   port_configs: []
+  services:
+    - diamond

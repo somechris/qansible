@@ -1,5 +1,12 @@
 # lint-distribution-independent
 
+- name: '{{common_role_tasks_end_parent_role}}: Ensure services are up and running'
+  service:
+    name: '{{item}}'
+    state: started
+    enabled: yes
+  with_items: "{{common_role_tasks_end_config['services']}}"
+
 - name: '{{common_role_tasks_end_parent_role}}: Updating firewall port config'
   set_fact:
     firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({

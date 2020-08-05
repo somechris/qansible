@@ -48,6 +48,8 @@ name.):
   context of the `common-role-task-*` and hence would not give the including,
   but the included role name. As this would be undesired, we explicitly have to
   give the including role name.
+* `services`: List of service names provided by the including role. These
+  services get enabled and started at the end of the role.
 * `supported_distributions`: List of distributions that the including role
   supports.
 * `user`: The name of the user for the service. This will be the owner of the
