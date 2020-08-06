@@ -68,6 +68,8 @@ Sets up Graphite backend and web application.
   get stored in.
 * `graphite_log_dir`: Directory graphite proccess will write logs to.
 * `graphite_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
+* `graphite_service_users`: List of common web users to grant access. (See
+  `website_common_htpasswds` of `roles/website-common/README.txt`)
 * `graphite_query_net_accesses`: List of net accesses of which hosts can reach
   the cache query service.
 * `graphite_receive_net_accesses`: List of net accesses of which hosts can

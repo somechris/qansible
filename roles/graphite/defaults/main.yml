@@ -58,3 +58,5 @@ graphite_common_role_tasks_config:
     - carbon-cache
   monitoring_checks:
     - services
+
+graphite_service_users: []
