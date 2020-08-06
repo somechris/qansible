@@ -34,10 +34,17 @@ No Globals that are specific only for this role.
   the following key/value pairs:
   * `name`: Name of the htpasswd file to render.
   * `users`: List of usernames to add to the htpasswds. Pick them from
-    `website_users` key from the roles' credentials file.
+    the key set of the `website_common_users` dictionary in this
+    roles' credentials file.
 * `website_common_is_https`: If True, the main site is prepared to get
   served through https (E.g.: will have certs brought into place
   automatically).
 * `website_common_add_www_redirects`: If True, the requirements for
   `www.{{website_common_domain}}` site are set up (E.g.: certs if it
   is a https site)
+* `website_common_users`: a dictionary of common static users for our
+  websites. The key is the username. The values are again dictionaries with the
+  following key/values:
+  * `comment`: A comment for the user.
+  * `password`: The plaintext password for this user.
+  * `salt`: A salt to hash the password with.
