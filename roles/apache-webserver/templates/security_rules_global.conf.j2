@@ -16,3 +16,6 @@ SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:From
 # adds 920275 for this very case. Until that fix flows down to us, we
 # whitelist this header.
 SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:Sec-Fetch-User
+
+# The auth mail header typically contains an @ which triggers 920274.
+SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:{{web_site_authenticated_email_header}}
