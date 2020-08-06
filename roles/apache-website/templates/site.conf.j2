@@ -280,7 +280,11 @@ SecRule REQUEST_HEADERS:Host "@streq {{apache_website_domain}}" "{{first_rule_ac
 {%     set location_type = (location['type'] | default('static')) %}
 {%     set match = "" %}
 {%     if (location_type == 'static') %}
-{%       set match = "@streq " ~ location['name'] %}
+{%       if location['name'] is ending_with('/') %}
+{%         set match = "@beginsWith " ~ location['name'] %}
+{%       else %}
+{%         set match = "@streq " ~ location['name'] %}
+{%       endif %}
 {%     elif (location_type == 'regexp') %}
 {%       set match = "@rx ^" ~ location['name'] %}
 {%     else %}
