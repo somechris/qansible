@@ -12,10 +12,10 @@ def mkpasswd(password, salt, method='SHA512-CRYPT', add_text_method=True):
     if len(salt) < 16:
         # Warn about too short salts. We want to make sure they are long enough
         # to contribute to the difficulty.
-        raise RuntimeError("Please use at least 16 characters as salt")
+        raise RuntimeError("Please use at least 16 characters as salt. ('%s' has only %d characters)" % (salt, len(salt)))
     if method == 'SHA512-CRYPT':
         if len(salt) != 16:
-            raise RuntimeError("Salt has to be 16 characters in [a-zA-Z0-9./] for %s." % (method))
+            raise RuntimeError("Salt has to be 16 characters in [a-zA-Z0-9./] for %s. ('%s' has %d characters)" % (method, salt, len(salt)))
         hashed_password = crypt.crypt(password, "$6$%s" % (salt))
     elif method == 'SSHA':  # SHA1 is broken, but SSHA is still ok-ish. If
         # possible, avoid SSHA and use something more secure
