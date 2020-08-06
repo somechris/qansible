@@ -65,6 +65,20 @@ GIDSTART="10000" # Group ID
 UIDSTART="{{ldap_server_uid_start}}" # User ID
 MIDSTART="20000" # Machine ID
 
+service_switch() {
+    local PARAM="$1"
+    if [ "$(echo "$PARAM" | cut -f 1 -d -)" = "service" ]
+    then
+        USUFFIX="ou={{ldap_server_ou_services}}"
+        GIVENNAME="Service"
+        SURNAME="$(echo "$PARAM" | cut -f 2- -d -)"
+        UHOMES="/dev/null"
+        USHELL="/usr/sbin/nologin"
+        UIDSTART="30000"
+    fi
+}
+service_switch "$@"
+
 # Group membership management
 # ObjectCLass used for groups
 # Possible values : posixGroup, groupOfNames, groupOfUniqueNames (case-sensitive !)
