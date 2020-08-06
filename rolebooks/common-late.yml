@@ -9,6 +9,8 @@
 
     - role: apache-webserver
       when: (apache_websites | default([]) | length) > 1
+      tags:
+        - apache-webserver
 
     - role: diamond
       tags:
