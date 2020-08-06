@@ -29,13 +29,10 @@ No Globals that are specific only for this role.
 -------------
 * `website_common_domain`: The domain to host
 * `website_common_kind`: The kind of webserver (E.g.: `nginx`, `apache`)
-* `website_common_htpasswds`: (optional) (default: []) List of
-  htpasswds to set up. Each htpasswd is modelled as dictionary having
-  the following key/value pairs:
-  * `name`: Name of the htpasswd file to render.
-  * `users`: List of usernames to add to the htpasswds. Pick them from
-    the key set of the `website_common_users` dictionary in this
-    roles' credentials file.
+* `website_common_htpasswds`: (optional) (Default: {}) Dictionary of htpasswds
+  to set up. The key is the name of the htpasswd file, and the value is a list
+  of usernames to add to the htpasswds. Pick them from the key set of the
+  `website_common_users` dictionary in this roles' credentials file.
 * `website_common_is_https`: If True, the main site is prepared to get
   served through https (E.g.: will have certs brought into place
   automatically).

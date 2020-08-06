@@ -31,11 +31,11 @@
 
 - name: Create htpasswords
   template:
-    dest: '{{web_site_root_dir}}/{{website_common_domain}}/htpasswds/{{item.name}}'
+    dest: '{{web_site_root_dir}}/{{website_common_domain}}/htpasswds/{{item.key}}'
     src: 'htpasswd.j2'
     owner: www-data
     group: ssl-cert
     mode: 0440
-  with_items: '{{website_common_htpasswds}}'
+  with_items: '{{website_common_htpasswds | dict2items}}'
   notify:
     reload webserver

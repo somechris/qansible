@@ -47,9 +47,9 @@ Deploys a static html page from S3.
 * `static_website_server_flavor`: (default: apache) Specifies which
   web server to use to serve the site. Currently, only `apache` is
   supported here.
-* `static_website_htpasswds`: htpasswds configuration for the web
-  servers. This parameter has to be in the format used by by the role
-  selected through `static_website_server_flavor`.
+* `static_website_htpasswds`: (Default: {}) htpasswds configuration for the web
+  servers. This parameter has to be in the format used by by the role selected
+  through `static_website_server_flavor`.
 * `static_website_domain`: Domain name which to deploy and serve at.
 * `static_website_net_accesses`: The net-accesses that can access this
   site. This can be more restrictive than the webserver's net_accesses,
