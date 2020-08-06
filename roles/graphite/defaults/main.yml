@@ -56,3 +56,5 @@ graphite_common_role_tasks_config:
       incoming_net_accesses: '{{graphite_query_net_accesses}}'
   services:
     - carbon-cache
+  monitoring_checks:
+    - services

@@ -20,3 +20,10 @@
   with_items: "{{common_role_tasks_end_config['port_configs']}}"
   tags:
     - always
+
+- name: '{{common_role_tasks_end_parent_role}}: Updating monitoring config'
+  set_fact:
+    monitoring_check_config: '{{monitoring_check_config | monitoring_checks_append_common_role_tasks_config(common_role_tasks_end_config)}}'
+  changed_when: False
+  tags:
+    - always

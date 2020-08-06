@@ -1,0 +1,42 @@
+monitoring-checks
+=================
+
+To allow switching between monitoring solutions, we don't hard-code monitoring
+checks into the roles, but we instead collect the needed monitoring actions for
+each role in the fact `monitoring_check_config`, and let the monitoring
+solutions decide how to perform them.
+
+`monitoring_check_config` is a list and each item defines a monitoring
+action. Each action is either a string, or a dictionary. string definitions are
+just abbrevations for dictionaries. A definition 'foo' is equivalent to the
+dictionary
+
+```
+{
+  'name': 'foo',
+  'command': 'foo',
+}
+```
+
+A dictionary definition has the following key/values:
+* `name`: The check's name.
+* `type`: (Default: `process`) The type of the check. Has to be one of
+  `process`.
+
+
+## Type `process`
+
+The type `process` checks that the expected processes are running as immediate
+child of the root process. The following additional key/values allow to specify
+what processes to expect:
+* `argument`: If specified, match only processes that are run with this
+  argument.
+* `min-procs`: (Default: 1) The minimal number of processes that need to match
+  the other conditions. Use the empty string to not check the minimum number of
+  processes.
+* `max-procs`: (Default: 1) The maximum number of processes that may match the
+  other conditions. Use the empty string to not check the maximum number of
+  processes.
+* `user`: (Default: `root`) Match only processes run by this user. Use the
+  string `omit` (not Ansible's variable of name `omit`) to not check the process
+  owner.

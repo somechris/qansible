@@ -26,3 +26,5 @@ diamond_common_role_tasks_config:
   port_configs: []
   services:
     - diamond
+  monitoring_checks:
+    - {command: 'python', argument: '/usr/bin/diamond'}

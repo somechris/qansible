@@ -4,9 +4,6 @@
 {{"load_per_cpu" | icinga_nrpe_command("load", "-r -w 2,1.1,0.8 -c 4,1.5,0.9")}}
 {{"nscd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=nscd")}}
 {{"nslcd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=nslcd")}}
-{{"atopacctd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=atopacctd")}}
-{{"atop_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=atop")}}
-{{"diamond_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --user=diamond --command=python --argument-array=/usr/bin/diamond")}}
 {% if 'ldap_servers' in group_names %}
 {{"slapd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --user=openldap --command=slapd")}}
 {% endif %}
@@ -22,6 +19,6 @@
 {% if 'apache' in group_names %}
 {{"apache_httpd_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --command=apache2")}}
 {% endif %}
-{% if 'graphites' in group_names %}
-{{"graphite_carbon_proc" | icinga_nrpe_command("procs", "--critical=1:1 --ppid=1 --user=_graphite --command=carbon-cache")}}
-{% endif %}
+{% for check in (monitoring_check_config | monitoring_checks_explicitize) %}
+{{check | icinga_monitoring_check_config_nrpe_formatter}}
+{% endfor %}

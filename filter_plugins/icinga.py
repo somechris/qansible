@@ -1,5 +1,6 @@
 import copy
 import collections
+import re
 
 
 def update_dict(target, source):
@@ -271,6 +272,40 @@ def icinga_http_preconfigured_checks(host, apache_sites=[], nginx_sites=[],
             # TODO: add checks for 5xx requests and total.count
     return ret
 
+
+def icinga_slug(string):
+    return re.sub(r'[^a-zA-Z0-9]', r'_', string.lower())
+
+def icinga_monitoring_check_config_nrpe_formatter(config):
+    ret = ''
+    slug=icinga_slug(config['name'])
+    if config['type'] == 'process':
+        arg=''
+        if 'command' in config:
+            arg=' --command=%s' % (config['command'])
+        if (str(config['min-procs']) + str(config['min-procs'])) != '':
+            arg+=' --critical %s:%s' % (config['min-procs'], config['max-procs'])
+        arg+=' --ppid=1'
+        if config['user'] != 'omit':
+            arg+=' --user=%s' % (config['user'])
+        if 'argument' in config:
+            arg+=' --argument-array=%s' % (config['argument'])
+        ret = icinga_nrpe_command(slug, 'procs', arg.strip())
+    else:
+        raise RuntimeError('Unknown check type "%s" in icinga_monitoring_check_config_nrpe_formatter' % (config['type']))
+    return ret
+
+
+def icinga_monitoring_check_config_check_formatter(config, inventory_hostname):
+    ret = ''
+    slug=icinga_slug(config['name'])
+    if config['type'] == 'process':
+        ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
+    else:
+        raise RuntimeError('Unknown check type "%s" in icinga_monitoring_check_config_check_formatter' % (config['type']))
+    return ret
+
+
 class FilterModule(object):
     '''Filters for icinga'''
 
@@ -284,4 +319,8 @@ class FilterModule(object):
             'icinga_http_check': icinga_http_check,
             'icinga_http_preconfigured_checks':
                 icinga_http_preconfigured_checks,
+            'icinga_monitoring_check_config_nrpe_formatter':
+                icinga_monitoring_check_config_nrpe_formatter,
+            'icinga_monitoring_check_config_check_formatter':
+                icinga_monitoring_check_config_check_formatter,
         }

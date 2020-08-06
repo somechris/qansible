@@ -23,6 +23,9 @@ name.):
   service. The group will get created, if it's missing. Use the string 'omit'
   (not `{{omit}}`) to omit all group actions (group creation, setting owner
   groups on files, ...).
+* `monitoring_checks`: A list of definitions of monitoring checks for
+  this server.
+#TO-DO: add documentation for monitoring key
 * `notifications`: A list of handlers to notify upon changes.
 * `packages`: A list of packages to install for the including role.
 * `paths`: A list of directory/link definitions set up. Each definition is a
