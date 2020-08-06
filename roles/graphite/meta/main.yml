@@ -32,24 +32,39 @@ dependencies:
         alias: /usr/share/graphite-web/static/
       - name: /admin
         deny: True
-      - name: /metrics/find/
-        security_rules:
+      - name: /metrics/find
+        security_rules: &yaml_sec_rules_metrics_find
         - type: remove-target
           id: 920273
           rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
           targets:
           - 'ARGS:query'
+          - 'REQUEST_BODY'
+        - type: remove-target
+          id: 942460
+          rationale: queries like 'host.*.*' have 4 non-word characters in a row and would trigger this check.
+          targets:
+          - 'ARGS:query'
+          - 'REQUEST_BODY'
+      - name: /metrics/find/
+        security_rules: *yaml_sec_rules_metrics_find
+      - name: /render
+        security_rules: &yaml_sec_rules_render
+        - type: remove-target
+          id: 921170
+          rationale: When rendering a graph, `target` occurs for each line. So we whitelist the used arguments.
+          targets:
+            - 'ARGS_NAMES:target'
+        - type: remove-target
+          id: 920273
+          rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
+          targets:
+            - 'ARGS:target'
+            - 'REQUEST_BODY'
+        - type: remove-target
+          id: 942432
+          rationale: Limit on allowed characters in argumets is too strict for our user provided values here, and already triggers on `constantLine(100)`
+          targets:
+            - 'ARGS:target'
       - name: /render/
-        security_rules:
-        - type: remove-target
-          id: 921170
-          rationale: When rendering a graph, `target` occurs for each line. So we whitelist the used arguments.
-          targets:
-          - 'ARGS_NAMES:target'
-      - name: /composer
-        security_rules:
-        - type: remove-target
-          id: 921170
-          rationale: When rendering a graph, `target` occurs for each line. So we whitelist the used arguments.
-          targets:
-          - 'ARGS_NAMES:target'
+        security_rules: *yaml_sec_rules_render
