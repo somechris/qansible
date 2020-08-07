@@ -48,11 +48,25 @@ No Globals that are specific only for this role.
      location as dictionary. The available key/values are:
      * `ldap-groups`: A list of LDAP group names. The user is authorized, if it
        is any of them.
+     * `htpasswds`: A list of htpasswd files. The user is authorized, if it is
+       in any of them. See the `apache_website_htpasswds` to define them.
+     The user is considered authorized, if they are authorized according to any
+     of the configured authorizations. So for example if a location defines both
+     `ldap-groups` and `htpasswds`, a user in an ldap-group is considered
+     authorized, even if they are not in a htpasswd file and vice versa.
+
      Authorization requirements are merged with parents. So if for example
      membership in the group `staff` is required for `/foo`, and group
      `analytics` for `/foo/bar`, then one needs to be both in `staff` and
      `analytics` to access `/foo/bar`. (This helps to avoid accidentally nixing
      net_access requirements on parents)
+
+     Note though, that mixing auth backends across different locations where one
+     contains the other does not work well. So if '/foo' requires an ldap-group
+     and `/foo/bar` requires a htpasswd, even users that are in both the
+     ldap-group and the htpasswd will fail to authorize. But if `/foo` would
+     also rely on a htpasswd or if `/foo/bar` would rely on an ldap-group (so
+     both `/foo` and `/foo/bar` are on the same backend, users can log in.
    * `cors`: (Default: ``) (Optional) If `allow-all-simple`, white-list simple
      requests through CORS.
    * `deny`: (Default: False) (Optional) If True, unconditionally deny

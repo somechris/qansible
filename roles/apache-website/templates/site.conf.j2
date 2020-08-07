@@ -94,9 +94,15 @@ does not start in 'WSGI'
 {%         if (location['auth'] is defined) %}
     AuthType basic
     AuthName "{{apache_website_domain}}"
+    AuthBasicProvider{% if (location['auth']['ldap_groups'] is defined) %} ldap{% endif %}{% if (location['auth']['htpasswds'] is defined) %} file{% endif %}
+
 {%           if (location['auth']['ldap_groups'] is defined) %}
-    AuthBasicProvider ldap
     AuthLDAPUrl "{{ldap_server_uri}}/ou={{ldap_server_ou_people}},{{ldap_server_base_dn}}?uid,mail,displayName?one" STARTTLS
+{%           endif %}
+{%           if (location['auth']['htpasswds'] is defined) %}
+{%             for htpasswd in location['auth']['htpasswds'] %}
+    AuthUserFile "{{web_site_root_dir}}/{{apache_website_domain}}/htpasswds/{{htpasswd}}"
+{%             endfor %}
 {%           endif %}
 {%         endif %}
     <RequireAll>
@@ -126,13 +132,22 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
       </RequireAny>
 {%         endif %}
 {%         if (location['auth'] is defined) %}
-{%           if (location['auth']['ldap_groups'] is defined) %}
+{%           if (location['auth']['ldap_groups'] is defined or location['auth']['htpasswds'] is defined) %}
 
-      # ldap-groups
+      # auth
       <RequireAny>
-{% for ldap_group in location['auth']['ldap_groups'] %}
+{%             if (location['auth']['ldap_groups'] is defined) %}
+        # ldap groups
+{%               for ldap_group in location['auth']['ldap_groups'] %}
         Require ldap-group cn={{ldap_group}},ou={{ldap_server_ou_groups}},{{ldap_server_base_dn}}
-{% endfor %}
+{%               endfor %}
+
+{%             endif %}
+{%             if (location['auth']['htpasswds'] is defined) %}
+        # htpasswds
+        Require valid-user
+
+{%             endif %}
         Require all denied
         # ^ This 'Require all denied' makes sure that at least one rule
         # fails and RequireAny hence cannot return neutral
