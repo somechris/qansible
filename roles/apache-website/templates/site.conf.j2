@@ -166,8 +166,14 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
       # conditions
     </RequireAll>
     RequestHeader set {{web_site_authenticated_user_header}} %{REMOTE_USER}s
-    RequestHeader set {{web_site_authenticated_email_header}} %{AUTHENTICATE_MAIL}e
-    RequestHeader set {{web_site_authenticated_display_name_header}} %{AUTHENTICATE_DISPLAYNAME}e
+
+    # User headers if authorized through ldap
+    RequestHeader set {{web_site_authenticated_email_header}} %{AUTHENTICATE_MAIL}e env=AUTHORIZE_UID
+    RequestHeader set {{web_site_authenticated_display_name_header}} %{AUTHENTICATE_DISPLAYNAME}e env=AUTHORIZE_UID
+
+    # User headers if authorized through htpasswd
+    RequestHeader set {{web_site_authenticated_email_header}} %{REMOTE_USER}s@{{company_email_domain}} env=!AUTHORIZE_UID
+    RequestHeader set {{web_site_authenticated_display_name_header}} %{REMOTE_USER}s env=!AUTHORIZE_UID
 
 {%         if (location['cors'] | default('')) == 'allow-all-simple' %}
 
