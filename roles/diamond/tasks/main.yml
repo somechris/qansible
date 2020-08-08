@@ -23,6 +23,19 @@
   notify:
     reload diamond
 
+- name: Install custom collectors
+  template:
+    dest: '{{diamond_collector_dir}}/{{item}}Collector.py'
+    src: '{{item}}Collector.py.j2'
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - ProxyBulkFile
+    - ProxyCPU
+  notify:
+    reload diamond
+
 - name: Configure collectors
   template:
     dest: '{{diamond_collector_conf_dir}}/{{item}}Collector{{diamond_collector_conf_extension}}'
@@ -32,6 +45,8 @@
     mode: 0444
   with_items:
     - DiskUsage
+    - ProxyBulkFile
+    - ProxyCPU
   notify:
     reload diamond
 

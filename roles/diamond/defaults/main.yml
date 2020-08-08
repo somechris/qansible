@@ -28,3 +28,5 @@ diamond_common_role_tasks_config:
     - diamond
   monitoring_checks:
     - {command: 'python', argument: '/usr/bin/diamond'}
+
+diamond_metric_proxy_hosts: []

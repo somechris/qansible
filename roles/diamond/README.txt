@@ -38,6 +38,7 @@ No Globals that are specific only for this role.
 * `diamond_collector_conf_extension`: File extension used for files within
   `diamond_collector_conf_dir`.
 * `diamond_effective_log_dir`: Directory where logs effectively get stored in.
+* `diamond_metric_proxy_hosts`: (Default: []) Hosts to proxy metrics for.
 * `diamond_log_dir`: Directory proccesses will write logs to.
 * `diamond_effective_data_disk`: Directory for data disk where data effectively
   gets stored in.
