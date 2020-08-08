@@ -48,6 +48,14 @@ dependencies:
             - 'ARGS:query'
             - 'ARGS:target'
             - 'REQUEST_BODY'
+      - name: '/api/search'
+        type: regexp
+        security_rules:
+        - type: remove-target
+          id: 921170
+          rationale: Having more than 1 dashboard triggers 921180, so we exclude it in counting
+          targets:
+            - 'ARGS_NAMES:dashboardIds'
       - name: '/api/datasources/proxy/[0-9]+/render'
         type: regexp
         security_rules:
@@ -62,6 +70,11 @@ dependencies:
           targets:
           - 'ARGS:target'
         - type: remove-target
+          id: 920460
+          rationale: When using aliasSub, we end up using '(backslash)1' to reference groups. This triggers this rule.
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
           id: 921170
           rationale: When rendering a graph, `target` occurs for each line. So we whitelist the used arguments.
           targets:
@@ -69,6 +82,11 @@ dependencies:
         - type: remove-target
           id: 942200
           rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers for example on `,aliasByMetric(hosts.foo.memory.Buffers),aliasByMetric(hosts.foo.memory.Cached),alias(hosts.foo.memory.MemFree, 'Free'))
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942260
+          rationale: When using aliasSub, we end up using '(backslash)1' to reference groups. This triggers this rule.
           targets:
             - 'ARGS:target'
         - type: remove-target
@@ -89,5 +107,10 @@ dependencies:
         - type: remove-target
           id: 942432
           rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers for example on `(scale(sumSeries(hosts.foo.cpu.total.*), 0.010000)`
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942490
+          rationale: When using aliasSub, we end up using '(backslash)1' to reference groups. This triggers this rule.
           targets:
             - 'ARGS:target'
