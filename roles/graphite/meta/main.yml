@@ -36,7 +36,7 @@ dependencies:
         security_rules: &yaml_sec_rules_metrics_find
         - type: remove-target
           id: 920273
-          rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
           targets:
           - 'ARGS:query'
           - 'REQUEST_BODY'
@@ -57,14 +57,39 @@ dependencies:
             - 'ARGS_NAMES:target'
         - type: remove-target
           id: 920273
-          rationale: Limit on allowed characters in argumets is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here. We're covered by id:920271, which has a more loose character set.
           targets:
             - 'ARGS:target'
             - 'REQUEST_BODY'
         - type: remove-target
-          id: 942432
-          rationale: Limit on allowed characters in argumets is too strict for our user provided values here, and already triggers on `constantLine(100)`
+          id: 942200
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers for example on `,aliasByMetric(hosts.foo.memory.Buffers),aliasByMetric(hosts.foo.memory.Cached),alias(hosts.foo.memory.MemFree, 'Free'))`
           targets:
             - 'ARGS:target'
+        - type: remove-target
+          id: 942370
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers on `alias(diffSeries(hosts.foo.memory.MemTotal,aliasByMetric(hosts.foo.memory.Buffers),aliasByMetric(hosts.foo.memory.Cached),alias(hosts.foo.memory.MemFree, 'Free')), 'Used w/o Buffers and Cache')`
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942430
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers on `(diffSeries(hosts.foo.memory.MemTotal,aliasByMetric(hosts.foo.memory.Buffers),aliasByMetric(hosts.foo.memory.Cached),alias(hosts.foo.memory.MemFree, 'Free'))`
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942431
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and triggers on `(diffSeries(hosts.foo.memory.MemTotal,aliasByMetric(hosts.foo.memory.Buffers),aliasByMetric(hosts.foo.memory.Cached)`
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942432
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and already triggers on `constantLine(100)`
+          targets:
+            - 'ARGS:target'
+        - type: remove-target
+          id: 942460
+          rationale: Limit on allowed characters in arguments is too strict for our user provided values here, and already triggers on `.*),` as in `alias(scale(sumSeries(hosts.foo.cpu.total.*), 0.010000), 'CPUs')`
+          targets:
+          - 'ARGS:target'
       - name: /render/
         security_rules: *yaml_sec_rules_render

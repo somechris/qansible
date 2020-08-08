@@ -59,4 +59,5 @@ graphite_common_role_tasks_config:
   monitoring_checks:
     - services
 
-graphite_service_users: []
+graphite_service_users:
+  - service-grafana
