@@ -156,3 +156,8 @@ graphite_web_host: '{{graphite_collection_host}}'
 #
 grafana_var_lib_dir: '/var/lib/grafana'
 grafana_dashboard_dir: '{{grafana_var_lib_dir}}/dashboards'
+
+#---------------------------------------------------------------------------
+# ssh
+#
+ssh_connections_available: {}

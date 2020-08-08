@@ -1,0 +1,91 @@
+# lint-distribution-independent
+
+# While the split into client and server part seems obvious, note that we
+# determining home directories is split between client and server too. This is
+# on purpose to trivially allow hosts to connect back to themselves as a
+# different user.
+
+# --- Client configuration ---
+- name: Getting home directories for clients
+  shell: "getent passwd {{ssh_connections_available[item]['client']['user']}} | cut -f 6 -d :"
+  with_items: '{{ssh_connections_available}}'
+  when: "ssh_connections_available[item]['client']['host'] == inventory_hostname"
+  changed_when: False
+  register: ssh_connections_reg_client_getent
+
+- name: Collect home dirs for clients
+  set_fact:
+    ssh_connections_reg_client_home_dirs: "{{ssh_connections_reg_client_home_dirs | default({}) | combine({item.item: (item.stdout | default(''))})}}"
+  with_items: '{{ssh_connections_reg_client_getent.results}}'
+
+- name: Creating .ssh directory
+  file:
+    path: '{{ssh_connections_reg_client_home_dirs[item]}}/.ssh'
+    state: directory
+    owner: "{{ssh_connections_available[item]['client']['user']}}"
+    mode: 0700
+  with_items: '{{ssh_connections_available}}'
+  when: "ssh_connections_available[item]['client']['host'] == inventory_hostname"
+
+- name: Creating ssh client config
+  template:
+    dest: '{{ssh_connections_reg_client_home_dirs[item]}}/.ssh/config'
+    src: ssh-client-config.j2
+    owner: "{{ssh_connections_available[item]['client']['user']}}"
+    mode: 0400
+  with_items: '{{ssh_connections_available}}'
+  when: "ssh_connections_available[item]['client']['host'] == inventory_hostname"
+
+- name: Copying client keys up
+  copy:
+    dest: '{{ssh_connections_reg_client_home_dirs[item]}}/.ssh/id_rsa-{{item}}'
+    src: id_rsa-{{item}}
+    owner: "{{ssh_connections_available[item]['client']['user']}}"
+    mode: 0400
+  with_items: '{{ssh_connections_available}}'
+  when: "ssh_connections_available[item]['client']['host'] == inventory_hostname"
+
+- name: Adding keys to known_hosts
+  # We're not using Ansible's known_hosts module here, as ssh failed to find the
+  # keys that we inserted. Also, that module does not allow to set owner and
+  # mode. Since it is simple enough, and we want tight control of the known
+  # hosts file anyways to rule out rogue known hosts, we re-implement as
+  # template.
+  template:
+    dest: '{{ssh_connections_reg_client_home_dirs[item]}}/.ssh/known_hosts'
+    src: known_hosts.j2
+    owner: "{{ssh_connections_available[item]['client']['user']}}"
+    mode: 0400
+  with_items: '{{ssh_connections_available}}'
+  when: "ssh_connections_available[item]['client']['host'] == inventory_hostname"
+
+# --- Server configuration ---
+- name: Getting home directories for servers
+  shell: "getent passwd {{ssh_connections_available[item]['server']['user']}} | cut -f 6 -d :"
+  with_items: '{{ssh_connections_available}}'
+  when: "ssh_connections_available[item]['server']['host'] == inventory_hostname"
+  changed_when: False
+  register: ssh_connections_reg_server_getent
+
+- name: Collect home dirs for servers
+  set_fact:
+    ssh_connections_reg_server_home_dirs: "{{ssh_connections_reg_server_home_dirs | default({}) | combine({item.item: (item.stdout | default(''))})}}"
+  with_items: '{{ssh_connections_reg_server_getent.results}}'
+
+- name: Creating .ssh directory
+  file:
+    path: '{{ssh_connections_reg_server_home_dirs[item]}}/.ssh'
+    state: directory
+    owner: "{{ssh_connections_available[item]['server']['user']}}"
+    mode: 0700
+  with_items: '{{ssh_connections_available}}'
+  when: "ssh_connections_available[item]['server']['host'] == inventory_hostname"
+
+- name: Authorizing keys
+  template:
+    dest: '{{ssh_connections_reg_server_home_dirs[item]}}/.ssh/authorized_keys'
+    src: authorized_keys.j2
+    owner: "{{ssh_connections_available[item]['server']['user']}}"
+    mode: 0400
+  with_items: '{{ssh_connections_available}}'
+  when: "ssh_connections_available[item]['server']['host'] == inventory_hostname"

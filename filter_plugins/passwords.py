@@ -1,6 +1,7 @@
 import crypt
 import hashlib
 import base64
+import hmac
 
 
 # You can use
@@ -33,6 +34,14 @@ def mkpasswd(password, salt, method='SHA512-CRYPT', add_text_method=True):
     return ret
 
 
+def ssh_known_hosts_hash(host, hex_salt):
+    if len(hex_salt) != 40:
+        raise RuntimeError('hex_salt %s is %d characters long, but has to be 40 characters long' % (hex_salt, len(hex_salt)))
+    salt = hex_salt.decode("hex")
+    digest = hmac.new(salt, host, hashlib.sha1).digest()
+    return '|1|%s|%s' % (base64.b64encode(salt), base64.b64encode(digest))
+
+
 def format_passwd_line(user, password, salt, uid='', gid='', gecos='', home='', shell='/bin/nologin', extra=''):
     items = []
     items += [user]
@@ -54,4 +63,5 @@ class FilterModule(object):
         return {
             'mkpasswd': mkpasswd,
             'format_passwd_line': format_passwd_line,
+            'ssh_known_hosts_hash': ssh_known_hosts_hash,
         }

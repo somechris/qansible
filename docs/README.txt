@@ -150,6 +150,7 @@ agreements.
   - `remote-apt-repository`: Configures APT to also use a remote repository.
   - `ssh-client-expect-authorized-key`: Configures expected authorized
     keys for ssh clients.
+  - `ssh-connections`: Configures user configurations for public key access.
   - `ssh-server`: Sets up an SSH server
   - `static-website`: Deploys a static HTML site from an artifact url
   - `time`: Takes care about time settings.

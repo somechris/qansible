@@ -1,0 +1,10 @@
+# {{ansible_managed}}
+{% for key in ssh_connections_available %}
+{%   if ssh_connections_available[key]['server']['host'] == inventory_hostname %}
+{%     if ssh_connections_available[key]['server']['user'] == ssh_connections_available[item]['server']['user'] %}
+
+# {{key}}
+{{lookup('file', 'id_rsa-' + key + '.pub')}}
+{%     endif %}
+{%   endif %}
+{% endfor %}

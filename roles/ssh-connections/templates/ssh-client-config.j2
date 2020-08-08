@@ -1,0 +1,20 @@
+# {{ansible_managed}}
+{% for key in ssh_connections_available %}
+{%   if ssh_connections_available[key]['client']['host'] == inventory_hostname %}
+{%     if ssh_connections_available[key]['client']['user'] == ssh_connections_available[item]['client']['user'] %}
+
+# -- {{key}} --------------------------------------------------
+
+Host {{key}}
+  Hostname {{ssh_connections_available[key]['server']['host']}}
+  Port {{ssh_connections_available[key]['server']['port'] | default(ssh_server_port)}}
+  User {{ssh_connections_available[key]['server']['user']}}
+  IdentityFile {{ssh_connections_reg_client_home_dirs[key]}}/.ssh/id_rsa-{{key}}
+  HashKnownHosts no
+  UpdateHostKeys no
+{%       for option,value in (ssh_connections_available[key]['options'] | default({})).items() %}
+  {{option}} {{value}}
+{%       endfor %}
+{%     endif %}
+{%   endif %}
+{% endfor %}

@@ -1,0 +1,9 @@
+# {{ansible_managed}}
+
+{% for key in ssh_connections_available %}
+{%   if ssh_connections_available[key]['client']['host'] == inventory_hostname %}
+{%     if ssh_connections_available[key]['client']['user'] == ssh_connections_available[item]['client']['user'] %}
+{% if ssh_connections_available[key]['known_hosts_hex_salt'] is defined %}{{ssh_connections_available[key]['server']['host'] | ssh_known_hosts_hash(ssh_connections_available[key]['known_hosts_hex_salt'])}}{% else %}{{ssh_connections_available[key]['server']['host']}}{% endif %} {{ssh_connections_available[key]['server']['key_type']}} {{ssh_connections_available[key]['server']['key']}}
+{%     endif %}
+{%   endif %}
+{% endfor %}

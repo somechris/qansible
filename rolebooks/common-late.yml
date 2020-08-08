@@ -21,6 +21,10 @@
         - grafana-host-dashboards
         - grafana
 
+    - role: ssh-connections
+      tags:
+        - ssh-connections
+
 - name: common-late (generic for all, even unmanaged)
   hosts: all
   gather_facts: no
