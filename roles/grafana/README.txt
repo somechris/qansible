@@ -24,7 +24,8 @@ it.
 2. Globals
 ----------
 
-No Globals that are specific only for this role.
+* `grafana_dashboard_dir`: The directory for provisioned dashboards.
+
 
 
 3. Parameters
@@ -35,7 +36,6 @@ No Globals that are specific only for this role.
 * `grafana_admin_password`: Administrator password (Not used when accessing
   through reverse proxy)
 * `grafana_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
-* `grafana_dashboard_dir`: The directory for provisioned dashboards.
 * `grafana_effective_data_disk`: Directory for data disk where grafana data
   effectively gets stored in.
 * `grafana_effective_data_dir`: Directory where grafana data effectively gets

@@ -1,0 +1,17 @@
+{# qa:no-ansible-managed-check, as JSON does not allow comments -#}
+{{"" | grafana_create_dashboard(
+   title = inventory_hostname_short,
+   tags = [ "host", inventory_hostname_short ] + group_names,
+   )
+  | grafana_add_row_host_metadata(inventory_hostname_short, hostvars[inventory_hostname])
+  | grafana_add_row_overview(inventory_hostname_short, cpu_count=ansible_processor_vcpus, collapse=False)
+  | grafana_add_row_load(inventory_hostname_short, cpu_count=ansible_processor_vcpus)
+  | grafana_add_row_cpu(inventory_hostname_short)
+  | grafana_add_row_processes(inventory_hostname_short)
+  | grafana_add_row_disk(inventory_hostname_short)
+  | grafana_add_row_memory(inventory_hostname_short)
+  | grafana_add_row_network(inventory_hostname_short)
+  | grafana_add_row_graphite(inventory_hostname_short, add=("graphite" in group_names))
+  | grafana_add_rows_apache(inventory_hostname_short, apache_websites, add=("apache" in group_names))
+  | grafana_dump_dashboard()
+  }}

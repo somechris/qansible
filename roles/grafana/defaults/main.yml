@@ -1,7 +1,5 @@
-grafana_var_lib_dir: '/var/lib/grafana'
 grafana_log_dir: '/var/log/grafana'
 grafana_provisioning_dir: '/etc/grafana/provisioning'
-grafana_dashboard_dir: '{{grafana_var_lib_dir}}/dashboards'
 
 grafana_effective_data_disk: '{{common_directories_data_dir2}}'
 grafana_effective_data_dir: '{{grafana_effective_data_disk}}/grafana'

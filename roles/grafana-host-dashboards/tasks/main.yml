@@ -1,0 +1,13 @@
+# lint-distribution-independent
+
+- name: Setup host dashboard
+  template:
+    dest: '{{grafana_dashboard_dir}}/host-dashboard-{{inventory_hostname_short}}.json'
+    src: dashboard-host.json.j2
+    owner: root
+    group: root
+    mode: 0444
+  delegate_to: "{{item}}"
+  with_items: '{{groups["grafanas"]}}'
+  notify:
+    - reload grafana

@@ -150,3 +150,9 @@ graphite_line_receiver_port: 2003
 graphite_host_prefix_wo_host: 'hosts'
 graphite_host_prefix: '{{graphite_host_prefix_wo_host}}.{{inventory_hostname_short}}'
 graphite_web_host: '{{graphite_collection_host}}'
+
+#---------------------------------------------------------------------------
+# Grafana
+#
+grafana_var_lib_dir: '/var/lib/grafana'
+grafana_dashboard_dir: '{{grafana_var_lib_dir}}/dashboards'
