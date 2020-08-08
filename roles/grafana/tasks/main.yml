@@ -42,6 +42,8 @@
     mode: 0444
   with_items:
     - generic-host-overview
+  tags:
+    - 'grafana-dashboards'
   notify:
     reload grafana
 

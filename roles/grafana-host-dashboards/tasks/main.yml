@@ -8,6 +8,8 @@
     group: root
     mode: 0444
   delegate_to: "{{item}}"
+  tags:
+    - 'grafana-dashboards'
   with_items: '{{groups["grafanas"]}}'
   notify:
     - reload grafana
