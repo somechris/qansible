@@ -5,6 +5,7 @@ import copy
 import collections
 import re
 
+MAX_CPU=900
 
 # timepicker.time_options are not picked up by Grafana. The seem to be
 # hard-coded in the version we use. But Grafana examples configure
@@ -1164,6 +1165,7 @@ def grafana_panel_cpu(host, span=3):
     add_metric(ret, host, 'cpu.total.idle')
 
     set_yaxis_units(ret, "percent")
+    set_yaxis_maximum(ret, 'left', MAX_CPU) # Add max to limit effect of outliers.
     set_stacked_mode(ret)
     set_colors(ret, {
             "idle": "#3F2B5B",
@@ -1181,6 +1183,7 @@ def grafana_panel_cpu_kind(host, kind, color, span=3):
     add_metric(ret, host, 'cpu.total.%s' % kind)
 
     set_yaxis_units(ret, "percent")
+    set_yaxis_maximum(ret, 'left', MAX_CPU) # Add max to limit effect of outliers.
     set_stacked_mode(ret)
     set_colors(ret, {
             kind: color,
