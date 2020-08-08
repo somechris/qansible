@@ -1079,7 +1079,7 @@ def grafana_panel_host_metadata(host, hostvars, span=12):
 
     add_separator()  # --------------------------
 
-    add_link('This host in Icinga', 'https://%s/cgi-bin/icinga/status.cgi?host=%s' % (hostvars['icinga_web_host'], hostvars['inventory_hostname']))
+    add_link('This host in Icinga', 'https://%s/cgi-bin/icinga/status.cgi?host=%s' % (hostvars['icinga_server_web_host'], hostvars['inventory_hostname']))
 
     set_content(ret, "\n".join(lines))
 
