@@ -1,0 +1,7 @@
+# {{ansible_managed}}
+
+enabled = {{"apache" in group_names}}
+
+path = apache
+
+urls = localhost http://localhost:80/server-status?auto
