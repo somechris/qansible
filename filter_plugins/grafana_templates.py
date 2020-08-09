@@ -30,8 +30,6 @@ import json
 import copy
 import re
 
-MAX_CPU=900
-
 # timepicker.time_options are not picked up by Grafana. The seem to be
 # hard-coded in the version we use. But Grafana examples configure
 # that setting. So we follow that lead. Hopefully it will get picked
@@ -297,28 +295,9 @@ def grafana_add_row_overview(dashboard, host, cpu_count=False, repeated=False, c
     update_dict(row, {
             "panels": [
 #TODO: importieren:                grafana_panel_load(host, span=span, cpu_count=cpu_count),
-                grafana_panel_cpu(host, span=span),
+#TODO: importieren:                grafana_panel_cpu(host, span=span),
                 grafana_panel_memory(host, span=span),
                 grafana_panel_network_bytes(host, span=span, title='Network'),
-                ],
-            })
-    return add_row(dashboard, row)
-
-
-def grafana_add_row_cpu(dashboard, host, repeated=False, collapse=True):
-    span = 3
-    title = 'CPU'
-    row = get_default_row(title, host, repeated, collapse)
-    update_dict(row, {
-            "panels": [
-                grafana_panel_cpu_kind(host, 'user', '#7EB26D', span=span),
-                grafana_panel_cpu_kind(host, 'nice', '#EAB839', span=span),
-                grafana_panel_cpu_kind(host, 'system', '#6ED0E0', span=span),
-                grafana_panel_cpu_kind(host, 'iowait', '#BA43A9', span=span),
-                grafana_panel_cpu_kind(host, 'irq', '#E24D42', span=span),
-                grafana_panel_cpu_kind(host, 'softirq', '#1F78C1', span=span),
-                grafana_panel_cpu_kind(host, 'steal', '#0A50A1', span=span),
-                grafana_panel_cpu_kind(host, 'idle', '#3F2B5B', span=span),
                 ],
             })
     return add_row(dashboard, row)
@@ -643,46 +622,6 @@ def grafana_panel_processes_both(host, span=3):
     add_metric(ret, host, 'loadavg.processes_running', 'running')
     add_metric(ret, host, 'loadavg.processes_total', 'total')
 
-    return ret
-
-
-def grafana_panel_cpu(host, span=3):
-    title = "CPU %"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'cpu.total.user')
-    add_metric(ret, host, 'cpu.total.nice')
-    add_metric(ret, host, 'cpu.total.system')
-    add_metric(ret, host, 'cpu.total.iowait')
-    add_metric(ret, host, 'cpu.total.irq')
-    add_metric(ret, host, 'cpu.total.softirq')
-    add_metric(ret, host, 'cpu.total.steal')
-    add_metric(ret, host, 'cpu.total.idle')
-
-    set_yaxis_units(ret, "percent")
-    set_yaxis_maximum(ret, 'left', MAX_CPU) # Add max to limit effect of outliers.
-    set_stacked_mode(ret)
-    set_colors(ret, {
-            "idle": "#3F2B5B",
-            "iowait": "#BA43A9",
-            "softirq": "#1F78C1",
-            "steal": "#0A50A1",
-            })
-    return ret
-
-
-def grafana_panel_cpu_kind(host, kind, color, span=3):
-    title = kind
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'cpu.total.%s' % kind)
-
-    set_yaxis_units(ret, "percent")
-    set_yaxis_maximum(ret, 'left', MAX_CPU) # Add max to limit effect of outliers.
-    set_stacked_mode(ret)
-    set_colors(ret, {
-            kind: color,
-            })
     return ret
 
 
@@ -1259,7 +1198,6 @@ FILTERS = {
     'grafana_add_rows_website': grafana_add_rows_website,
     'grafana_add_row_overview': grafana_add_row_overview,
     'grafana_add_row_host_metadata': grafana_add_row_host_metadata,
-    'grafana_add_row_cpu': grafana_add_row_cpu,
     'grafana_add_row_memory': grafana_add_row_memory,
     'grafana_add_row_processes': grafana_add_row_processes,
     'grafana_add_row_disk': grafana_add_row_disk,
