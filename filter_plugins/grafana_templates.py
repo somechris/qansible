@@ -288,18 +288,6 @@ def grafana_add_rows_website(dashboard, host, engine, website, aspect=None, timi
     return dashboard
 
 
-def grafana_add_row_host_metadata(dashboard, host, hostvars, repeated=False, collapse=True):
-    span = 12
-    title = 'Metadata'
-    row = get_default_row(title, host, repeated, collapse)
-    update_dict(row, {
-            "panels": [
-                grafana_panel_host_metadata(host, hostvars, span=span),
-                ],
-            })
-    return add_row(dashboard, row)
-
-
 def grafana_add_row_disk(dashboard, host, repeated=False, collapse=True):
     span = 4
     title = 'Disk I/O'
@@ -498,45 +486,6 @@ def grafana_add_row_website_timing_method_details(dashboard, host, engine, websi
                 ],
             })
     return add_row(dashboard, row) if add else dashboard
-
-
-def grafana_panel_host_metadata(host, hostvars, span=12):
-    title = "Metadata"
-    ret = get_default_text(title, span)
-
-    lines = []
-
-    def add_line(line):
-        lines.append(line)
-
-    def add_separator():
-        add_line('')
-
-    def add_kv(key, value):
-        add_line('| %s | %s |' % (key, value))
-
-    def add_kvk(key, value_key):
-        add_kv(key, hostvars[value_key])
-
-    def add_link(name, src):
-        add_separator()
-        add_line('[%s](%s)' % (name, src))
-
-    add_line('# %s' % (hostvars['inventory_hostname']))
-
-    add_separator()  # --------------------------
-
-    add_kv('Key', 'Value')
-    add_kv('---', '---')
-    add_kvk('Name', 'inventory_hostname')
-
-    add_separator()  # --------------------------
-
-    add_link('This host in Icinga', 'https://%s/cgi-bin/icinga/status.cgi?host=%s' % (hostvars['icinga_server_web_host'], hostvars['inventory_hostname']))
-
-    set_content(ret, "\n".join(lines))
-
-    return ret
 
 
 def grafana_panel_time_sync(host, span=3):
@@ -1024,7 +973,6 @@ FILTERS = {
     'grafana_add_rows_apache': grafana_add_rows_apache,
     'grafana_add_rows_nginx': grafana_add_rows_nginx,
     'grafana_add_rows_website': grafana_add_rows_website,
-    'grafana_add_row_host_metadata': grafana_add_row_host_metadata,
     'grafana_add_row_disk': grafana_add_row_disk,
     'grafana_add_row_time': grafana_add_row_time,
     'grafana_add_row_graphite': grafana_add_row_graphite,
