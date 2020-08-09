@@ -33,6 +33,7 @@
   with_items:
     - ProxyBulkFile
     - ProxyCPU
+    - ProxyLoadAverage
     - ProxyMemory
   notify:
     reload diamond
@@ -48,6 +49,7 @@
     - DiskUsage
     - ProxyBulkFile
     - ProxyCPU
+    - ProxyLoadAverage
     - ProxyMemory
   notify:
     reload diamond
