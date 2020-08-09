@@ -13,6 +13,7 @@ sysadmin_email_address: 'sysadmin@{{company_email_domain}}'
 webmaster_email_address: 'webmaster@{{company_email_domain}}'
 
 qhost_distribution: '{{ansible_distribution | default("Unknown")}}'
+qhost_cpus: '{{ansible_processor_vcpus | default(1)}}'
 
 admin_user: admin
 

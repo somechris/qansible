@@ -4,8 +4,8 @@
    tags = [ "host", inventory_hostname_short ] + group_names,
    )
   | grafana_add_row_host_metadata(inventory_hostname_short, hostvars[inventory_hostname])
-  | grafana_add_row_overview(inventory_hostname_short, cpu_count=ansible_processor_vcpus, collapse=False)
-  | grafana_add_row_load(inventory_hostname_short, cpu_count=ansible_processor_vcpus)
+  | grafana_add_row_overview(inventory_hostname_short, cpu_count=qhost_cpus, collapse=False)
+  | grafana_add_row_load(inventory_hostname_short, cpu_count=qhost_cpus)
   | grafana_add_row_cpu(inventory_hostname_short)
   | grafana_add_row_processes(inventory_hostname_short)
   | grafana_add_row_disk(inventory_hostname_short)
