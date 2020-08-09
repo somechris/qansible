@@ -288,23 +288,6 @@ def grafana_add_rows_website(dashboard, host, engine, website, aspect=None, timi
     return dashboard
 
 
-def grafana_add_row_disk(dashboard, host, repeated=False, collapse=True):
-    span = 4
-    title = 'Disk I/O'
-    row = get_default_row(title, host, repeated, collapse)
-    update_dict(row, {
-            "panels": [
-                grafana_panel_diskspace_bytes(host, span=span),
-                grafana_panel_diskspace_percent(host, span=span),
-                grafana_panel_iostat_queue_length(host, span=span),
-                grafana_panel_iostat_iops(host, span=span),
-                grafana_panel_iostat_throughput(host, span=span),
-                grafana_panel_iostat_waiting(host, span=span),
-                ],
-            })
-    return add_row(dashboard, row)
-
-
 def grafana_add_row_time(dashboard, host, repeated=False, collapse=True):
     span = 3
     title = 'Time'
@@ -524,87 +507,6 @@ def grafana_panel_time_difference(host, span=3):
 
     set_yaxis_minimum(ret, 'left', None)
     set_yaxis_units(ret, left='s')
-
-    return ret
-
-
-def grafana_panel_diskspace_bytes(host, span=4):
-    title = "Disk bytes available"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, "diskspace.*.byte_avail", [-2])
-
-    set_yaxis_units(ret, "bytes")
-
-    return ret
-
-
-def grafana_panel_diskspace_percent(host, span=4):
-    title = "Disk % free"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, "diskspace.*.byte_percentfree", [-2])
-
-    set_yaxis_units(ret, "percent")
-
-    return ret
-
-
-def grafana_panel_iostat_queue_length(host, span=4):
-    title = "Avg. Queue length"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, "iostat.*.average_queue_length", [-2])
-
-    return ret
-
-
-def grafana_panel_iostat_iops(host, span=4):
-    title = "IOPS"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'iostat.*.reads_per_second', {
-            'kind': 'sub',
-            'match': "^.*\\.([^.]*)\\.([^._]*)_[^.]*$",
-            'replacement': "\\1 \\2"})
-    add_metric(ret, host, 'iostat.*.writes_per_second', {
-            'kind': 'sub',
-            'match': "^.*\\.([^.]*)\\.([^._]*)_[^.]*$",
-            'replacement': '\\1 \\2'})
-
-    return ret
-
-
-def grafana_panel_iostat_throughput(host, span=4):
-    title = "Disk throughput"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, "iostat.*.read_byte_per_second", {
-            'kind': 'sub',
-            'match': "^.*\\.([^.]*)\\.([^._]*)_[^.]*$",
-            'replacement': "\\1 \\2"})
-    add_metric(ret, host, "iostat.*.write_byte_per_second", {
-            'kind': 'sub',
-            'match': "^.*\\.([^.]*)\\.([^._]*)_[^.]*$",
-            'replacement': "\\1 \\2"})
-
-    set_yaxis_units(ret, "Bps")
-
-    return ret
-
-
-def grafana_panel_iostat_waiting(host, span=4):
-    title = "IO awaits"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'iostat.*.read_await', {
-            'kind': 'sub',
-            'match': "^.*\\.([^.]*)\\.([^._]*)_[^.]*$",
-            'replacement': "\\1 \\2"})
-    add_metric(ret, host, 'iostat.*.write_await', {
-            'kind': 'sub',
-            'match': "^.*\\.([^.]*)\\.([^._]*)_[^.]*$",
-            'replacement': "\\1 \\2"})
 
     return ret
 
@@ -973,7 +875,6 @@ FILTERS = {
     'grafana_add_rows_apache': grafana_add_rows_apache,
     'grafana_add_rows_nginx': grafana_add_rows_nginx,
     'grafana_add_rows_website': grafana_add_rows_website,
-    'grafana_add_row_disk': grafana_add_row_disk,
     'grafana_add_row_time': grafana_add_row_time,
     'grafana_add_row_graphite': grafana_add_row_graphite,
     'grafana_add_row_apache': grafana_add_row_apache,
