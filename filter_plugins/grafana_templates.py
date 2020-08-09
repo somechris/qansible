@@ -296,23 +296,8 @@ def grafana_add_row_overview(dashboard, host, cpu_count=False, repeated=False, c
             "panels": [
 #TODO: importieren:                grafana_panel_load(host, span=span, cpu_count=cpu_count),
 #TODO: importieren:                grafana_panel_cpu(host, span=span),
-                grafana_panel_memory(host, span=span),
+#TODO: importieren:                grafana_panel_memory(host, span=span),
                 grafana_panel_network_bytes(host, span=span, title='Network'),
-                ],
-            })
-    return add_row(dashboard, row)
-
-
-def grafana_add_row_memory(dashboard, host, repeated=False, collapse=True):
-    span = 3
-    title = 'Memory'
-    row = get_default_row(title, host, repeated, collapse)
-    update_dict(row, {
-            "panels": [
-                grafana_panel_memory_kind(host, 'used', span=span),
-                grafana_panel_memory_kind(host, 'Buffers', color='#1F78C1', span=span),
-                grafana_panel_memory_kind(host, 'Cached', color='#0A50A1', span=span),
-                grafana_panel_memory_kind(host, 'MemFree', label='Free', color='#3F2B5B', span=span),
                 ],
             })
     return add_row(dashboard, row)
@@ -621,55 +606,6 @@ def grafana_panel_processes_both(host, span=3):
 
     add_metric(ret, host, 'loadavg.processes_running', 'running')
     add_metric(ret, host, 'loadavg.processes_total', 'total')
-
-    return ret
-
-
-def grafana_panel_memory(host, span=3):
-    title = "Memory"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, ['memory.MemTotal', '#B', '#C', '#D'], 'Used w/o Buffers and Cache', sum='diff')
-    add_metric(ret, host, 'memory.Buffers')
-    add_metric(ret, host, 'memory.Cached')
-    add_metric(ret, host, 'memory.MemFree', 'Free')
-
-    set_stacked_mode(ret)
-    set_yaxis_units(ret, "bytes")
-    set_colors(ret, {
-            "Buffers": "#1F78C1",
-            "Cached": "#0A50A1",
-            "Free": "#3F2B5B",
-            })
-
-    return ret
-
-
-def grafana_panel_memory_kind(host, metric, label=None, color=None, span=3):
-    if metric == 'used':
-        title = 'Used w/o Buffers and Cache'
-        label = title
-    elif label:
-        title = label
-    else:
-        title = metric
-        label = title
-    ret = get_default_graph(title, span)
-
-    if metric == 'used':
-        add_metric(ret, host, ['memory.MemTotal', '#B', '#C', '#D'], label, sum='diff')
-        add_metric(ret, host, 'memory.Buffers', visible=False)
-        add_metric(ret, host, 'memory.Cached', visible=False)
-        add_metric(ret, host, 'memory.MemFree', visible=False)
-    else:
-        add_metric(ret, host, 'memory.%s' % metric, label)
-
-    set_stacked_mode(ret)
-    set_yaxis_units(ret, "bytes")
-    if color:
-        set_colors(ret, {
-                label: color
-                })
 
     return ret
 
@@ -1198,7 +1134,6 @@ FILTERS = {
     'grafana_add_rows_website': grafana_add_rows_website,
     'grafana_add_row_overview': grafana_add_row_overview,
     'grafana_add_row_host_metadata': grafana_add_row_host_metadata,
-    'grafana_add_row_memory': grafana_add_row_memory,
     'grafana_add_row_processes': grafana_add_row_processes,
     'grafana_add_row_disk': grafana_add_row_disk,
     'grafana_add_row_network': grafana_add_row_network,
