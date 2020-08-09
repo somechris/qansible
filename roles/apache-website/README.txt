@@ -67,6 +67,14 @@ No Globals that are specific only for this role.
      ldap-group and the htpasswd will fail to authorize. But if `/foo` would
      also rely on a htpasswd or if `/foo/bar` would rely on an ldap-group (so
      both `/foo` and `/foo/bar` are on the same backend, users can log in.
+   * `auth_merging`: (Default: And) How auth requirements trickle down to
+     defined sublocations. So if for example location `/foo` and `/foo/bar` both
+     define Requires (ldap-groups, net-accesses, ...), this setting defines how
+     these Requires affect urls under `/foo/bar`. If `And`, the requirements of
+     both `/foo` and `/foo/bar` have to hold to get access underneath
+     `/foo/bar`.  If `Or`, the requirements of both `/foo` or `/foo/bar` have to
+     hold to get access underneath `/foo/bar`. If `Off`, the requirements on
+     `/foo` are ignored and only the requirements of `/foo/bar` are relevant.
    * `cors`: (Default: ``) (Optional) If `allow-all-simple`, white-list simple
      requests through CORS.
    * `deny`: (Default: False) (Optional) If True, unconditionally deny

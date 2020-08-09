@@ -86,11 +86,9 @@ does not start in 'WSGI'
 {%         endif %}
 
   <Location{{location_suffix}} "{{location_start_extra}}{{location['name']}}">
-    AuthMerging And
-{# ^^^^ makes sure that an ldap-groups (i.e.: Require) on /foo/bar does to    #}
-{# reset the net_accesses (i.e.: also Require) set on /foo. With              #}
-{# `AuthMerging And` both the ldap-groups and the net-accesses apply to       #}
-{# /foo/bar. #}
+    AuthMerging {{location['auth_merging'] | default('And') | string | replace_if_whole_string_matches('False', 'Off') | replace_if_whole_string_matches('True', 'And')}}
+{# ^ If users supply 'Off', Ansible translates it to False. So we need to #}
+{# fix up manually. :-/                                                   #}
 {%         if (location['auth'] is defined) %}
     AuthType basic
     AuthName "{{apache_website_domain}}"

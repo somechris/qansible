@@ -11,5 +11,6 @@ dependencies:
     apache_website_net_accesses: []
     apache_website_locations:
       - name: /server-status
+        auth_merging: Off
         expose_server_status: True
         net_accesses: ['loopback']
