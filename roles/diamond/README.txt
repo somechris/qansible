@@ -37,6 +37,11 @@ No Globals that are specific only for this role.
 * `diamond_collector_conf_dir`: Directory to store collector configs in.
 * `diamond_collector_conf_extension`: File extension used for files within
   `diamond_collector_conf_dir`.
+* `diamond_custom_collectors`: List of extra collectors to install and
+  configure.
+* `diamond_custom_collector_configs`: List of collectors that have extra
+  configuration injected. (Elements of `diamond_custom_collectors` will get
+  merged in, so you do not need to add them here)
 * `diamond_effective_log_dir`: Directory where logs effectively get stored in.
 * `diamond_metric_proxy_hosts`: (Default: []) Hosts to proxy metrics for.
 * `diamond_log_dir`: Directory proccesses will write logs to.

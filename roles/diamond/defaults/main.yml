@@ -30,3 +30,10 @@ diamond_common_role_tasks_config:
     - {command: 'python', argument: '/usr/bin/diamond'}
 
 diamond_metric_proxy_hosts: []
+diamond_custom_collectors:
+    - ProxyBulkFile
+    - ProxyCPU
+    - ProxyLoadAverage
+    - ProxyMemory
+diamond_custom_collector_configs:
+    - DiskUsage

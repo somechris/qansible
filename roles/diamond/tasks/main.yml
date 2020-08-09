@@ -30,11 +30,7 @@
     owner: root
     group: root
     mode: 0444
-  with_items:
-    - ProxyBulkFile
-    - ProxyCPU
-    - ProxyLoadAverage
-    - ProxyMemory
+  with_items: '{{diamond_custom_collectors}}'
   notify:
     reload diamond
 
@@ -45,12 +41,7 @@
     owner: root
     group: root
     mode: 0444
-  with_items:
-    - DiskUsage
-    - ProxyBulkFile
-    - ProxyCPU
-    - ProxyLoadAverage
-    - ProxyMemory
+  with_items: '{{diamond_custom_collectors + diamond_custom_collector_configs}}'
   notify:
     reload diamond
 
