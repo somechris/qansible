@@ -1,0 +1,742 @@
+# {{ansible_managed}}
+{# lint-ignore: time_local is an nginx variable and not from our `time` role #}
+"""
+Gathers information from plain log files (E.g.: Per method and per
+http status metrics from webserver logs, like Apache Http, or Nginx).
+
+An example config file looks like:
+```
+enabled = True
+path = logs
+default_format = lines
+
+[files]
+
+[[some-file]]
+file_name = /var/log/apache2/access.log
+format = web:req_v2
+prefix = foo
+
+[[some-other-file]]
+file_name = /var/log/apache2/access.log
+format = lines
+prefix = bar
+```
+
+If `default_format` is omitted, `web:req_v2` is assumed.
+
+The `[files]` section can have arbitrarily many subsections. Each such
+subsection specifies a file to monitor.
+
+In a subsection `file_name` holds the file name to monitor, `format`
+holds the file's expected format (see below), and `prefix` holds the
+name to publish the metrics under.
+
+If `file_name` is omitted, it defaults to the subsection name (i.e.:
+`some-file`, resp. `some-other-file` in the example config above).
+
+If `format` is omitted, it defaults to the `default_format`.
+
+If `prefix` is omitted, it defaults to the file name (with `.` and `-`
+replaced by `_`).
+
+#### Available formats
+
+##### `web:req_v2` format
+
+The `web:req_v2` format parses statistics (including per method and
+per http status counts) from access log files req_v2 format from
+Apache Http, and Nginx.
+
+For each of
+
+* `total`: overall requests
+* `method.<METHOD>`: requests using the method `<METHOD>` (where `<METHOD>`
+   are all http methods, like `GET`, `PUT`, ...)
+* `method.unparsable`: requests where the method could not get parsed
+* `status.<STATUS>`: requests having HTTP status code `<STATUS>` (where
+  `<STATUS>` are `200`, `206`, `301`, `302`, `303`, `304`, `404`,
+  `500`, `501`, `502`, `503`, `504`)
+* `status.unparsable`: requests where the status could not get parsed
+
+the metrics:
+
+* `count`: Number of requests
+* `size.average`: Average size of the line's size field
+* `size.unparsable`: Number of requests with unparsable size field
+
+are published.
+
+Additionally, if the status got parsed, a metric with the status gets
+published (e.g.: `status.503` for a request resulting in a `503` Http
+status code), and a metric with collecting by group (e.g.:
+`status.5xx` for a request resulting in a `503` Http status code).
+
+Finally, the following metrics get published:
+* `ssl.protocol.<PROTOCOL>.count`: Number of requests on SSL/TLS
+  protocol. (Identification depends on log line being in req_v2
+  format)
+* `ssl.ciphersuite.<CIPHERSUITE>.count`: Number of requests using a ciphersuite
+  suite. (Identification depends on log line being in req_v2 format)
+* `ssl.client_serial.<SERIAL>.count`: Number of requests from a client
+  certificat. having a given serial number. (Identification depends on
+  log line being in req_v2 format)
+* `user.<USERNAME>.count`: Number of requests from the given username
+  (Identification depends on log line being in req_v2 format)
+
+Web servers on this Ansible setup typically come the `req_v2` format
+pre-configured and use it per default. If it does not work out, you
+can use the following configs to force the format:
+
+* Apache Http
+
+  ```
+  LogFormat "req_v2 %{{'{'}}%Y-%m-%dT%H:%M:%S}t+00:00 %h %>s %O %D %{{'{'}}SSL_PROTOCOL}x %{{'{'}}SSL_CIPHER}x %{{'{'}}SSL_CLIENT_M_SERIAL}x \"%u\" \"%r\" \"%{Referer}i\" \"%{X-Forwarded-For}i\" \"%{User-Agent}i\"" req_v2
+  CustomLog ${APACHE_LOG_DIR}/access.log req_v2
+  ```
+
+  See Apache's [LogFormat](https://httpd.apache.org/docs/2.4/mod/mod_log_config.html#logformat),
+  and [CustomLog](https://httpd.apache.org/docs/2.4/mod/mod_log_config.html#customlog) directives.
+
+  In the LogCollector, set the option
+
+  ```
+  duration_scale = microseconds
+  ```
+
+  for the log file.
+
+* Nginx
+
+  This Nginx section is outdated. We leave it around to give users a
+  starting point. But this is not up-to-date.
+
+  ```
+  access_log /var/log/nginx/access.log req_v2;
+  ```
+
+  See Nginx's [log_format](http://nginx.org/en/docs/http/ngx_http_log_module.html#log_format)
+  and [access_log](http://nginx.org/en/docs/http/ngx_http_log_module.html#access_log).
+
+  To also get metrics for the duration, define a log format in your
+  nginx config that contains the request duration, like
+
+  ```
+  log_format req_v2_w_time '$remote_addr - $remote_user [$time_local] '
+                    '"$request" $status $body_bytes_sent '
+                    '"$http_referer" "$http_user_agent" $request_time';
+  ```
+
+  and use in your site like:
+
+  ```
+  access_log /var/log/nginx/access.log req_v2_w_time;
+  ```
+
+  and in the LogCollector, set the option
+
+  ```
+  duration_scale = seconds
+  ```
+
+  for the log file.
+
+
+
+##### `java:log` format
+
+The `java:log` format tries to parse and count log levels from log files.
+
+This format publishes the following metrics per file
+
+* `total.count`: The number of lines
+* `unparsable.count`: The number of lines where no log level was found
+* `<LEVEL>.count`: The number of lines in log level <LEVEL>, where <LEVEL>
+  is any of `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`.
+  If levels starting in `jul:` are found, they are considered log
+  lines from JUL, and they get counted against their name with `jul`
+  prefixes. So for example `jul_INFORMATION`, `jul_SEVERE`.
+  If levels starting in `logback:` are found, they are considered log
+  lines from logback, and they get counted against their name with `logback`
+  prefixes. So for example `logback_ERROR`, `logback_INFO`.
+
+
+
+##### `python:log` format
+
+The `python:log` format tries to parse and count log levels from Python log
+files.
+
+This format publishes the following metrics per file
+
+* `total.count`: The number of lines
+* `unparsable.count`: The number of lines where no log level was found
+* `<LEVEL>.count`: The number of lines in log level <LEVEL>, where <LEVEL>
+  is any of `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`.
+
+
+
+##### `lines` format
+
+The `lines` format parses line count and average line length
+statistics from any text file.
+
+This format publishes the following metrics per file
+
+* `total.count`: The number of lines
+* `total.length.average`: Average line length
+
+
+#### Log rotation
+Upon log rotation, the open file is read to the end, and then the file
+is reopened. If you logrotate twice between two runs, the collector
+does not see the file from the first rotation, and cannot pick it
+up. Hence make sure that this collector is run at least once per
+rotation.
+
+As log rotation typically happens in the scale of days while diamond
+runs typically happen in the scale of seconds/minutes, the above
+condition is typically trivially met.
+"""  # noqa
+
+import diamond.collector
+import os
+
+from math import ceil
+
+
+HTTP_METHODS = [
+    'OPTIONS',
+    'GET',
+    'HEAD',
+    'POST',
+    'PUT',
+    'DELETE',
+    'TRACE',
+    'CONNECT',
+    ]
+HTTP_STATUS_CODES = [
+    200,
+    206,
+    301,
+    302,
+    304,
+    404,
+    500,
+    501,
+    502,
+    503,
+    504,
+    ]
+JAVA_LOG_LEVELS = [
+    'FATAL',
+    'ERROR',
+    'WARN',
+    'INFO',
+    'DEBUG',
+    'TRACE',
+]
+JAVA_LOG_JUL_PREFIX = 'jul:'
+JAVA_LOG_LOGBACK_PREFIX = 'logback:'
+
+
+PYTHON_LOG_LEVELS = [
+    'CRITICAL',
+    'ERROR',
+    'WARNING',
+    'INFO',
+    'DEBUG',
+]
+
+
+class LogFacadeFactory(object):
+    def __init__(self):
+        self._default_format = 'web:req_v2'
+
+    def create(self, file_name, options, log):
+        log.info("Setting up reader for %s" % (file_name))
+
+        if 'prefix' in options:
+            prefix = options['prefix']
+            del options['prefix']
+        else:
+            prefix = file_name.replace('.', '_').replace('/', '_')
+
+        if 'format' in options:
+            format = options['format']
+            del options['format']
+        else:
+            format = self._default_format
+
+        if format == 'java:log':
+            return LogFacadeJavaLog(file_name, prefix, log, options)
+        if format == 'python:log':
+            return LogFacadePythonLog(file_name, prefix, log, options)
+        elif format == 'lines':
+            return LogFacadeLines(file_name, prefix, log, options)
+        elif format == 'web:req_v2':
+            return LogFacadeWebReqV2(file_name, prefix, log, options)
+        else:
+            log.error('Unknown log format "%s". Skipping %s' % (
+                format, file_name))
+
+    def set_default_format(self, default_format):
+        self._default_format = default_format
+
+
+class LogFacadeBase(object):
+    def __init__(self, file_name, prefix, log, options):
+        self._file_name = file_name
+        self._prefix = prefix
+        self._options = options
+        self.__line_start = ''
+
+        self.log = log
+
+        self._init_file()
+        if self._file:
+            # We skip to the end of the file, to avoid reading old log
+            # entries.
+            self._file.seek(0, os.SEEK_END)
+
+    def _open_file(self):
+        try:
+            return open(self._file_name, 'rt')
+        except Exception as e:
+            self.log.error(e)
+        return None
+
+    def _init_file(self, file_=None, file_stat=None):
+        self._file = file_ if file_ else self._open_file()
+        if self._file:
+            if not file_stat:
+                file_stat = os.fstat(self._file.fileno())
+            self._file_inode = file_stat.st_ino
+            self._file_size = file_stat.st_size
+        else:
+            self._destruct_file()
+
+    def _destruct_file(self):
+        if self._file:
+            self._file.close()
+            self._file = None
+        self._file_inode = None
+        self._file_size = 0
+
+    def parse_line(self, line):
+        raise NotImplementedError("Override this method with custom logic")
+
+    def get_target_buckets(self, request_parsed):
+        raise NotImplementedError("Override this method with custom logic")
+
+    def get_required_buckets(self):
+        raise NotImplementedError("Override this method with custom logic")
+
+    def get_metrics_for_bucket(self, bucket, items):
+        raise NotImplementedError("Override this method with custom logic")
+
+    def _scoop(self, buckets):
+        try:
+            line = self.__line_start + self._file.readline()
+            while line != '' and line[-1] == '\n':
+                request_parsed = self.parse_line(line)
+
+                target_buckets = self.get_target_buckets(request_parsed)
+
+                for bucket_name in target_buckets:
+                    if bucket_name not in buckets:
+                        buckets[bucket_name] = []
+                    buckets.get(bucket_name).append(request_parsed)
+
+                line = self._file.readline()
+
+            if line == '':
+                self.__line_start = ''
+            else:
+                self.__line_start = line
+        except Exception as e:
+            self._destruct_file()
+            self.log.error(e)
+
+    def get_prefix(self):
+        return self._prefix
+
+    def get_metrics(self):
+        buckets = self.get_required_buckets()
+
+        if not self._file:
+            self._init_file()
+
+        if self._file:
+            self._scoop(buckets)
+
+            # self._file is exhausted at this point. But it may have been
+            # logrotated, so we need to check if we're still on the
+            # current file.
+            reopened_file = self._open_file()
+            if reopened_file:
+                file_stat = os.fstat(reopened_file.fileno())
+                if file_stat.st_ino != self._file_inode or \
+                        file_stat.st_size < self._file_size:
+                    # File got logrotated, so we switch to the new file
+                    self._file.close()
+
+                    self.log.info('Following fresh %s file'
+                                  % (self._file_name))
+                    self._init_file(reopened_file, file_stat)
+
+                    self._scoop(buckets)
+                else:
+                    self._file_size = file_stat.st_size
+                    reopened_file.close()
+            else:
+                self._destruct_file()
+
+        ret = {}
+        for k, v in buckets.items():
+            bucket_metrics = self.get_metrics_for_bucket(k, v)
+            for k2, v2 in bucket_metrics.items():
+                ret[k + '.' + k2] = v2
+        return ret
+
+
+class LogFacadeWebReqV2(LogFacadeBase):
+    """Available options:
+      line_start: Lines that do not start in this string are not considered
+                  log lines. If None, every line is considered a log line.
+                  (Default: None)
+    """
+    def __init__(self, file_name, prefix, log, options):
+        super(LogFacadeWebReqV2, self).__init__(file_name, prefix, log,
+                                                   options)
+        self._duration_scale = options.get('duration_scale', None)
+        if self._duration_scale:
+            self._duration_scale = self._duration_scale.lower()
+        if not self._duration_scale or (
+                self._duration_scale.startswith('no')):
+            self._duration_scale = None
+        elif self._duration_scale.startswith('s'):
+            self._duration_scale = 1000
+        elif self._duration_scale.startswith('mil') or (
+                self._duration_scale.startswith('ms')):
+            self._duration_scale = 1
+        elif self._duration_scale.startswith('mic') or (
+                self._duration_scale.startswith('us')):
+            self._duration_scale = 1./1000
+        else:
+            self.log.error('Could not parse value "%s" for ' +
+                           '"duration_scale". Ignoring duration.' %
+                           (options['duration_scale']))
+        self._line_start = options.get('line_start', None)
+
+    def parse_line(self, line):
+        is_log_line = not self._line_start \
+            or line.startswith(self._line_start)
+        method = 'unparsable'
+        status = 'unparsable'
+        size = 'unparsable'
+        duration = 'unparsable'
+        ssl_protocol = 'unparsable'
+        ssl_ciphersuite = 'unparsable'
+        ssl_client_serial = 'unparsable'
+        user = 'unparsable'
+
+        if is_log_line:
+            if line.startswith('req_v2 '):
+                space_split = line.split(' ')
+                if len(space_split) >= 14 and space_split[9].startswith('"'):
+                    # looks like a good req_v2 line.
+                    quote_split = line.split('"')
+                    try:
+                        method = quote_split[3].split(' ')[0]
+                    except:
+                        pass
+                    status = space_split[3]
+                    size = space_split[4]
+                    duration = space_split[5]
+                    ssl_protocol = space_split[6]
+                    ssl_ciphersuite = space_split[7]
+                    ssl_client_serial = space_split[8]
+                    try:
+                        user = quote_split[1]
+                    except:
+                        pass
+
+            # common cleanup
+            if method not in HTTP_METHODS:
+                method = 'unparsable'
+            try:
+                status = int(status)
+            except ValueError:
+                status = 'unparsable'
+            try:
+                size = int(size)
+            except ValueError:
+                size = 'unparsable'
+            if self._duration_scale:
+                try:
+                    duration = float(duration) * self._duration_scale
+                except ValueError:
+                    duration = 'unparsable'
+            ssl_protocol = ssl_protocol.replace('.', '_')
+            if ssl_protocol == '-':
+                ssl_protocol = 'unparsable'
+            if ssl_ciphersuite == '-':
+                ssl_ciphersuite = 'unparsable'
+            if ssl_client_serial == '-':
+                ssl_client_serial = 'unparsable'
+            user = user.replace('.', '_')
+            if user == '-':
+                user = 'unparsable'
+
+        return {
+            'is_log_line': is_log_line,
+            'method': method,
+            'status': status,
+            'size': size,
+            'duration': duration,
+            'ssl_protocol': ssl_protocol,
+            'ssl_ciphersuite': ssl_ciphersuite,
+            'ssl_client_serial': ssl_client_serial,
+            'user': user,
+            }
+
+    def get_target_buckets(self, request_parsed):
+        if request_parsed['is_log_line']:
+            buckets = [
+                'total',
+                'method.' + request_parsed['method'],
+                'status.' + str(request_parsed['status']),
+                'ssl.protocol.' + request_parsed['ssl_protocol'],
+                'ssl.ciphersuite.' + request_parsed['ssl_ciphersuite'],
+                'ssl.client_serial.' + request_parsed['ssl_client_serial'],
+                'user.' + request_parsed['user'],
+                ]
+
+            if request_parsed['status'] != 'unparsable':
+                group_name = str(int(request_parsed['status'])/100) + 'xx'
+                buckets.append('status.' + group_name)
+        else:
+            buckets = ['non_log_lines']
+        return buckets
+
+    def get_required_buckets(self):
+        buckets = {
+            'total': [],
+            'method.unparsable': [],
+            'status.unparsable': [],
+            }
+        for method in HTTP_METHODS:
+            buckets['method.'+method] = []
+        for status in HTTP_STATUS_CODES:
+            buckets['status.'+str(status)] = []
+        for status in range(1, 6):
+            buckets['status.'+str(status)+'xx'] = []
+        return buckets
+
+    def get_metrics_for_bucket(self, bucket, items):
+        ret = {}
+        ret['count'] = len(items)
+        if bucket != 'non_log_lines' and not bucket.startswith('ssl.') \
+                and not bucket.startswith('user.'):
+            int_sizes = [request['size']
+                         for request in items
+                         if isinstance(request['size'], int)]
+            n_items = len(items)
+            ret['size.average'] = (sum(int_sizes) / n_items) if n_items else 0
+            ret['size.unparsable'] = n_items - len(int_sizes)
+            if (self._duration_scale):
+                durations = [item['duration']
+                             for item in items
+                             if isinstance(item['duration'], float)]
+                durations.sort()
+
+                n_durations = len(durations)
+                if n_durations:
+                    ret['duration.q01'] = int(durations[int(
+                        ceil(1. * n_durations / 100.) - 1)])
+                    ret['duration.q05'] = int(durations[int(
+                        ceil(5. * n_durations / 100.) - 1)])
+                    ret['duration.q50'] = int(durations[int(
+                        ceil(50. * n_durations / 100.) - 1)])
+                    ret['duration.q95'] = int(durations[int(
+                        ceil(95. * n_durations / 100.) - 1)])
+                    ret['duration.q99'] = int(durations[int(
+                        ceil(99. * n_durations / 100.) - 1)])
+                    ret['duration.average'] = int(sum(durations) / n_durations)
+                    ret['duration.unparsable'] = n_items - n_durations
+        return ret
+
+
+class LogFacadeLines(LogFacadeBase):
+    """Interpret logs as lines
+
+    Available metrics:
+    * total.count: The number of lines
+    * total.length.average: Average line length
+    """
+    def __init__(self, file_name, prefix, log, options):
+        super(LogFacadeLines, self).__init__(file_name, prefix, log,
+                                             options)
+
+    def parse_line(self, line):
+        return len(line)
+
+    def get_target_buckets(self, request_parsed):
+        return ['total']
+
+    def get_required_buckets(self):
+        return {'total': []}
+
+    def get_metrics_for_bucket(self, bucket, items):
+        ret = {}
+        n_items = len(items)
+        ret['count'] = n_items
+        ret['length.average'] = (sum(items) / n_items) if n_items else 0
+        return ret
+
+
+class LogFacadeStandardLog(LogFacadeBase):
+    """Interpret logs as being a standard log format
+
+    Available options:
+      line_start: Lines that do not start in this string are considered
+                  unparsable. (Default: '201')
+      level_start: Index into the line, where to start looking for the log
+                   level (Default: 24)
+      level_end: Index into the line, where to end looking for the log level
+                 (Default: 32)
+
+    Available metrics:
+    * total.count: The number of lines
+    * $LEVEL.count: The number lines for each of the required levels.
+    * unparsable.count: The number of unparsable lines
+    """
+    def __init__(self, file_name, prefix, log, options, required_levels=[]):
+        super(LogFacadeStandardLog, self).__init__(file_name, prefix, log,
+                                                   options)
+        self._line_start = options.get('line_start', '201')
+        self._level_start = int(options.get('level_start', 24))
+        self._level_end = int(options.get('level_end', 32))
+
+        self._required_levels = required_levels
+
+    def parse_line(self, line):
+        level = None
+
+        # Quick test to sieve out mismatches early
+        # This quick test shaves off 10% runtime on our files
+        if line.startswith(self._line_start):
+            line_level_start = line[self._level_start:self._level_end]
+            line_level = line_level_start.split(' ', 1)[0]
+            if line_level in self._required_levels:
+                level = line_level
+            else:
+                level = self.parse_unknown_level(line_level, line)
+
+        if not level:
+            level = "unparsable"
+
+        return {'level': level}
+
+    def parse_unknown_level(line_level, line):
+        return None
+
+    def get_target_buckets(self, request_parsed):
+        return ['total', request_parsed['level']]
+
+    def get_required_buckets(self):
+        ret = {'total': [], 'unparsable': []}
+        for level in self._required_levels:
+            ret[level] = []
+        return ret
+
+    def get_metrics_for_bucket(self, bucket, items):
+        ret = {}
+        ret['count'] = len(items)
+        return ret
+
+
+class LogFacadeJavaLog(LogFacadeStandardLog):
+    """Interpret logs as Java log lines
+
+    Available options: (same as LogFacadeStandardLog)
+
+    Available metrics:
+    * total.count: The number of lines
+    * $LEVEL.count: The number lines for each JAVA_LOG_LEVELS, and additionally
+      for all JUL and LogBack levels.
+    * unparsable.count: The number of unparsable lines
+    """
+    def __init__(self, file_name, prefix, log, options):
+        super(LogFacadeJavaLog, self).__init__(file_name, prefix, log,
+                                               options, JAVA_LOG_LEVELS)
+
+    def parse_unknown_level(self, line_level, line):
+        level = None
+        if line_level.startswith(JAVA_LOG_JUL_PREFIX) \
+                or line_level.startswith(JAVA_LOG_LOGBACK_PREFIX):
+            level_start = line[self._level_start:].strip()
+            level = level_start.split(' ', 1)[0].replace(':', '_')
+        return level
+
+
+class LogFacadePythonLog(LogFacadeStandardLog):
+    """Interpret logs as Python log lines
+
+    Available options: (same as LogFacadeStandardLog)
+
+    Available metrics:
+    * total.count: The number of lines
+    * $LEVEL.count: The number lines for each PYTHON_LOG_LEVELS
+    * unparsable.count: The number of unparsable lines
+    """
+    def __init__(self, file_name, prefix, log, options):
+        super(LogFacadePythonLog, self).__init__(file_name, prefix, log,
+                                                 options, PYTHON_LOG_LEVELS)
+
+
+class LogCollector(diamond.collector.Collector):
+    def process_config(self):
+        super(LogCollector, self).process_config()
+        factory = LogFacadeFactory()
+
+        if 'default_format' in self.config:
+            factory.set_default_format(self.config['default_format'])
+
+        self._facades = []
+        for file_name, options in self.config.get('files', {}).items():
+            if 'file_name' in options:
+                file_name = options['file_name']
+                del options['file_name']
+            self._facades.append(factory.create(file_name, options, self.log))
+
+    def get_default_config_help(self):
+        config_help = super(LogCollector, self).get_default_config_help()
+        config_help.update({
+            'default_format':
+                'The default format used to read files, if they do not ' +
+                'specify their own format. (Default: `web:req_v2`)',
+            'files':
+                'The files to parse. Each file is specified in a ' +
+                'separate subsection. (See description at the top for ' +
+                'examples)',
+        })
+        return config_help
+
+    def get_default_config(self):
+        config = super(LogCollector, self).get_default_config()
+        config.update({
+            'path': 'log',
+            'default_format:': 'web:req_v2',
+            'files': [],
+        })
+        return config
+
+    def collect(self):
+        for facade in self._facades:
+            prefix = facade.get_prefix()
+            if prefix:
+                prefix += '.'
+            for k, v in facade.get_metrics().items():
+                self.publish(prefix + k, v)

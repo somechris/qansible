@@ -31,6 +31,7 @@ diamond_common_role_tasks_config:
 
 diamond_metric_proxy_hosts: []
 diamond_custom_collectors:
+    - Log
     - ModdedHttpd
     - ProxyBulkFile
     - ProxyCPU

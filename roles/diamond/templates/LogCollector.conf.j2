@@ -1,0 +1,38 @@
+# {{ansible_managed}}
+
+enabled = {{"apache" in group_names}}
+
+path = logs
+
+default_format = lines
+
+[files]
+
+{% for server in [ {'name': 'apache', 'sites': apache_websites, 'log_path': 'apache2', 'scale': 'microseconds'},
+                  ] %}
+{%   for site in server['sites'] %}
+{%     for access in [ {'port': 80, 'name': 'http'},
+                       {'port': 443, 'name': 'https'}
+                       ]
+%}
+[[/var/log/{{server.log_path}}/{{site}}/{{access['port']}}_access.log]]
+file_name = /var/log/{{server.log_path}}/{{site}}/{{access['port']}}_access.log
+format = web:req_v2
+prefix = {{server['name']}}.{{site | regex_replace('[.-]', '_')}}.{{access['name']}}
+duration_scale = {{server['scale']}}
+
+{%     endfor %}
+{%   endfor %}
+{%   if server['name'] == 'apache' and "apache" in group_names%}
+[[/var/log/{{server.log_path}}/access.log]]
+file_name = /var/log/{{server.log_path}}/access.log
+format = web:req_v2
+prefix = {{server['name']}}.fallback
+
+[[/var/log/{{server.log_path}}/other_vhosts_access.log]]
+file_name = /var/log/{{server.log_path}}/other_vhosts_access.log
+format = web:req_v2
+prefix = {{server['name']}}.other_vhosts
+
+{%   endif %}
+{% endfor %}
