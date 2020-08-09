@@ -300,20 +300,6 @@ def grafana_add_row_host_metadata(dashboard, host, hostvars, repeated=False, col
     return add_row(dashboard, row)
 
 
-def grafana_add_row_processes(dashboard, host, repeated=False, collapse=True):
-    span = 4
-    title = 'Processes'
-    row = get_default_row(title, host, repeated, collapse)
-    update_dict(row, {
-            "panels": [
-                grafana_panel_processes_running(host, span=span),
-                grafana_panel_processes_total(host, span=span),
-                grafana_panel_processes_both(host, span=span),
-                ],
-            })
-    return add_row(dashboard, row)
-
-
 def grafana_add_row_disk(dashboard, host, repeated=False, collapse=True):
     span = 4
     title = 'Disk I/O'
@@ -549,34 +535,6 @@ def grafana_panel_host_metadata(host, hostvars, span=12):
     add_link('This host in Icinga', 'https://%s/cgi-bin/icinga/status.cgi?host=%s' % (hostvars['icinga_server_web_host'], hostvars['inventory_hostname']))
 
     set_content(ret, "\n".join(lines))
-
-    return ret
-
-
-def grafana_panel_processes_running(host, span=3):
-    title = "Processes running"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'loadavg.processes_running', 'Processes running')
-
-    return ret
-
-
-def grafana_panel_processes_total(host, span=3):
-    title = "Processes total"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'loadavg.processes_total', 'Processes total')
-
-    return ret
-
-
-def grafana_panel_processes_both(host, span=3):
-    title = "Processes"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'loadavg.processes_running', 'running')
-    add_metric(ret, host, 'loadavg.processes_total', 'total')
 
     return ret
 
@@ -1067,7 +1025,6 @@ FILTERS = {
     'grafana_add_rows_nginx': grafana_add_rows_nginx,
     'grafana_add_rows_website': grafana_add_rows_website,
     'grafana_add_row_host_metadata': grafana_add_row_host_metadata,
-    'grafana_add_row_processes': grafana_add_row_processes,
     'grafana_add_row_disk': grafana_add_row_disk,
     'grafana_add_row_time': grafana_add_row_time,
     'grafana_add_row_graphite': grafana_add_row_graphite,
