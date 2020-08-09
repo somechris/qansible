@@ -11,7 +11,7 @@
   | grafana_add_row_disk(inventory_hostname_short)
   | grafana_add_row_memory(inventory_hostname_short)
   | grafana_add_row_network(inventory_hostname_short)
-  | grafana_add_row_graphite(inventory_hostname_short, add=("graphite" in group_names))
+  | grafana_add_row_graphite(inventory_hostname_short, add=("graphites" in group_names))
   | grafana_add_rows_apache(inventory_hostname_short, apache_websites, add=("apache" in group_names))
   | grafana_dump_dashboard()
   }}

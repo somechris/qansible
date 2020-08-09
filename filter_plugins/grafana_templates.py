@@ -515,8 +515,8 @@ def grafana_panel_graphite_cache(host, span=4):
     title = "Cache"
     ret = get_default_graph(title, span)
 
-    add_metric(ret, host, "carbon.agents.*.cache.queries")
-    add_metric(ret, host, "carbon.agents.*.cache.queues")
+    add_metric(ret, host, "graphite.carbon.agents.*.cache.queries")
+    add_metric(ret, host, "graphite.carbon.agents.*.cache.queues")
 
     return ret
 
@@ -525,9 +525,9 @@ def grafana_panel_graphite_updates(host, span=4):
     title = "Updates"
     ret = get_default_graph(title, span)
 
-    add_metric(ret, host, "carbon.agents.*.metricsReceived")
-    add_metric(ret, host, "carbon.agents.*.committedPoints")
-    add_metric(ret, host, "carbon.agents.*.updateOperations")
+    add_metric(ret, host, "graphite.carbon.agents.*.metricsReceived")
+    add_metric(ret, host, "graphite.carbon.agents.*.committedPoints")
+    add_metric(ret, host, "graphite.carbon.agents.*.updateOperations")
 
     return ret
 
@@ -536,8 +536,8 @@ def grafana_panel_graphite_monitors(host, span=4):
     title = "Monitors"
     ret = get_default_graph(title, span)
 
-    add_metric(ret, host, "carbon.agents.*.creates")
-    add_metric(ret, host, "carbon.agents.*.errors")
+    add_metric(ret, host, "graphite.carbon.agents.*.creates")
+    add_metric(ret, host, "graphite.carbon.agents.*.errors")
 
     return ret
 
