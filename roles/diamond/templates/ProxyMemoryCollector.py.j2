@@ -1,0 +1,63 @@
+# {{ansible_managed}}
+#
+# coding=utf-8
+
+"""
+Collect CPU stats from a remote host.
+"""
+
+import tempfile
+import os
+import time
+from memory import MemoryCollector
+
+
+class ProxyMemoryCollector(MemoryCollector):
+    def get_config_as_list(self, key):
+        value = self.config.get(key, [])
+        if not isinstance(value, list):
+            value = [value]
+        return value
+
+    def process_config(self):
+        super(ProxyMemoryCollector, self).process_config()
+        remote_hosts = self.get_config_as_list('remote_hosts')
+        self.remote_hosts = [host.split('.')[0] for host in remote_hosts]
+        self.proxy_metrics_dir = self.config.get(
+            'proxy_metrics_dir',
+            '/var/lib/diamond/proxy-metrics')
+        self.PROC_orig = self.PROC
+
+    def collect_for_host(self, host):
+        local_basename = self.PROC_orig.replace(os.sep, '-')
+        local_name=os.path.join(self.proxy_metrics_dir, host, local_basename)
+        if os.path.isfile(local_name):
+            mtime = os.path.getmtime(local_name)
+            now = time.time()
+            age = now - mtime
+            if age <= 70:
+                self.current_host = host
+                self.PROC=local_name
+                super(ProxyMemoryCollector, self).collect()
+                self.PROC=None
+                self.current_host = None
+            else:
+                self.log.error('%s too old (%d seconds)' % (local_name, age))
+        else:
+            self.log.error('%s does not exist' % (local_name))
+
+    def collect(self):
+        try:
+            for host in self.remote_hosts:
+                self.collect_for_host(host)
+        finally:
+            self.current_host = None
+        return None
+
+    def get_metric_path(self, name, instance=None):
+        host = str(self.current_host) if self.current_host else 'undef-proxy-cpu'
+        if 'path' in self.config:
+            path = self.config['path']
+        else:
+            path = self.__class__.__name__
+        return '.'.join(['{{graphite_host_prefix_wo_host}}', host, path, name])
