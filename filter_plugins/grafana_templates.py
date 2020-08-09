@@ -297,7 +297,7 @@ def grafana_add_row_overview(dashboard, host, cpu_count=False, repeated=False, c
 #TODO: importieren:                grafana_panel_load(host, span=span, cpu_count=cpu_count),
 #TODO: importieren:                grafana_panel_cpu(host, span=span),
 #TODO: importieren:                grafana_panel_memory(host, span=span),
-                grafana_panel_network_bytes(host, span=span, title='Network'),
+#TODO: importieren:                grafana_panel_network_bytes(host, span=span, title='Network'),
                 ],
             })
     return add_row(dashboard, row)
@@ -341,20 +341,6 @@ def grafana_add_row_disk(dashboard, host, repeated=False, collapse=True):
                 grafana_panel_iostat_iops(host, span=span),
                 grafana_panel_iostat_throughput(host, span=span),
                 grafana_panel_iostat_waiting(host, span=span),
-                ],
-            })
-    return add_row(dashboard, row)
-
-
-def grafana_add_row_network(dashboard, host, repeated=False, collapse=True):
-    span = 4
-    title = 'Network'
-    row = get_default_row(title, host, repeated, collapse)
-    update_dict(row, {
-            "panels": [
-                grafana_panel_network_bytes(host, span=span),
-                grafana_panel_network_packets(host, span=span),
-                grafana_panel_network_drop_and_errors(host, span=span),
                 ],
             })
     return add_row(dashboard, row)
@@ -606,43 +592,6 @@ def grafana_panel_processes_both(host, span=3):
 
     add_metric(ret, host, 'loadavg.processes_running', 'running')
     add_metric(ret, host, 'loadavg.processes_total', 'total')
-
-    return ret
-
-
-def grafana_panel_network_bytes(host, span=3, title='Network bytes'):
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'network.*.rx_byte', [-2, -1])
-    add_metric(ret, host, 'network.*.tx_byte', [-2, -1])
-
-    set_yaxis_units(ret, "Bps")
-
-    return ret
-
-
-def grafana_panel_network_packets(host, span=3):
-    title = "Network packets"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'network.*.rx_packets', [-2, -1])
-    add_metric(ret, host, 'network.*.tx_packets', [-2, -1])
-
-    set_yaxis_units(ret, "pps")
-
-    return ret
-
-
-def grafana_panel_network_drop_and_errors(host, span=3):
-    title = "Network drop & errors"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, 'network.*.rx_drop', [-2, -1])
-    add_metric(ret, host, 'network.*.rx_errors', [-2, -1])
-    add_metric(ret, host, 'network.*.tx_drop', [-2, -1])
-    add_metric(ret, host, 'network.*.tx_errors', [-2, -1])
-
-    set_yaxis_units(ret, "pps")
 
     return ret
 
@@ -1136,7 +1085,6 @@ FILTERS = {
     'grafana_add_row_host_metadata': grafana_add_row_host_metadata,
     'grafana_add_row_processes': grafana_add_row_processes,
     'grafana_add_row_disk': grafana_add_row_disk,
-    'grafana_add_row_network': grafana_add_row_network,
     'grafana_add_row_time': grafana_add_row_time,
     'grafana_add_row_graphite': grafana_add_row_graphite,
     'grafana_add_row_apache': grafana_add_row_apache,
