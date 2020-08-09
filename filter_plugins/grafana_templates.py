@@ -288,21 +288,6 @@ def grafana_add_rows_website(dashboard, host, engine, website, aspect=None, timi
     return dashboard
 
 
-def grafana_add_row_overview(dashboard, host, cpu_count=False, repeated=False, collapse=True):
-    span = 3
-    title = 'Performance Characteristics'
-    row = get_default_row(title, host, repeated, collapse)
-    update_dict(row, {
-            "panels": [
-#TODO: importieren:                grafana_panel_load(host, span=span, cpu_count=cpu_count),
-#TODO: importieren:                grafana_panel_cpu(host, span=span),
-#TODO: importieren:                grafana_panel_memory(host, span=span),
-#TODO: importieren:                grafana_panel_network_bytes(host, span=span, title='Network'),
-                ],
-            })
-    return add_row(dashboard, row)
-
-
 def grafana_add_row_host_metadata(dashboard, host, hostvars, repeated=False, collapse=True):
     span = 12
     title = 'Metadata'
@@ -1081,7 +1066,6 @@ FILTERS = {
     'grafana_add_rows_apache': grafana_add_rows_apache,
     'grafana_add_rows_nginx': grafana_add_rows_nginx,
     'grafana_add_rows_website': grafana_add_rows_website,
-    'grafana_add_row_overview': grafana_add_row_overview,
     'grafana_add_row_host_metadata': grafana_add_row_host_metadata,
     'grafana_add_row_processes': grafana_add_row_processes,
     'grafana_add_row_disk': grafana_add_row_disk,
