@@ -303,19 +303,6 @@ def grafana_add_row_time(dashboard, host, repeated=False, collapse=True):
     return add_row(dashboard, row)
 
 
-def grafana_add_row_graphite(dashboard, host, add=True, repeated=False, collapse=True):
-    span = 4
-    title = 'Graphite'
-    row = get_default_row(title, host, repeated, collapse)
-    update_dict(row, {
-            "panels": [
-                grafana_panel_graphite_cache(host, span=span),
-                grafana_panel_graphite_updates(host, span=span),
-                grafana_panel_graphite_monitors(host, span=span),
-                ],
-            })
-    return add_row(dashboard, row) if add else dashboard
-
 def grafana_add_row_apache(dashboard, host, websites, add=True, collapse=True, repeated=False):
     span = 4
     title = "Apache"
@@ -507,37 +494,6 @@ def grafana_panel_time_difference(host, span=3):
 
     set_yaxis_minimum(ret, 'left', None)
     set_yaxis_units(ret, left='s')
-
-    return ret
-
-
-def grafana_panel_graphite_cache(host, span=4):
-    title = "Cache"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, "graphite.carbon.agents.*.cache.queries")
-    add_metric(ret, host, "graphite.carbon.agents.*.cache.queues")
-
-    return ret
-
-
-def grafana_panel_graphite_updates(host, span=4):
-    title = "Updates"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, "graphite.carbon.agents.*.metricsReceived")
-    add_metric(ret, host, "graphite.carbon.agents.*.committedPoints")
-    add_metric(ret, host, "graphite.carbon.agents.*.updateOperations")
-
-    return ret
-
-
-def grafana_panel_graphite_monitors(host, span=4):
-    title = "Monitors"
-    ret = get_default_graph(title, span)
-
-    add_metric(ret, host, "graphite.carbon.agents.*.creates")
-    add_metric(ret, host, "graphite.carbon.agents.*.errors")
 
     return ret
 
@@ -876,7 +832,6 @@ FILTERS = {
     'grafana_add_rows_nginx': grafana_add_rows_nginx,
     'grafana_add_rows_website': grafana_add_rows_website,
     'grafana_add_row_time': grafana_add_row_time,
-    'grafana_add_row_graphite': grafana_add_row_graphite,
     'grafana_add_row_apache': grafana_add_row_apache,
     'grafana_add_row_nginx': grafana_add_row_nginx,
     }
