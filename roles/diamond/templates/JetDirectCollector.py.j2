@@ -1,0 +1,180 @@
+# {{ansible_managed}}
+#
+# coding=utf-8
+
+"""
+Collect status from HP Jet Direct printers.
+"""
+
+import requests
+import itertools
+import re
+import diamond.collector
+
+
+class JetDirectCollector(diamond.collector.Collector):
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        config = super(JetDirectCollector, self).get_default_config()
+        config.update({
+            'path':             'jetdirect',
+        })
+        return config
+
+    def get_config_as_list(self, key):
+        value = self.config.get(key, [])
+        if not isinstance(value, list):
+            value = [value]
+        return value
+
+    def process_config(self):
+        super(JetDirectCollector, self).process_config()
+        self.remote_hosts = self.get_config_as_list('remote_hosts')
+        self.current_host = None
+        self.path_device_status = '/hp/device/this.LCDispatcher?nav=hp.DeviceStatus'
+        self.path_supplies_status = '/hp/device/this.LCDispatcher?nav=hp.Supplies'
+        self.path_usage_status = '/hp/device/this.LCDispatcher?nav=hp.Usage'
+        self.only_non_empty_rows = True
+
+    def fetch(self, host, path):
+        url = "https://%s%s" % (host, path)
+        response = requests.get(url, verify=False)
+        if response.status_code != 200:
+            raise RuntimeError('Failed to fetch "%s". Responseonse status code was %d' % (url, response.status_code))
+        return response.content
+
+    def extract_text(self, str, in_tag=False):
+        ret = ''
+        for letter in str:
+            if letter == '>':
+                in_tag = False
+            else:
+                if letter == '<':
+                    in_tag = True
+                else:
+                    if not in_tag:
+                        ret += letter
+        return ret.replace('&nbsp;', '').strip()
+
+    def collect_device_status(self, host):
+        metrics = {}
+        content = self.fetch(host, self.path_device_status)
+        content = content.replace('\n', '')
+        for table in content.split('<table'):
+            if 'InOut' in table:
+                for tr in table.split('<tr'):
+                    tds = tr.split('<td')
+                    if len(tds) > 4:
+                        tray = self.extract_text(tds[1], True)
+                        status = self.extract_text(tds[2], True)
+                        ready = int(status.lower() == 'ok')
+                        metrics['tray.' + tray + '.ready'] = ready
+            else:
+                for line in table.split('\n'):
+                    if ' id="Text1"' in line:
+                        status = line.split('>')[-2][:-5]
+                        if status == 'Ready':
+                            status = 1
+                            ready = 1
+                        elif status == 'Sleep mode on':
+                            status = 2
+                            ready = 1
+                        else:
+                            status = -1
+                            ready = 0
+                        metrics['status'] = status
+                        metrics['ready'] = ready
+        return metrics
+
+    def collect_supplies_status(self, host):
+        metrics = {}
+        content = self.fetch(host, self.path_supplies_status)
+        for block in content.split('class="hpConsumableBlock"')[1:]:
+            name = 'unknown'
+            block_metrics = {}
+            percent_remaining = None
+            pages_remaining = None
+            pages_printed = None
+            supply_level = None
+            for element in block.replace('<span',' span').split('<'):
+                if 'hpConsumableBlockHeaderContent' in element:
+                    name = element.split('>')[-1]
+                if 'hpConsumableBlockHeaderPctRemaining' in element:
+                    block_metrics['percent_remaining'] = element.split('>')[-1].split('%')[0]
+                if 'hpDataItemTitle' in element:
+                    in_item_supply = ('Supply Level' in element)
+                    in_item_printed = ('Pages printed' in element)
+                    in_item_remaining = ('Pages Remaining' in element)
+                if 'hpDataItemValue' in element:
+                    if in_item_supply:
+                        block_metrics['ready'] = int(element.split('>')[-1].lower() == 'ok')
+                    if in_item_printed:
+                        block_metrics['pages_printed'] = element.split('>')[-1]
+                    if in_item_remaining:
+                        block_metrics['pages_remaining'] = element.split('>')[-1]
+
+            for (k, v) in block_metrics.items():
+                if v is not None and v != '':
+                    metrics['supply.' + name + '.' + k] = v
+
+        return metrics
+
+    def collect_usage_status(self, host):
+        metrics = {}
+        content = self.fetch(host, self.path_usage_status)
+        for table in content.split('<table')[1:]:
+            table = table.split('</table')[0]
+            rows = table.split('<tr')
+            found_headings = False
+            table_name = self.extract_text(rows[0], True)
+            for row in rows[1:]:
+                if '<th' in row:
+                    cols = [self.extract_text(col, True) for col in row.split('<th')[2:]]
+                    found_headings = True
+                elif found_headings:
+                    row_cols = row.split('<td')
+                    row_name = self.extract_text(row_cols[1], True)
+                    has_non_zero_metric = False
+                    row_metrics = {}
+                    for cell, col in itertools.izip(row_cols[2:], cols):
+                        if col:
+                            name = row_name + '.' + col
+                            value = float(self.extract_text(cell, True).replace(',', ''))
+                            row_metrics[name] = value
+                            if col.lower() != 'units' and value != 0:
+                                has_non_zero_metric = True
+                    if has_non_zero_metric or not self.only_non_empty_rows:
+                        for (k,v) in row_metrics.items():
+                            metrics['usage.' + table_name + '.' + k] = v
+        return metrics
+
+
+    def collect_for_host(self, host):
+        for metrics in [
+            self.collect_device_status(host),
+            self.collect_supplies_status(host),
+            self.collect_usage_status(host),
+            ]:
+            for (k, v) in metrics.items():
+                k = re.sub(r'[^a-z0-9.]+', '_', k.lower())
+                k = re.sub(r'_\.', '.', k)
+                self.publish(k, v)
+
+    def collect(self):
+        try:
+            for host in self.remote_hosts:
+                self.current_host = host
+                self.collect_for_host(host)
+        finally:
+            self.current_host = None
+        return None
+
+    def get_metric_path(self, name, instance=None):
+        host = str(self.current_host) if self.current_host else 'undef-proxy-cpu'
+        if 'path' in self.config:
+            path = self.config['path']
+        else:
+            path = self.__class__.__name__
+        return '.'.join(['{{graphite_host_prefix_wo_host}}', host.split('.')[0], path, name])

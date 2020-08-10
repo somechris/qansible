@@ -1,8 +1,8 @@
 # {{ansible_managed}}
 
-enabled = {{(diamond_metric_proxy_hosts | length) > 0}}
+enabled = {{(diamond_metric_proxy_hosts_ssh | length) > 0}}
 
 proxy_metrics_dir = {{diamond_effective_data_dir}}/proxy-metrics
-remote_hosts = {{diamond_metric_proxy_hosts | join(',')}}
+remote_hosts = {{diamond_metric_proxy_hosts_ssh | join(',')}}
 
 files = /proc/stat,/proc/meminfo,/proc/loadavg,/proc/net/dev

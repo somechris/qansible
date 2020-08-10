@@ -21,6 +21,7 @@ diamond_common_role_tasks_config:
     - /etc/diamond
   packages:
     - diamond
+    - python-requests
   notifications:
     - reload diamond
   port_configs: []
@@ -29,8 +30,10 @@ diamond_common_role_tasks_config:
   monitoring_checks:
     - {command: 'python', argument: '/usr/bin/diamond'}
 
-diamond_metric_proxy_hosts: []
+diamond_metric_proxy_hosts_ssh: []
+diamond_metric_proxy_hosts_jetdirect: []
 diamond_custom_collectors:
+    - JetDirect
     - Log
     - ModdedHttpd
     - ProxyBulkFile

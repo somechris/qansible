@@ -43,7 +43,10 @@ No Globals that are specific only for this role.
   configuration injected. (Elements of `diamond_custom_collectors` will get
   merged in, so you do not need to add them here)
 * `diamond_effective_log_dir`: Directory where logs effectively get stored in.
-* `diamond_metric_proxy_hosts`: (Default: []) Hosts to proxy metrics for.
+* `diamond_metric_proxy_hosts_ssh`: (Default: []) Hosts to proxy
+  metrics for that are reachable through ssh.
+* `diamond_metric_proxy_hosts_jetdirect`: (Default: []) Hosts to proxy
+  metrics for that expose a JetDirect web interface.
 * `diamond_log_dir`: Directory proccesses will write logs to.
 * `diamond_effective_data_disk`: Directory for data disk where data effectively
   gets stored in.

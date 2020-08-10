@@ -1,0 +1,5 @@
+# {{ansible_managed}}
+
+enabled = {{(diamond_metric_proxy_hosts_jetdirect | length) > 0}}
+
+remote_hosts = {{diamond_metric_proxy_hosts_jetdirect | join(',')}}
