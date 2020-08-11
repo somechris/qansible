@@ -25,18 +25,17 @@ apache/nginx log files, gather metrics from data in databases, ...
 2. Globals
 ----------
 
-No Globals that are specific only for this role.
+* `diamond_collector_dir`: Directory to store additional diamond collectors
+  (plugins that gather metrics) in.
+* `diamond_collector_conf_dir`: Directory to store collector configs in.
+* `diamond_collector_conf_extension`: File extension used for files within
+  `diamond_collector_conf_dir`.
 
 
 
 3. Parameters
 -------------
 
-* `diamond_collector_dir`: Directory to store additional diamond collectors
-  (plugins that gather metrics) in.
-* `diamond_collector_conf_dir`: Directory to store collector configs in.
-* `diamond_collector_conf_extension`: File extension used for files within
-  `diamond_collector_conf_dir`.
 * `diamond_custom_collectors`: List of extra collectors to install and
   configure.
 * `diamond_custom_collector_configs`: List of collectors that have extra

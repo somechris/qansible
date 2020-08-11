@@ -28,6 +28,8 @@ Sets up Graphite backend and web application.
   hostname.
 * `graphite_host_prefix`: The full metric prefix including the
   hostname.
+* `graphite_service_prefix_wo_service`: The metric prefix left of the
+  service name.
 * `graphite_web_host`: Domain name which offers the Graphite web
   application for querying and adhoc graphing.
 
@@ -74,8 +76,6 @@ Sets up Graphite backend and web application.
   the cache query service.
 * `graphite_receive_net_accesses`: List of net accesses of which hosts can
   ingest metrics.
-* `graphite_service_prefix_wo_service`: The metric prefix left of the
-  service name.
 * `graphite_salt`: The salt graphite uses for auth tokens, CRSF, etc.
 * `graphite_var_lib_dir`: The directory underneath `/var/lib` associated to
   graphite.

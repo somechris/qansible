@@ -16,8 +16,6 @@ graphite_database_port: ''
 graphite_database_user: ''
 graphite_database_password: ''
 
-graphite_service_prefix_wo_service: 'services'
-
 graphite_line_receiver_port: 2003
 graphite_cache_query_port: 7002
 

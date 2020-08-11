@@ -150,6 +150,7 @@ graphite_collection_host: 'graphite.{{company_domain}}'
 graphite_line_receiver_port: 2003
 graphite_host_prefix_wo_host: 'hosts'
 graphite_host_prefix: '{{graphite_host_prefix_wo_host}}.{{inventory_hostname_short}}'
+graphite_service_prefix_wo_service: 'services'
 graphite_web_host: '{{graphite_collection_host}}'
 
 #---------------------------------------------------------------------------
@@ -162,3 +163,11 @@ grafana_dashboard_dir: '{{grafana_var_lib_dir}}/dashboards'
 # ssh
 #
 ssh_connections_available: {}
+
+#---------------------------------------------------------------------------
+# diamond
+#
+diamond_collector_conf_extension: .conf
+diamond_collector_conf_dir: /etc/diamond/collectors
+diamond_collector_dir: /usr/share/diamond/collectors
+
