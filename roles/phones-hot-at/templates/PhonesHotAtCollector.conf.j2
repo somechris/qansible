@@ -1,0 +1,20 @@
+# {{ansible_managed}}
+
+xenabled = False
+enabled = {{(phones_hot_at_accounts | length) > 0}}
+
+[accounts]
+
+{% for id, config in phones_hot_at_accounts|dictsort %}
+
+[[{{id}}]]
+email = {{config['email']}}
+pop_host = {{config['pop']['host']}}
+pop_port = {{config['pop']['port']}}
+pop_user = {{config['pop']['user']}}
+pop_password = '{{phones_hot_at_pop_passwords[id]}}'
+
+{%   for number, name in (config['aliases'] | default({}) | dictsort) %}
+alias_{{number}}={{name}}
+{%   endfor %}
+{% endfor %}

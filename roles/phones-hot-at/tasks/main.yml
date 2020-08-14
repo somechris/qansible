@@ -1,0 +1,26 @@
+- name: Drop-out for unsupported distributions
+  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
+  when: 'qhost_distribution not in ["Debian"]'
+
+- name: Install custom collectors
+  template:
+    dest: '{{diamond_collector_dir}}/PhonesHotAtCollector.py'
+    src: 'PhonesHotAtCollector.py.j2'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload diamond
+
+- name: Load credentials
+  include_vars: credentials.yml
+
+- name: Configure collectors
+  template:
+    dest: '{{diamond_collector_conf_dir}}/PhonesHotAtCollector{{diamond_collector_conf_extension}}'
+    src: 'PhonesHotAtCollector{{diamond_collector_conf_extension}}.j2'
+    owner: diamond
+    group: root
+    mode: 0440
+  notify:
+    reload diamond

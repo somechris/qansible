@@ -1,0 +1,207 @@
+# {{ansible_managed}}
+#
+# coding=utf-8
+
+"""
+Collect status from biblioweb.at libraries.
+"""
+
+import requests
+import json
+import re
+import poplib
+import email
+from email.header import decode_header
+import datetime
+import time
+
+import diamond.collector
+
+
+class PhonesHotAtCollector(diamond.collector.Collector):
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        config = super(PhonesHotAtCollector, self).get_default_config()
+        config.update({
+            'path': 'phones',
+            'cache-duration': 300,
+        })
+        return config
+
+    def process_config(self):
+        super(PhonesHotAtCollector, self).process_config()
+        self.accounts = self.config.get('accounts', {})
+        for account in self.accounts.values():
+            account['session'] = None
+            account['last_metrics'] = {}
+            account['last_login_url_request'] = 0
+            account['last_full_good_fetch'] = 0
+        self.cache_duration = self.config['cache-duration']
+
+    def api_call(self, account, function, data):
+        url='https://www.hot.at/api/?Mode=Selfcare&Function=' + function
+        cookies = {'PHPSESSID': account['session']}
+
+        response = requests.post(url, cookies=cookies, data=data)
+        if response.status_code != 200:
+            account['session'] = None
+            raise RuntimeError('Got status code %d for url "%s", but expected %d' % (response.status_code, url, status_code))
+
+        content = json.loads(response.content)
+
+        if content['Errors']:
+            account['session'] = None
+            raise RuntimeError('Received errors %s for url "%s"' % (content['Errors'], url))
+
+        if content['Status'] != 'Success':
+            account['session'] = None
+            raise RuntimeError('Received status "%s" for url "%s" but expected "Success"' % (content['Status'], url))
+
+        return content['Result']
+
+    def api_get_balance(self, account, get_msisdns=False):
+        function = 'getBalance'
+        data = {}
+        if get_msisdns:
+            data['Add[]']='AlternativeMsisdns'
+        return self.api_call(account, function, data)
+
+    def api_set_active_msisdns(self, account, msisdn):
+        function = 'setActiveMsisdn'
+        data = {
+            'Msisdn': msisdn
+            }
+        return self.api_call(account, function, data)
+
+    def extract_date(self, raw_date):
+        raw_date_split=raw_date.split('.')
+        year=int(raw_date_split[2])
+        month=int(raw_date_split[1].lstrip('0'))
+        day=int(raw_date_split[0].split(' ')[-1].lstrip('0'))
+        return datetime.date(year,month,day)
+
+    def get_name(self, account, msisdn):
+        return account.get('alias_' + str(msisdn), msisdn)
+
+    def get_pop3(self, account):
+        pop3 = poplib.POP3_SSL(account['pop_host'], account['pop_port'])
+        pop3.user(account['pop_user'])
+        pop3.pass_(account['pop_password'])
+        return pop3
+
+    def get_payload_if_ok(self, response):
+        if not len(response) >= 2:
+            raise RuntimeError('response needs to hold at least 2 items, but has %s only' % len(response))
+        if not response[0].startswith('+OK '):
+            raise RuntimeError('response was "%s", but was expected to start with "+OK "' % (response[0]))
+        return response[1]
+
+    def fetch_message_bodies(self, account, delete=False):
+        pop3 = self.get_pop3(account)
+        list_response = pop3.list()
+        msg_specs = self.get_payload_if_ok(list_response)
+        ret = []
+        for msg_spec in msg_specs:
+            msg_nr = msg_spec.split(' ')[0]
+            msg_response = pop3.retr(msg_nr)
+            msg_str = '\n'.join(self.get_payload_if_ok(msg_response))
+            msg = email.message_from_string(msg_str)
+            body = msg.get_payload().replace('=\n','').replace('=3D','=')
+            ret.append(body)
+            if delete:
+               pop3.dele(msg_nr)
+        pop3.quit()
+        return ret
+
+    def get_login_url(self, account):
+        login_url = None
+        for body in self.fetch_message_bodies(account, delete=True):
+            match = re.search(r'https://www.hot.at/login/\?EmailToken=[0-9a-f]*', body)
+            if match:
+                login_url = match.group(0)
+        return login_url
+
+    def get_session(self, account):
+        session = None
+        login_url = self.get_login_url(account)
+
+        if login_url:
+            response = requests.get(login_url)
+            session = response.cookies['PHPSESSID']
+
+        return session
+
+    def request_login_url_email(self, account):
+        now = time.time()
+        last_request = now - account['last_login_url_request']
+        if last_request >= 1800:
+            self.log.debug('Requesting new login url')
+            url = 'https://www.hot.at/api/?Mode=Selfcare&Function=sendLoginEmail'
+            data = {
+                'Email': account['email']
+                }
+            requests.post(url, data=data)
+            account['session'] = 'requested'
+            account['last_login_url_request'] = now
+        else:
+            self.log.debug('Skipping login url request, as last was only %d seconds ago' % (last_request))
+
+    def collect_raw_metrics(self, account):
+        metrics={}
+
+        if account['session'] is None:
+            self.log.debug('session is None')
+            self.request_login_url_email(account)
+            time.sleep(5) # Pausing a bit to allow for message delivery
+
+        if account['session'] == 'requested':
+            self.log.debug('session is "requested"')
+            session = self.get_session(account)
+            if session:
+                account['session'] = session
+
+        if account['session'] is not None and account['session'] != 'requested':
+            today = datetime.date.today()
+            msisdns = self.api_get_balance(account, get_msisdns=True)['AlternativeMsisdns']
+            msisdns = [msisdn['Msisdn'] for msisdn in msisdns]
+            for msisdn in msisdns:
+                self.api_set_active_msisdns(account, msisdn)
+                balance = self.api_get_balance(account)
+                name = self.get_name(account, msisdn)
+                metrics[name + '.credit'] = balance['Balance']
+                deactivation_date = self.extract_date(balance['DeactivationDate'])
+                metrics[name + '.deactivation_days'] = (deactivation_date - today).days
+
+        return metrics
+
+    def collect_metrics(self, account):
+        metrics = {}
+        now = time.time()
+
+        if now - account['last_full_good_fetch'] < self.cache_duration:
+            metrics = account['last_metrics']
+        else:
+            metrics = self.collect_raw_metrics(account)
+            account['last_metrics'] = metrics
+            if metrics:
+                account['last_full_good_fetch'] = time.time()
+        return metrics
+
+    def collect_for_account(self, account):
+        metrics = self.collect_metrics(account)
+        for (k, v) in metrics.items():
+            precision = 2 if k.endswith('.credit') else 0
+            self.publish(k,v,precision=precision)
+
+    def collect(self):
+        for account in self.accounts.values():
+            self.collect_for_account(account)
+
+    def get_metric_path(self, name, instance=None):
+        if 'path' in self.config:
+            path = self.config['path']
+        else:
+            path = self.__class__.__name__
+        return '.'.join(['{{graphite_service_prefix_wo_service}}', path, name])

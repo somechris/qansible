@@ -147,6 +147,7 @@ agreements.
   - `pass`: A playbook that does nothing. This is useful when using
     conditionals for role names and needing to "do nothing" in certain
     cases.
+  - `phones-hot-at`: Integrates data from hot.at phones.
   - `pop3-server`: Sets up a POP3 server.
   - `remote-apt-repository`: Configures APT to also use a remote repository.
   - `ssh-client-expect-authorized-key`: Configures expected authorized
