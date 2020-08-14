@@ -138,13 +138,12 @@ class PhonesHotAtCollector(diamond.collector.Collector):
         last_request = now - account['last_login_url_request']
         if last_request >= 1800:
             self.log.debug('Requesting new login url')
-            url = 'https://www.hot.at/api/?Mode=Selfcare&Function=sendLoginEmail'
+            account['last_login_url_request'] = now
             data = {
                 'Email': account['email']
                 }
-            requests.post(url, data=data)
+            self.api_call(account, 'sendLoginEmail', data=data)
             account['session'] = 'requested'
-            account['last_login_url_request'] = now
         else:
             self.log.debug('Skipping login url request, as last was only %d seconds ago' % (last_request))
 
