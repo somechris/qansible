@@ -7,6 +7,7 @@
 - import_playbook: rolebooks/graphite.yml
 - import_playbook: rolebooks/grafana.yml
 
+- import_playbook: rolebooks/common.yml
 - import_playbook: rolebooks/local.yml
 - import_playbook: rolebooks/icinga-servers.yml
 

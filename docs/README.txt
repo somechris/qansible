@@ -157,6 +157,7 @@ agreements.
   - `vpn`: Sets up the server's VPN connections
   - `website-common`: Common tasks for websites for different webservers.
   - `x509-cert`: Installs an X.509 certificate
+  - `zte-modem-metric-fetcher`: fetches metrics from ZTE modems
 
 
 

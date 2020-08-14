@@ -1,0 +1,6 @@
+- name: reload diamond
+  # diamond offers a 'reload' target, but it seems this does not
+  # always do the trick. Hence, we aim for a 'restart'.
+  service:
+    name: diamond
+    state: restarted

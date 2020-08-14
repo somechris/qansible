@@ -1,0 +1,10 @@
+# {{ansible_managed}}
+
+enabled = {{(zte_modem_metric_fetcher_modems | length) > 0}}
+
+[hosts]
+{% for host in zte_modem_metric_fetcher_modems %}
+
+[[{{host}}]]
+admin_password = '{{zte_modem_metric_fetcher_passwords[host]}}'
+{% endfor %}

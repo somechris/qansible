@@ -1,0 +1,129 @@
+# {{ansible_managed}}
+#
+# coding=utf-8
+
+"""
+Fetches files from hosts that are needed for other proxy collectors
+"""
+
+import requests
+import json
+import base64
+import diamond.collector
+
+class ZteModemCollector(diamond.collector.Collector):
+    def get_config_as_list(self, key):
+        value = self.config.get(key, [])
+        if not isinstance(value, list):
+            value = [value]
+        return value
+
+    def process_config(self):
+        super(ZteModemCollector, self).process_config()
+        self.configs = self.config.get('hosts', {})
+
+    def request_raw(self, host, cmds=[], multi_data=None, data=None):
+        url_base = 'http://%s' % (host)
+        url = '%s/goform/goform_%s_cmd_process' % (url_base, 'set' if data else 'get')
+        referer = '%s/index.html' % (url_base)
+        method = 'post' if data else 'get'
+        if data:
+            params={}
+        else:
+            params={
+                'isTest' : False,
+                'cmd': ','.join(cmds),
+                }
+
+        if multi_data is not None:
+            params['multi_data'] = multi_data
+
+        response = requests.request(method, url, headers={'Referer': referer}, params=params, data=data)
+
+        ret = False
+        if response.status_code == 200:
+            content = json.loads(response.content)
+            if data:
+                if content['result'] == "0":
+                    ret = content
+            else:
+                if content.get(cmds[0], '') != "":
+                    ret = content
+
+        return ret
+
+    def login(self, host):
+        password = self.configs[host]['admin_password']
+        data = {
+            'isTest': False,
+            'goformId': 'LOGIN',
+            'password': base64.b64encode(password),
+            }
+        return self.request_raw(host, data=data)
+
+    def fetch(self, host, cmds=[], multi_data=None): # first element in cmds is used to check if we're logged in
+        if multi_data is None:
+            if len(cmds) > 1:
+                multi_data = 1
+        content = self.request_raw(host, cmds, multi_data=multi_data)
+        if content is False:
+            if self.login(host):
+                content = self.request_raw(host, cmds, multi_data=multi_data)
+        return content
+
+    def collect_raw_metrics_for_host(self, host):
+        metrics={}
+        cmds = [
+            'realtime_tx_bytes',
+            'realtime_rx_bytes',
+            'modem_main_state',
+            'ppp_status',
+            'signalbar',
+            'network_type',
+            'rssi',
+            'lte_rsrp',
+            'Z_rssi',
+            'Z_rscp',
+            'Z_rsrp',
+            'Z_rsrq',
+            ]
+        data = self.fetch(host, cmds)
+        for k, v in data.items():
+            if k == 'ppp_status':
+                v = (v == 'ppp_connected')
+            elif k == 'realtime_tx_bytes':
+                k = 'network.lte.tx_byte'
+            elif k == 'realtime_rx_bytes':
+                k = 'network.lte.rx_byte'
+            elif k == 'modem_main_state':
+                v = (v == 'modem_init_complete')
+            elif k == 'network_type':
+                v = (v == 'LTE')
+            elif k[-4:] in ['rssi', 'rscp', 'rsrp', 'rsrq']:
+                k = 'signal.' + k
+            elif k == 'signalbar':
+                k = 'signal.bar'
+
+            metrics[k] = int(v)
+
+        data = self.fetch(host, ['lan_station_list'])
+        metrics['stations.lan'] = len(data['lan_station_list'])
+
+        data = self.fetch(host, ['station_list'])
+        metrics['stations.wlan'] = len(data['station_list'])
+
+        return metrics
+
+    def collect_for_host(self, host):
+        for name, value in self.collect_raw_metrics_for_host(host).items():
+            name = host.split('.')[0] + '.' + name
+            if name.endswith('x_byte'):
+                value = self.derivative(name, value)
+            self.publish(name, value)
+
+    def collect(self):
+        for host in self.configs.keys():
+            self.collect_for_host(host)
+
+    def get_metric_path(self, name, instance=None):
+        return '{{graphite_host_prefix_wo_host}}.' + name

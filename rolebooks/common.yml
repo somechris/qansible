@@ -1,0 +1,6 @@
+- name: "ZTE Modem metrics"
+  hosts: zte_modem_metric_fetchers
+  roles:
+    - role: zte-modem-metric-fetcher
+      tags:
+        - zte-modem-metric-fetcher
