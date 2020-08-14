@@ -614,6 +614,9 @@ dnslookup:
 {%   if router['local_part_suffix'] is defined %}
   local_part_suffix = {{router['local_part_suffix']}}
 {%   endif %}
+{%   if (router['unseen'] | default(False) | bool) %}
+  unseen = true
+{%   endif %}
 {%   if router['aliases'] is defined %}
   data = ${lookup{$local_part}lsearch{/etc/mail/aliases-{{router['aliases']}}}{$value@{{router['target']}}}}
 {%   endif %}

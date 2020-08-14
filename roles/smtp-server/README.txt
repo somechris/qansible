@@ -76,6 +76,9 @@ No Globals that are specific only for this role.
     alias file to resolve local_parts by.
   * `redirect_to`: (Optional) (Only if driver is 'redirect') The email
     address to redirect to.
+  * `unseen`: (Default: False) The message gets duplicated. One copy
+    is processed by this router, and the other copy continues with the
+    remaining routers as if it had not been matched by this router.
 * `smtp_server_port`: The port to listen for initially unencrypted but
   STARTTLS enabled SMTP connections.
 * `smtp_server_port_ssl_config`: The name for the ssl_config to set up
