@@ -1,0 +1,12 @@
+# {{ansible_managed}}
+
+enabled = {{(libraries_biblioweb_at_accounts | length) > 0}}
+
+[accounts]
+{% for id, config in libraries_biblioweb_at_accounts.iteritems() %}
+
+[[{{id}}]]
+library = {{config['library'] | default(id)}}
+user = {{config['user']}}
+password = {{libraries_biblioweb_at_passwords[id]}}
+{% endfor %}

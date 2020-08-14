@@ -4,3 +4,11 @@
     - role: zte-modem-metric-fetcher
       tags:
         - zte-modem-metric-fetcher
+
+- name: "biblioweb libraries"
+  hosts: libraries_biblioweb_ats
+  roles:
+    - role: libraries-biblioweb-at
+      tags:
+        - libraries-biblioweb-at
+        - libraries

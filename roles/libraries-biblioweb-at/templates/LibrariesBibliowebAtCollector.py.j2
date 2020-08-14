@@ -1,0 +1,143 @@
+# {{ansible_managed}}
+#
+# coding=utf-8
+
+"""
+Collect status from biblioweb.at libraries.
+"""
+
+import requests
+import itertools
+import re
+import datetime
+import time
+
+import diamond.collector
+
+
+class LibrariesBibliowebAtCollector(diamond.collector.Collector):
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        config = super(LibrariesBibliowebAtCollector, self).get_default_config()
+        config.update({
+            'path':             'libraries',
+            'cache-duration': 3600,
+        })
+        return config
+
+    def process_config(self):
+        super(LibrariesBibliowebAtCollector, self).process_config()
+        self.last_metrics = {}
+        self.last_raw_fetch = 0
+        self.accounts = self.config.get('accounts', {})
+        self.cache_duration = self.config['cache-duration']
+
+    def fetch(self, url, status_code, referer, cookies={}, data={}):
+        if data:
+            response = requests.post(url, headers={'Referer': referer}, allow_redirects=False, cookies=cookies, data=data)
+        else:
+            response = requests.get(url, headers={'Referer': referer}, allow_redirects=False, cookies=cookies)
+        if response.status_code != status_code:
+            raise RuntimeError('Got status code %d for url "%s", but expected %d' % (response.status_code, url, status_code))
+        return response
+
+    def get_lent_page(self, account_id):
+        library = self.accounts[account_id].get('library', account_id)
+        user = self.accounts[account_id]['user']
+        password = self.accounts[account_id]['password']
+
+        general_base = 'http://www.biblioweb.at'
+        path_db = '/db.asp'
+        path_start = '/start.asp'
+        path_library = '/' + library
+        path_webopac = '/webopac123/webopac.asp'
+
+        response = self.fetch(general_base + path_db, 302, general_base + path_library + '/')
+        specific_base = response.headers['Location'][:-1]
+
+        response = self.fetch(specific_base + path_library + path_start, 302, specific_base + path_library + '/')
+        cookies = response.cookies
+
+        self.fetch(specific_base + path_db, 302, specific_base + path_library + '/', cookies)
+        self.fetch(specific_base + path_webopac + '?login=1', 200, general_base + path_db, cookies)
+        self.fetch(specific_base + path_webopac, 200, specific_base + path_webopac + '?login=1', cookies, {'BNR': user, 'GD': password})
+
+        fetch_next_page = True
+        page=0
+        total_content=''
+        while fetch_next_page:
+            page += 1
+            response = self.fetch(specific_base + path_webopac + '?kat=1&content=show_EL&seite=' +str(page), 200, specific_base + path_webopac, cookies)
+
+            if not 'Treffer!' in response.content:
+                raise RuntimeError('Could not get to page of lent items')
+
+            total_content += '\n-----page-' + str(page) + '-----\n'
+            total_content += response.content
+            fetch_next_page = 'Systematik' in response.content
+
+        return total_content
+
+    def extract_date(self, raw_date):
+        raw_date_split=raw_date.split('.')
+        year=int(raw_date_split[2])
+        month=int(raw_date_split[1].lstrip('0'))
+        day=int(raw_date_split[0].split(' ')[-1].lstrip('0'))
+        return datetime.date(year,month,day)
+
+    def extract_notation(self, raw):
+        return raw.split('>')[1].split('<')[0]
+
+    def collect_raw_metrics(self, account_id):
+        metrics = {}
+        content = self.get_lent_page(account_id)
+
+        raw_due_dates = re.findall(r'Ende der Verleihfrist: [0-9.]+', content)
+        due_dates = [self.extract_date(raw_date) for raw_date in raw_due_dates]
+        due_dates.sort()
+
+        metrics['lent_items.next_due_date_days'] = (due_dates[0] - datetime.date.today()).days
+        metrics['lent_items.current.total'] = len(due_dates)
+
+        raw_notations = re.findall(r'Systematik\): <b>[^<]*</b>', content, re.IGNORECASE)
+        notations = [self.extract_notation(raw) for raw in raw_notations]
+        for notation in notations:
+            name = 'lent_items.current.category.' + re.sub(r'[^a-zA-Z0-9]', '_', notation)
+            metrics[name] = metrics.get(name, 0) + 1
+
+        return metrics
+
+    def collect_metrics_for_account(self, account_id):
+        metrics = {}
+        now = time.time()
+
+        if now - self.last_raw_fetch < self.cache_duration:
+            metrics = self.last_metrics
+        else:
+            raw_metrics = self.collect_raw_metrics(account_id)
+            metrics = {}
+            for (k, v) in raw_metrics.items():
+                k = account_id + '.' + k
+                k = re.sub(r'[^a-zA-Z0-9.]+', '_', k)
+                k = re.sub(r'_\.', '.', k)
+                metrics[k] = v
+
+            self.last_metrics = metrics
+            self.last_raw_fetch = time.time()
+
+        return metrics
+
+    def collect(self):
+        for account_id in self.accounts.keys():
+            metrics = self.collect_metrics_for_account(account_id)
+            for (k, v) in metrics.items():
+                self.publish(k,v)
+
+    def get_metric_path(self, name, instance=None):
+        if 'path' in self.config:
+            path = self.config['path']
+        else:
+            path = self.__class__.__name__
+        return '.'.join(['{{graphite_service_prefix_wo_service}}', path, name])
