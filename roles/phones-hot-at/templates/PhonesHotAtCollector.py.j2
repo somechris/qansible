@@ -161,6 +161,7 @@ class PhonesHotAtCollector(diamond.collector.Collector):
             session = self.get_session(account)
             if session:
                 account['session'] = session
+                time.sleep(5) # Pausing a bit to give server some time
 
         if account['session'] is not None and account['session'] != 'requested':
             today = datetime.date.today()
