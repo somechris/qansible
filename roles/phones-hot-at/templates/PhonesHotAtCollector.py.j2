@@ -14,6 +14,7 @@ import email
 from email.header import decode_header
 import datetime
 import time
+import traceback
 
 import diamond.collector
 
@@ -196,7 +197,10 @@ class PhonesHotAtCollector(diamond.collector.Collector):
 
     def collect(self):
         for account in self.accounts.values():
-            self.collect_for_account(account)
+            try:
+                self.collect_for_account(account)
+            except:
+                self.log.error(traceback.format_exc())
 
     def get_metric_path(self, name, instance=None):
         if 'path' in self.config:
