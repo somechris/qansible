@@ -105,6 +105,7 @@ class PhonesHotAtCollector(diamond.collector.Collector):
         msg_specs = self.get_payload_if_ok(list_response)
         ret = []
         for msg_spec in msg_specs:
+            self.log.debug('Got email')
             msg_nr = msg_spec.split(' ')[0]
             msg_response = pop3.retr(msg_nr)
             msg_str = '\n'.join(self.get_payload_if_ok(msg_response))
@@ -122,6 +123,7 @@ class PhonesHotAtCollector(diamond.collector.Collector):
             match = re.search(r'https://www.hot.at/login/\?EmailToken=[0-9a-f]*', body)
             if match:
                 login_url = match.group(0)
+                self.log.debug('Found login url')
         return login_url
 
     def get_session(self, account):
@@ -129,8 +131,10 @@ class PhonesHotAtCollector(diamond.collector.Collector):
         login_url = self.get_login_url(account)
 
         if login_url:
+            self.log.debug('Requesting session token from login_url')
             response = requests.get(login_url)
             session = response.cookies['PHPSESSID']
+            self.log.debug('Got session token')
 
         return session
 
@@ -152,12 +156,12 @@ class PhonesHotAtCollector(diamond.collector.Collector):
         metrics={}
 
         if account['session'] is None:
-            self.log.debug('session is None')
+            self.log.debug('No session token found, requsting login url')
             self.request_login_url_email(account)
             time.sleep(5) # Pausing a bit to allow for message delivery
 
         if account['session'] == 'requested':
-            self.log.debug('session is "requested"')
+            self.log.debug('No session token found, but login url requested, so checking emails')
             session = self.get_session(account)
             if session:
                 account['session'] = session
