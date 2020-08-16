@@ -27,6 +27,7 @@ from grafana_metrics import zero_missing_points
 from grafana_websites import grafana_add_rows_website
 from grafana_websites import grafana_panel_website_total_requests
 from grafana_websites import grafana_panel_websites
+from misc import dump_json
 del sys.path[0]
 
 import json
@@ -81,20 +82,6 @@ default_dashboard = {
     "title": "untitled",
     "version": 0,
     }
-
-
-def dump_json(obj):
-    """Format an object as json string
-
-    Parameters
-    ----------
-    obj: Any type accepted by json.dump
-
-    Return
-    ------
-    string: the formatted JSON string
-    """
-    return json.dumps(obj, indent=4, sort_keys=True)
 
 
 def explode_ec2_tag(tag):

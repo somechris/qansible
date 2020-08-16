@@ -1,6 +1,7 @@
 import collections
 import itertools
 import re
+import json
 
 def update_dict(target, source, merge_lists=False):
     for key, value in source.iteritems():
@@ -70,12 +71,26 @@ def replace_if_whole_string_matches(source, needle, replacement):
 def replace_omit_string(source, replacement):
     return replace_if_whole_string_matches(source, 'omit', replacement)
 
+def dump_json(obj):
+    """Format an object as json string
+
+    Parameters
+    ----------
+    obj: Any type accepted by json.dump
+
+    Return
+    ------
+    string: the formatted JSON string
+    """
+    return json.dumps(obj, indent=2, sort_keys=True)
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
     def filters(self):
         return {
             'attrs': attrs,
+            'dump_json': dump_json,
             'update_dict': update_dict,
             'merge_list_of_lists': merge_list_of_lists,
             'slug': slug,
