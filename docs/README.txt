@@ -128,6 +128,7 @@ agreements.
     host
   - `firewall-late`: Sets up the system's firewall
   - `grafana`: Sets up a Grafana server to dashboard metrics.
+  - `grafana-dashboards`: Renders configured dashboards for Grafana.
   - `grafana-host-dashboards`: Sets up per-host dashboards in Grafana.
   - `graphite`: Sets up a Graphite/Carbon server as metrics host.
   - `gnupg-public-key`: Installs a GnuPG public key.

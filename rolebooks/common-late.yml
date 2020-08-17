@@ -41,6 +41,12 @@
        - icinga-client
        - icinga
 
+    - role: grafana-dashboards
+      tags:
+        - grafana-dashboards
+        - dashboards
+        - grafana
+
 - name: common-late (finish)
   hosts: '!unmanaged'
   roles:

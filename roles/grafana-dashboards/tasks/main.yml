@@ -1,0 +1,15 @@
+# lint-distribution-independent
+
+- name: Render configured dashboards
+  template:
+    dest: "{{grafana_dashboard_dir}}/{{item[0]['basename']}}.json"
+    src: dashboard.json.j2
+    owner: root
+    group: root
+    mode: 0444
+  delegate_to: "{{item[1]}}"
+  with_cartesian:
+    - '{{dashboards}}'
+    - '{{groups["grafanas"]}}'
+  notify:
+    - reload grafana

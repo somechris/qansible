@@ -171,3 +171,7 @@ diamond_collector_conf_extension: .conf
 diamond_collector_conf_dir: /etc/diamond/collectors
 diamond_collector_dir: /usr/share/diamond/collectors
 
+#---------------------------------------------------------------------------
+# Dashboarding
+#
+dashboards: []
