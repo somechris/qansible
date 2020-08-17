@@ -321,17 +321,18 @@ Unknown location type {{location_type}} for location {{location}} is security ru
 {%     endif %}
 {%     for rule in location["security_rules"] %}
 {%       set rationale = rule['rationale']%}
+{%       set phase = (rule['phase'] | default(2 if rule['type'] == 'add-rule' else 1)) %}
 #{{rule['type']}}{% for key in ['id', 'variable'] %}{% if key in rule %} {{key}}:{{rule[key]}}{% endif %}{% endfor %} rationale: {{rationale}}
 {%       if rule['type'] == 'remove-target' %}
 {%         for target in rule['targets'] %}
-{{           sec_rule(rationale, 1, match, [], ["nolog", "ctl:ruleRemoveTargetById=" ~ rule['id'] ~ ";" ~ target]) }}
+{{           sec_rule(rationale, phase, match, [], ["nolog", "ctl:ruleRemoveTargetById=" ~ rule['id'] ~ ";" ~ target]) }}
 {%         endfor %}
 {%       elif rule['type'] == 'add-rule' %}
-{{         sec_rule(rationale, 2, match, [{'targets': rule['targets'], 'operator': rule['operator']}], rule['actions']) }}
+{{         sec_rule(rationale, phase, match, [{'targets': rule['targets'], 'operator': rule['operator']}], rule['actions']) }}
 {%       elif rule['type'] == 'set-variable' %}
-{{         sec_rule(rationale, 1, match, [], ['pass', 't:none', 'nolog', "setvar:'" + rule['variable'] + "=" + rule['value'] + "'"]) }}
+{{         sec_rule(rationale, phase, match, [], ['pass', 't:none', 'nolog', "setvar:'" + rule['variable'] + "=" + rule['value'] + "'"]) }}
 {%       elif rule['type'] == 'append-to-variable' %}
-{{         sec_rule(rationale, 1, match, [], ['pass', 't:none', 'nolog', "setvar:'" + rule['variable'] + "=%{" + rule['variable'] + "} " + rule['value'] + "'"]) }}
+{{         sec_rule(rationale, phase, match, [], ['pass', 't:none', 'nolog', "setvar:'" + rule['variable'] + "=%{" + rule['variable'] + "} " + rule['value'] + "'"]) }}
 {%       else %}
 ERROR: Unknown type {{rule['type']}} for security rule {{rule}}
 {%       endif %}

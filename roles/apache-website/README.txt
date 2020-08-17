@@ -105,6 +105,8 @@ No Globals that are specific only for this role.
        the rule to remove a target from.
      * `operator`: For `add-type`, the operator to match with against the
        `targets` (E.g.: `@rx ^(?i:file)://(.*)$`).
+     * `phase`: (Default: 2 for type `add-rule`, 1 otherwise) The phase in which
+       the rule should be applied. Either 1 or 2.
      * `rationale`: The plain text rationale why the adaption is necessary.
      * `targets`: For type `remove-target`, `targets` is the list of targets
        to remove from the security rule `id` for this location. For type
