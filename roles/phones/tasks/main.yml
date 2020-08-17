@@ -1,0 +1,8 @@
+# lint-distribution-independent
+
+- name: 'Add phone dashboard'
+  set_fact:
+    dashboards: "{{dashboards + ['Phones' | dashboard_phones]}}"
+  changed_when: False
+  tags:
+    - always

@@ -20,3 +20,10 @@
       tags:
         - phones-hot-at
         - phones
+
+- name: "Phones"
+  hosts: grafanas
+  roles:
+    - role: phones
+      tags:
+        - phones
