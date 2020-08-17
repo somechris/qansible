@@ -35,6 +35,12 @@ def new(title='Untitled row'):
 
     return row
 
+
+def set_repeat(row, name):
+    row['title'] +=' ($' + name + ')'
+    row['repeat'] = name
+
+
 def add_panel(row, panel, weight=DEFAULT_PANEL_WEIGHT):
     row['panels'].append({'weight': float(weight), 'panel': panel})
     return row

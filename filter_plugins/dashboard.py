@@ -41,6 +41,12 @@ def new(title='Untitled dashboard', basename=None):
     return dashboard
 
 
+def add_template(dashboard, template):
+    if 'templates' not in dashboard:
+        dashboard['templates'] = []
+    dashboard['templates'].append(template)
+
+
 def add_tag(dashboard, tag):
     dashboard['tags'].append(tag)
 

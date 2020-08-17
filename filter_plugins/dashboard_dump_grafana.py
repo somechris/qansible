@@ -48,6 +48,14 @@ default_text = {
     "mode": "markdown",
 }
 
+default_template = {
+    "includeAll": True,
+    "multi": True,
+    "regex": "",
+    "tags": [],
+    "useTags": False,
+}
+
 default_row = {
     "editable": False,
     "showTitle": True,
@@ -136,6 +144,66 @@ def finalize_row(row, next_id):
 
     return row
 
+def to_template_value(param):
+    text = param
+    if param == 'All':
+        value = '$__all'
+    else:
+        value = param
+    return {
+        "text": text,
+        "value": value,
+        }
+
+def finalize_template(template):
+    if not isinstance(template, dict):
+        if template == 'host':
+            template = {
+                'label': 'Hosts',
+                'name': 'host',
+                'query': 'hosts.*',
+                'type': 'query',
+                }
+
+    if not isinstance(template, dict):
+        raise RuntimeError('Unknown template spec "%s"', template)
+
+    type = template.get('type', 'custom')
+    if type == 'custom':
+        values = template.get('values', [])
+        if values:
+            if template.get('name') == 'host':
+                values = [value.split('.', 2)[0] for value in values]
+            values = ['All'] + values
+            current = values[1]
+        else:
+            current = '<empty>'
+
+        template_obj = {
+            'current': to_template_value(current),
+            'hideLabel': (template.get('label', None) is None),
+            'label': template.get('label', 'Label'),
+            'name': template.get('name'),
+            'options': [to_template_value(value) for value in values],
+            'query': ','.join(values),
+            'refresh': 0,
+            }
+    elif type == 'query':
+        template_obj = {
+            'current': to_template_value('All'),
+            'label': template.get('label', 'Label'),
+            'name': template.get('name'),
+            'options': [],
+            'query': template.get('query'),
+            'refresh': 1,
+            }
+    else:
+        raise RuntimeError('Unknown template type "%s"', type)
+
+    template_obj['type'] = type
+    template_obj = update_dict(copy.deepcopy(default_template), template_obj)
+    return template_obj
+
 def finalize_dashboard(dashboard):
     next_id = id_service()
 
@@ -147,6 +215,11 @@ def finalize_dashboard(dashboard):
     dashboard['originalTitle'] = dashboard['title']
     del dashboard['basename']
 
+    if 'templates' in dashboard:
+        dashboard['templating'] = {
+            'list': [finalize_template(template) for template in dashboard['templates']]
+            }
+        del dashboard['templates']
     return dashboard
 
 def dump(dashboard):
