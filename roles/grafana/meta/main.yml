@@ -114,3 +114,20 @@ dependencies:
           rationale: When using aliasSub, we end up using '(backslash)1' to reference groups. This triggers this rule.
           targets:
             - 'ARGS:target'
+      - name: /d/
+        security_rules:
+        - type: remove-target
+          id: 921170
+          rationale: Multiselected templates cause repeated arguments. So we need to white-list them. Since ARGS_NAMES:/^var-/ does not work in ruleRemoveTargetById, we remove the whole ARGS_NAMES and redo the rule with filtered names below.
+          targets:
+            - 'ARGS_NAMES'
+        - type: add-rule
+          rationale: Multiselected templates cause repeated arguments. So we need to white-list them. Since ARGS_NAMES:/^var-/ does not work in ruleRemoveTargetById, we removed the whole ARGS_NAMES above and redo the rule with filtered names.
+          targets:
+            - 'ARGS_NAMES'
+          operator: '!@beginsWith var-'
+          phase: 1 # Needs to be early, so 921180 can see the variables and fire accordingly
+          actions:
+            - pass
+            - nolog
+            - "setvar:'tx.paramcounter_%{MATCHED_VAR_NAME}=+1'"
