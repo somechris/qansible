@@ -46,8 +46,8 @@ filter() {
 
 #-----------------------------------------------------------
 
-MATCHER='[# ][tT][oO]-\?[dD][oO] *:'
-grep -rn "$MATCHER" * 2>/dev/null \
+MATCHER='\(.*[# ]\)\?[tT][oO]-\?[dD][oO] *:'
+grep -rn "^$MATCHER" * 2>/dev/null \
     | filter "${FALSE_POSITIVES[@]}" \
     | sort \
-    | sed -e 's/^\([^:]*\):\([0-9]*\):.*'"$MATCHER"' *\(.*\)$/* \1:\2 -- \3/' \
+    | sed -e 's/^\([^:]*\):\([0-9]*\):'"$MATCHER"' *\(.*\)$/* \1:\2 -- \4/' \
