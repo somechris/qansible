@@ -24,18 +24,14 @@
   hosts: '!unmanaged'
   roles: []
   tags:
-    - grafana-host-dashboards
+    - grafana-dashboards
+    - dashboards
     - grafana
 
 - name: common-late (generic for all, even unmanaged)
   hosts: all
   gather_facts: no
   roles:
-    - role: grafana-host-dashboards
-      tags:
-        - grafana-host-dashboards
-        - grafana
-
     - role: icinga-client
       tags:
        - icinga-client
