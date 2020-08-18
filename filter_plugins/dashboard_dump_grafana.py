@@ -128,8 +128,11 @@ def finalize_panel(panel, next_id):
         panel = update_dict(copy.deepcopy(default_graph), panel)
         panel['yaxes'][0] = update_dict(copy.deepcopy(default_yaxis), panel['yaxes'][0])
         panel['yaxes'][1] = update_dict(copy.deepcopy(default_yaxis), panel['yaxes'][1])
-    elif panel['type'] == 'text':
+    elif panel['type'] in ['text', 'markdown']:
         panel = update_dict(copy.deepcopy(default_text), panel)
+        if panel['type'] == 'text':
+            panel['content'] = '```\n%s\n```' % (panel['content'])
+        panel['type'] = 'text'
 
     panel = update_dict(copy.deepcopy(default_panel), panel)
     if 'id' not in panel:
