@@ -141,6 +141,7 @@ agreements.
   - `ldap-client-late`: Late part of LDAP client configuration.
   - `ldap-server`: Sets up an LDAP server.
   - `libraries-biblioweb-at`: Integrates data from Bibilioweb.at libraries
+  - `libraries`: Integrates library data with deployed services.
   - `locale`: Sets up locales.
   - `motd`: Sets up motd (message of the day) files shown after login. This is
   - `name-service-switch`: Configures name service switching

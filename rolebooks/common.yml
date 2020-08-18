@@ -13,6 +13,13 @@
         - libraries-biblioweb-at
         - libraries
 
+- name: "Libraries"
+  hosts: grafanas
+  roles:
+    - role: libraries
+      tags:
+        - libraries
+
 - name: "Phones from Hot Austria"
   hosts: phones_hot_ats
   roles:

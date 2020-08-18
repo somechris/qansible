@@ -1,0 +1,8 @@
+# lint-distribution-independent
+
+- name: 'Add libraries dashboard'
+  set_fact:
+    dashboards: "{{dashboards + ['Libraries' | dashboard_libraries]}}"
+  changed_when: False
+  tags:
+    - always
