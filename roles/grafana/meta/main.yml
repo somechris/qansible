@@ -53,9 +53,10 @@ dependencies:
         security_rules:
         - type: remove-target
           id: 921170
-          rationale: Having more than 1 dashboard triggers 921180, so we exclude it in counting
+          rationale: Having more than 1 dashboards, or tags triggers 921180, so we exclude it in counting
           targets:
             - 'ARGS_NAMES:dashboardIds'
+            - 'ARGS_NAMES:tag'
       - name: '/api/datasources/proxy/[0-9]+/render'
         type: regexp
         security_rules:
