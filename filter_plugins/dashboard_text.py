@@ -17,7 +17,7 @@ default_text = {
 }
 
 
-def new(title='Untitled text panel'):
+def new(title='Untitled text panel', width=None):
     """Prepares a new text panel object
 
     Parameters
@@ -30,7 +30,7 @@ def new(title='Untitled text panel'):
     object: The text panel object
     """
 
-    panel = new_panel(title=title)
+    panel = new_panel(title=title, width=width)
     panel = update_dict(panel, copy.deepcopy(default_text))
 
     return panel

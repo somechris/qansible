@@ -134,6 +134,9 @@ def finalize_panel(panel, next_id):
     panel = update_dict(copy.deepcopy(default_panel), panel)
     if 'id' not in panel:
         panel['id'] = next_id()
+    if 'width' in panel:
+        panel['span'] = panel['width']
+        del panel['width']
     return panel
 
 

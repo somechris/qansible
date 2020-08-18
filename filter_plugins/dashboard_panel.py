@@ -14,7 +14,7 @@ default_panel = {
 }
 
 
-def new(title='Untitled untyped panel'):
+def new(title='Untitled untyped panel', width=None):
     """Prepares a new panel object
 
     Parameters
@@ -29,8 +29,13 @@ def new(title='Untitled untyped panel'):
 
     panel = copy.deepcopy(default_panel)
     panel['title'] = title
+    panel['width'] = width if width is not None else 4
 
     return panel
+
+
+def set_width(panel, width):
+    panel['width'] = width
 
 
 def finalize(panel):

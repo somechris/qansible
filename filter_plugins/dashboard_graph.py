@@ -16,7 +16,7 @@ default_graph = {
     'targets': [],
  }
 
-def new(title='Untitled graph panel'):
+def new(title='Untitled graph panel', width=None):
     """Prepares a new graph panel object
 
     Parameters
@@ -29,7 +29,7 @@ def new(title='Untitled graph panel'):
     object: The graph panel object
     """
 
-    panel = new_panel(title=title)
+    panel = new_panel(title=title, width=width)
     panel = update_dict(panel, copy.deepcopy(default_graph))
 
     return panel
