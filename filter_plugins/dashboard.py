@@ -62,6 +62,7 @@ def set_basename(dashboard, basename):
 
 def add_row(dashboard, row, weight=DEFAULT_ROW_WEIGHT):
     dashboard['rows'].append({'weight': float(weight), 'row': row})
+    return dashboard
 
 
 def finalize(dashboard):
@@ -81,6 +82,7 @@ def finalize(dashboard):
 
 
 FILTERS = {
+    'dashboard_add_row': add_row,
     }
 
 
