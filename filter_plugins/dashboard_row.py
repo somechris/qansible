@@ -17,7 +17,7 @@ default_row = {
     "panels": [],
     }
 
-def new(title='Untitled row'):
+def new(title='Untitled row', collapsed=None):
     """Prepares a new dashboard row object
 
     Parameters
@@ -33,12 +33,19 @@ def new(title='Untitled row'):
     row = copy.deepcopy(default_row)
     row['title'] = title
 
+    if collapsed is not None:
+        set_collapsed(row, collapsed)
+
     return row
 
 
 def set_repeat(row, name):
     row['title'] +=' ($' + name + ')'
     row['repeat'] = name
+
+
+def set_collapsed(row, collapsed):
+    row['collapsed'] = collapsed
 
 
 def add_panel(row, panel, weight=DEFAULT_PANEL_WEIGHT):

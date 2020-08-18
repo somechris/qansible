@@ -159,6 +159,9 @@ def finalize_row(row, next_id):
 
     row['panels'] = [finalize_panel(panel, next_id) for panel in row['panels']]
 
+    row['collapse'] = row['collapsed']
+    del row['collapsed']
+
     return row
 
 def to_template_value(param):
