@@ -344,6 +344,13 @@ def zero_missing_points(panel):
     panel["nullPointMode"] = "null as zero"
 
 
+def set_threshold(panel, value, color):
+    panel["threshold"] = {
+        'value': value,
+        'color': color,
+        }
+
+
 class FilterModule(object):
     '''Ansible jinja2 filters for metrics in graph panels of dashboards'''
 

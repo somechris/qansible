@@ -137,6 +137,17 @@ def finalize_panel(panel, next_id):
     if 'width' in panel:
         panel['span'] = panel['width']
         del panel['width']
+    if panel['type'] == 'graph':
+        if 'threshold' in panel:
+            threshold = panel['threshold']
+            update_dict(panel, {
+                    "grid": {
+                        "threshold1": int(threshold['value']),
+                        "threshold1Color": threshold['color'],
+                        "thresholdLine": True,
+                        },
+                    })
+            del panel['threshold']
     return panel
 
 
