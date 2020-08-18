@@ -73,6 +73,10 @@ def finalize(dashboard):
     # unbox rows
     ret['rows'] = [finalize_row(row['row']) for row in ret['rows']]
 
+    # Ordering, deduping, and normalizing tags
+    ret['tags'] = list(set([tag.replace('_', '-') for tag in ret['tags']]))
+    ret['tags'].sort()
+
     return ret
 
 
