@@ -1,6 +1,6 @@
 diamond_log_dir: '/var/log/diamond'
 
-diamond_effective_data_disk: '{{common_directories_data_dir1}}'
+diamond_effective_data_disk: '{{common_directories_default_data_dir}}'
 diamond_effective_data_dir: '{{diamond_effective_data_disk}}/diamond'
 diamond_effective_log_dir: '{{diamond_effective_data_dir}}/logs'
 
