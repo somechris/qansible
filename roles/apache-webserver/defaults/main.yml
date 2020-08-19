@@ -1,3 +1,8 @@
+apache_webserver_log_dir: '/var/log/apache2'
+apache_webserver_effective_data_disk: '{{common_directories_default_data_dir}}'
+apache_webserver_effective_data_dir: '{{apache_webserver_effective_data_disk}}/apache-webserver'
+apache_webserver_effective_log_dir: '{{apache_webserver_effective_data_dir}}/logs'
+
 apache_webserver_net_accesses: '{{webserver_net_accesses}}'
 apache_webserver_ports_plain: '{{webserver_ports_plain}}'
 apache_webserver_ports_encrypted: '{{webserver_ports_encrypted}}'
@@ -18,6 +23,9 @@ apache_webserver_common_role_tasks_config:
     - 'Debian'
   user: 'omit'
   paths:
+    - '{{apache_webserver_effective_data_dir}}'
+    - '{{apache_webserver_effective_log_dir}}'
+    - {state: link, path: '{{apache_webserver_log_dir}}', source: '{{apache_webserver_effective_log_dir}}'}
     - /etc/apache2
     - /etc/apache2/conf-available
     - /etc/apache2/conf-enabled

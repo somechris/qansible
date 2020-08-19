@@ -35,6 +35,12 @@ No Globals that are specific only for this role.
   unencrypted plaintext connections.
 * `apache_webserver_ports_encrypted`: The ports to listen on for
   encrypted connections.
+* `apache_webserver_effective_data_disk`: Directory for data disk where data
+  effectively gets stored in.
+* `apache_webserver_effective_data_dir`: Directory where all data effectively
+  gets stored in.
+* `apache_webserver_effective_log_dir`: Directory where logs effectively get
+  stored in.
 * `apache_webserver_error_documents`: Dictionary of overrides for
   Apache's default error pages. The keys are the status codes. The
   values are themselves dictionaries holding the following
@@ -42,3 +48,4 @@ No Globals that are specific only for this role.
   * `reason`: A short, one-line, plain text description of the reason
     for this status page showing up. (E.g.: `Bad Request`)
   * `explanation`: A more detailed explanation of what happened.
+* `apache_webserver_log_dir`: Directory that logs get written to.
