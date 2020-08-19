@@ -71,7 +71,7 @@ def panel_website_total_requests(host, engine, width=None):
     return panel
 
 
-def add_rows_website_variant(dashboard, host, engine, website, aspect=None, timing=True, ssl=False):
+def rows_website_variant(host, engine, website, aspect=None, timing=True, ssl=False):
     rows = [
         row_website_volume_kpi(host, engine, website, aspect),
         row_website_status_details(host, engine, website, aspect),
@@ -92,19 +92,19 @@ def add_rows_website_variant(dashboard, host, engine, website, aspect=None, timi
     number = 2000
     for row in rows:
         set_weight(row, weight_prefix + str(number))
-        add_row(dashboard, row)
         number += 1000
-    return dashboard
+    return rows
 
 
-def add_rows_website(dashboard, host, engine, website):
+def rows_website(host, engine, website):
+    rows = []
     is_fallback = (website in FALLBACK_SITES)
     if is_fallback:
-        dashboard = add_rows_website_variant(dashboard, host, engine, website, timing=False)
+        rows += rows_website_variant(host, engine, website, timing=False)
     else:
-        dashboard = add_rows_website_variant(dashboard, host, engine, website, aspect='https', ssl=True)
-        dashboard = add_rows_website_variant(dashboard, host, engine, website, aspect='http', ssl=False)
-    return dashboard
+        rows += rows_website_variant(host, engine, website, aspect='https', ssl=True)
+        rows += rows_website_variant(host, engine, website, aspect='http', ssl=False)
+    return rows
 
 
 class FilterModule(object):
@@ -112,5 +112,5 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'dashboard_add_rows_website': add_rows_website,
+            'dashboard_rows_website': rows_website,
             }
