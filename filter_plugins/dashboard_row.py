@@ -48,6 +48,10 @@ def set_collapsed(row, collapsed):
     row['collapsed'] = collapsed
 
 
+def set_weight(row, weight):
+    row['weight'] = weight
+
+
 def add_panel(row, panel, weight=DEFAULT_PANEL_WEIGHT):
     row['panels'].append({'weight': weight, 'panel': panel})
     return row
@@ -61,6 +65,10 @@ def finalize(row):
 
     # unbox panels
     ret['panels'] = [finalize_panel(panel['panel']) for panel in ret['panels']]
+
+    # The rows are sorted when they got finalized, so we strip the weight
+    if 'weight' in ret:
+        del ret['weight']
 
     return ret
 

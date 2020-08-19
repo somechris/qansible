@@ -31,6 +31,7 @@ from dashboard_websites_shared import STATUSES
 from dashboard_websites_shared import web_metric_base
 from dashboard_row import new as new_row
 from dashboard_row import add_panel
+from dashboard_row import set_weight
 from dashboard import add_row
 del sys.path[0]
 
@@ -90,7 +91,8 @@ def add_rows_website_variant(dashboard, host, engine, website, aspect=None, timi
         'encrypted' if aspect == 'https' else 'unencrypted')
     number = 2000
     for row in rows:
-        add_row(dashboard, row, weight_prefix + str(number))
+        set_weight(row, weight_prefix + str(number))
+        add_row(dashboard, row)
         number += 1000
     return dashboard
 

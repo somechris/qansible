@@ -60,8 +60,8 @@ def set_basename(dashboard, basename):
     dashboard['basename'] = basename
 
 
-def add_row(dashboard, row, weight=DEFAULT_ROW_WEIGHT):
-    dashboard['rows'].append({'weight': weight, 'row': row})
+def add_row(dashboard, row):
+    dashboard['rows'].append(row)
     return dashboard
 
 
@@ -75,10 +75,10 @@ def finalize(dashboard):
     ret = copy.deepcopy(dashboard)
 
     # sort rows by weight
-    ret['rows'].sort(key=lambda e : e['weight'])
+    ret['rows'].sort(key=lambda e : e.get('weight', DEFAULT_ROW_WEIGHT))
 
     # unbox rows
-    ret['rows'] = [finalize_row(row['row']) for row in ret['rows']]
+    ret['rows'] = [finalize_row(row) for row in ret['rows']]
 
     # Ordering, deduping, and normalizing tags
     ret['tags'] = list(set([tag.replace('_', '-') for tag in ret['tags']]))
