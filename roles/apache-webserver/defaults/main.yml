@@ -11,3 +11,31 @@ apache_webserver_error_documents:
   404:
     reason: Not Found
     explanation: The requested resource could not be found.
+
+apache_webserver_common_role_tasks_config:
+  role: apache-webserver
+  supported_distributions:
+    - 'Debian'
+  user: 'omit'
+  paths:
+    - /etc/apache2
+    - /etc/apache2/conf-available
+    - /etc/apache2/conf-enabled
+    - /etc/apache2/mods-available
+    - /etc/apache2/mods-enabled
+    - /etc/modsecurity
+    - /etc/modsecurity/crs
+  packages:
+    - apache2
+    - libapache2-mod-authnz-external
+    - libapache2-mod-security2
+    - modsecurity-crs
+  notifications: []
+  port_configs: "{% set collector = ([] | var_shim_init) %}{% for item in (apache_webserver_ports_plain + apache_webserver_ports_encrypted)%}{{collector|var_shim_add([{'port': item, 'name': 'WEBSERVER_' ~ item, 'incoming_net_accesses': apache_webserver_net_accesses}])}}{% endfor %}{{collector|var_shim_get}}"
+  services:
+    - apache2
+  dashboards: []
+  dashboard_host_rows:
+    - '{{inventory_hostname_short | dashboard_row_apache(apache_websites)}}'
+  monitoring_checks:
+    - {'name': 'HTTPD', command: 'apache2'}

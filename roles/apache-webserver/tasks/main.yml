@@ -1,28 +1,8 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
-
-- name: Install apache
-  apt:
-    name:
-      - apache2
-      - libapache2-mod-authnz-external
-      - libapache2-mod-security2
-      - modsecurity-crs
-    state: present
-
-- name: Drop undesired default configurations
-  file:
-    state: absent
-    dest: '/etc/apache2/conf-enabled/{{item}}'
-  with_items:
-    - icinga.conf # Icinga from apt configures its site via a conf. That
-                  # gets in the way of our site conf. Hence, we drop it
-    - icinga-web.conf # (See icinga.conf)
-    - serve-cgi-bin.conf # We do not want default cgi-bin serving
-    - javascript-common.conf # No automatic javascript exporting
-  notify:
-    reload apache
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{apache_webserver_common_role_tasks_config}}'
 
 - name: Make custom confs available
   template:
@@ -53,18 +33,27 @@
   notify:
     reload apache
 
-- name: Drop undesired modules
-  file:
-    state: absent
-    dest: '/etc/apache2/mods-enabled/{{item}}'
-  with_items:
-    - status.conf # Some distros do not restrict status module to local
-                  # requests, hence we roll our own config. That way we
-                  # should be say even after updates.
+- name: Configure modsecurity
+  template:
+    dest: '/etc/modsecurity/modsecurity.conf'
+    src: 'modsecurity.conf.j2'
+    owner: root
+    group: root
+    mode: 0444
   notify:
     reload apache
 
-- name: Make custom module confs available
+- name: Configure OWASP modsecurity rule set
+  template:
+    dest: '/etc/modsecurity/crs/crs-setup.conf'
+    src: 'crs-setup.conf.j2'
+    owner: root
+    group: root
+    mode: 0444
+  notify:
+    reload apache
+
+- name: Make custom mods available
   template:
     dest: '/etc/apache2/mods-available/{{item}}'
     src: '{{item}}.j2'
@@ -106,23 +95,33 @@
   notify:
     reload apache
 
-- name: Configure modsecurity
-  template:
-    dest: '/etc/modsecurity/modsecurity.conf'
-    src: 'modsecurity.conf.j2'
-    owner: root
-    group: root
-    mode: 0444
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{apache_webserver_common_role_tasks_config}}'
+
+- name: Drop undesired default configurations
+  file:
+    state: absent
+    dest: '/etc/apache2/conf-enabled/{{item}}'
+  with_items:
+    - icinga.conf # Icinga from apt configures its site via a conf. That
+                  # gets in the way of our site conf. Hence, we drop it
+    - icinga-web.conf # (See icinga.conf)
+    - serve-cgi-bin.conf # We do not want default cgi-bin serving
+    - javascript-common.conf # No automatic javascript exporting
   notify:
     reload apache
 
-- name: Configure OWASP modsecurity rule set
-  template:
-    dest: '/etc/modsecurity/crs/crs-setup.conf'
-    src: 'crs-setup.conf.j2'
-    owner: root
-    group: root
-    mode: 0444
+- name: Drop undesired modules
+  file:
+    state: absent
+    dest: '/etc/apache2/mods-enabled/{{item}}'
+  with_items:
+    - status.conf # Some distros do not restrict status module to local
+                  # requests, hence we roll our own config. That way we
+                  # should be say even after updates.
   notify:
     reload apache
 
@@ -176,23 +175,8 @@
   tags:
     - always
 
-- name: 'Add apache dashboard row'
-  set_fact:
-    dashboard_host: '{{dashboard_host | dashboard_add_row(inventory_hostname_short | dashboard_row_apache(apache_websites))}}'
-  changed_when: False
-  tags:
-    - always
-
-- name: Updating port config
-  set_fact:
-    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
-      item: {
-        "name": "WEBSERVER_" ~ item,
-        "protocol": "tcp",
-        "incoming_net_accesses": apache_webserver_net_accesses,
-      }
-    }, merge_lists=True)}}'
-  changed_when: False
-  with_items: '{{apache_webserver_ports_plain + apache_webserver_ports_encrypted}}'
-  tags:
-    - always
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{apache_webserver_common_role_tasks_config}}'

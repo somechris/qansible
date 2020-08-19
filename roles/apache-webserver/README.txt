@@ -27,6 +27,7 @@ No Globals that are specific only for this role.
 3. Parameters
 -------------
 
+* `apache_webserver_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `apache_webserver_net_accesses`: The allowed incoming net-accesses
   for the server. Websites can restrict further, but cannot relax
   beyond these net-accesses.
