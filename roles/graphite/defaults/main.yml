@@ -3,7 +3,7 @@ graphite_whisper_dir: /var/lib/graphite/whisper
 graphite_log_dir: '/var/log/graphite'
 graphite_alternate_log_dir: '/var/log/carbon'
 
-graphite_effective_data_disk: '{{common_directories_data_dir1}}'
+graphite_effective_data_disk: '{{common_directories_default_data_dir}}'
 graphite_effective_data_dir: '{{graphite_effective_data_disk}}/graphite'
 graphite_effective_var_lib_dir: '{{graphite_effective_data_dir}}/var-lib-graphite'
 graphite_effective_whisper_dir: '{{graphite_effective_data_dir}}/whisper'
