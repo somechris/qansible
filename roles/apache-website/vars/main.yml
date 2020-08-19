@@ -9,3 +9,17 @@ apache_website_add_www_redirects: '{{(apache_website_domain | split(".") | lengt
 apache_website_redirects: []
 apache_website_rewrites: []
 apache_website_mod_configs: {}
+
+apache_website_common_role_tasks_config:
+  role: 'apache-website ({{apache_website_domain}})'
+  supported_distributions:
+    - 'Debian'
+  user: omit
+  paths: []
+  packages: []
+  notifications: []
+  port_configs: []
+  services: []
+  dashboards: []
+  dashboard_host_rows: "{{inventory_hostname_short | dashboard_rows_website('apache', apache_website_domain)}}"
+  monitoring_checks: []

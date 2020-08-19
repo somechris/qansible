@@ -1,6 +1,8 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{apache_website_common_role_tasks_config}}'
 
 - name: Configure {{apache_website_domain}} site
   template:
@@ -11,6 +13,12 @@
     mode: 0444
   notify:
     reload apache
+
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{apache_website_common_role_tasks_config}}'
 
 - name: Collect hosted website
   set_fact:
@@ -26,9 +34,8 @@
   tags:
     - always
 
-- name: 'Add dashboard rows'
-  set_fact:
-    dashboard_host: "{{dashboard_host | dashboard_add_rows(inventory_hostname_short | dashboard_rows_website('apache', apache_website_domain))}}"
-  changed_when: False
-  tags:
-    - always
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{apache_website_common_role_tasks_config}}'

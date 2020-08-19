@@ -38,6 +38,7 @@ No Globals that are specific only for this role.
 
 3. Parameters
 -------------
+* `apache_website_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `apache_website_htpasswds`: (optional) (default: {}) See `website_common_htpasswds`
   of the `website-common` role.
 * `apache_website_locations`: (optional) (default: empty) List of location
