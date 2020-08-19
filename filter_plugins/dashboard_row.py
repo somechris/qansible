@@ -49,7 +49,7 @@ def set_collapsed(row, collapsed):
 
 
 def add_panel(row, panel, weight=DEFAULT_PANEL_WEIGHT):
-    row['panels'].append({'weight': float(weight), 'panel': panel})
+    row['panels'].append({'weight': weight, 'panel': panel})
     return row
 
 
