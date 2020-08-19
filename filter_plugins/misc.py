@@ -84,6 +84,25 @@ def dump_json(obj):
     """
     return json.dumps(obj, indent=2, sort_keys=True)
 
+
+def var_shim_init(initial_value):
+    return {'val': initial_value}
+
+
+def var_shim_set(var, value):
+    var['val'] = value
+    return ''
+
+
+def var_shim_add(var, value):
+    var['val'] += value
+    return ''
+
+
+def var_shim_get(var):
+    return var['val']
+
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
@@ -102,4 +121,8 @@ class FilterModule(object):
             'prepend_all_items': prepend_all_items,
             'replace_if_whole_string_matches': replace_if_whole_string_matches,
             'replace_omit_string': replace_omit_string,
+            'var_shim_init': var_shim_init,
+            'var_shim_set': var_shim_set,
+            'var_shim_add': var_shim_add,
+            'var_shim_get': var_shim_get,
         }
