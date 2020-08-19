@@ -10,11 +10,11 @@
     group: "{{item['user'] | default('root')}}"
     mode: "{{'775' if (item['writable'] | default(False)) else '555'}}"
   with_items:
-    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}' }
-    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/htdocs', user: www-data }
-    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/conf' }
-    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/htpasswds' }
-    - { path: '{{common_directories_data_dir1}}/website-{{website_common_domain}}/logs', user: www-data, writable: True }
+    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}' }
+    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}/htdocs', user: www-data }
+    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}/conf' }
+    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}/htpasswds' }
+    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}/logs', user: www-data, writable: True }
   notify:
     reload webserver
 
@@ -22,7 +22,7 @@
   file:
     state: link
     dest: '{{web_site_root_dir}}/{{website_common_domain}}'
-    src: '{{common_directories_data_dir1}}/website-{{website_common_domain}}'
+    src: '{{website_common_data_disk}}/website-{{website_common_domain}}'
   notify:
     reload webserver
 

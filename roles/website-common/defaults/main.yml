@@ -1,0 +1,1 @@
+website_common_data_disk: '{{common_directories_default_data_dir}}'
