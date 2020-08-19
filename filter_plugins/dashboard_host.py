@@ -64,7 +64,7 @@ def dashboard_host(host, groups=[], hostvars={}, cpu_count=False):
 
 
 class FilterModule(object):
-    '''Ansible jinja2 filters for grafana load graphs'''
+    '''Ansible jinja2 filters for generic per host rows'''
 
     def filters(self):
         return {

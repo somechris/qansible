@@ -78,7 +78,7 @@ def dashboard_phones(title):
 
 
 class FilterModule(object):
-    '''Ansible jinja2 filters for grafana load graphs'''
+    '''Ansible jinja2 filters for phone dashboards'''
 
     def filters(self):
         return {

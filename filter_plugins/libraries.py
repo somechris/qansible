@@ -81,7 +81,7 @@ def dashboard_libraries(title):
 
 
 class FilterModule(object):
-    '''Ansible jinja2 filters for grafana load graphs'''
+    '''Ansible jinja2 filters for library dashboards'''
 
     def filters(self):
         return {
