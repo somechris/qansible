@@ -7,6 +7,20 @@
     enabled: yes
   with_items: "{{common_role_tasks_end_config['services']}}"
 
+- name: '{{common_role_tasks_end_parent_role}}: Add dashboards'
+  set_fact:
+    dashboards: "{{dashboards + common_role_tasks_end_config['dashboards']}}"
+  changed_when: False
+  tags:
+    - always
+
+- name: '{{common_role_tasks_end_parent_role}}: Add dashboard rows'
+  set_fact:
+    dashboard_host_rows: "{{dashboard_host_rows + common_role_tasks_end_config['dashboard_host_rows']}}"
+  changed_when: False
+  tags:
+    - always
+
 - name: '{{common_role_tasks_end_parent_role}}: Updating firewall port config'
   set_fact:
     firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({

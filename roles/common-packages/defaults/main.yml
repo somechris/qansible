@@ -13,6 +13,8 @@ common_packages_common_role_tasks_config:
   port_configs: []
   services:
     - atop
+  dashboards: []
+  dashboard_host_rows: []
   monitoring_checks:
     - {name: 'atop/Accounting monitor', command: 'atopacctd', name_prefix: False}
     - {name: 'atop/Daemon', command: 'atop', name_prefix: False}

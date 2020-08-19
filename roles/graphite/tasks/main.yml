@@ -65,13 +65,6 @@
     minute: "{{inventory_hostname | hashing_mod(60, 11)}}"
     job: "/usr/bin/graphite-manage-attic --move-stale-entities --verbose >>{{graphite_log_dir}}/graphite-manage-attic.log 2>&1"
 
-- name: 'Add graphite dashboard row'
-  set_fact:
-    dashboard_host: '{{dashboard_host | dashboard_add_row(inventory_hostname_short | dashboard_row_graphite)}}'
-  changed_when: False
-  tags:
-    - always
-
 - name: Common role tasks at end
   import_role:
     name: common-role-tasks-end

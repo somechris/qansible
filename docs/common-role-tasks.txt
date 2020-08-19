@@ -19,6 +19,12 @@ think about them and cannot easily overlook them. We only provide defaults, when
 a field has almost always the same value. For example ports are almost always
 `tcp`, and the name of a user group is almost always the same as the user
 name.):
+* `dashboard_host_rows`: A list of rows to add to the host dashboard. Each row
+  has to be a row formatted accordingly to `dashboards.txt`. (See `dashboards`
+  key to add full blown, self-standing dashboards)
+* `dashboards`: A list of dashboards. Each dashboard has to be a full,
+  self-standing formatted accordingly to `dashboards.txt`. (See
+  `dashboard_host_rows` to add rows to the host's dashboard)
 * `group`: (Default: value at key `user`) The name of the group for the
   service. The group will get created, if it's missing. Use the string 'omit'
   (not `{{omit}}`) to omit all group actions (group creation, setting owner

@@ -65,6 +65,12 @@ def add_row(dashboard, row, weight=DEFAULT_ROW_WEIGHT):
     return dashboard
 
 
+def add_rows(dashboard, rows):
+    for row in rows:
+        add_row(dashboard, row)
+    return dashboard
+
+
 def finalize(dashboard):
     ret = copy.deepcopy(dashboard)
 
@@ -83,6 +89,7 @@ def finalize(dashboard):
 
 FILTERS = {
     'dashboard_add_row': add_row,
+    'dashboard_add_rows': add_rows,
     }
 
 
