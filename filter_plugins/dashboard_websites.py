@@ -73,16 +73,16 @@ def panel_website_total_requests(host, engine, width=None):
 
 def add_rows_website_variant(dashboard, host, engine, website, aspect=None, timing=True, ssl=False):
     rows = [
-        row_website_volume_kpi(dashboard, host, engine, website, aspect),
-        row_website_status_details(dashboard, host, engine, website, aspect),
+        row_website_volume_kpi(host, engine, website, aspect),
+        row_website_status_details(host, engine, website, aspect),
         ]
     if ssl:
-        rows.append(row_website_ssl(dashboard, host, engine, website, aspect))
+        rows.append(row_website_ssl(host, engine, website, aspect))
     if timing:
         rows += [
-            row_website_timing_kpi(dashboard, host, engine, website, aspect),
-            row_website_timing_per_status(dashboard, host, engine, website, aspect),
-            row_website_timing_per_method(dashboard, host, engine, website, aspect),
+            row_website_timing_kpi(host, engine, website, aspect),
+            row_website_timing_per_status(host, engine, website, aspect),
+            row_website_timing_per_method(host, engine, website, aspect),
             ]
 
     weight_prefix = 'website-%s-%s-%s-' % (

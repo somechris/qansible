@@ -47,7 +47,7 @@ def panel_website_requests_per_status(host, metric_base, status, alias, width=No
     return panel
 
 
-def row_website_status_details(dashboard, host, engine, website, aspect):
+def row_website_status_details(host, engine, website, aspect):
     title = '%s %s status details' % (
         website,
         ' (' + aspect + ')' if aspect else '')

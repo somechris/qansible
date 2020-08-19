@@ -39,7 +39,7 @@ def panel_website_ssl(host, aspect, metric_base, width=None):
     return panel
 
 
-def row_website_ssl(dashboard, host, engine, website, aspect):
+def row_website_ssl(host, engine, website, aspect):
     title = '%s %s SSL' % (website, ' (' + aspect + ')' if aspect else '')
     row = new_row(title)
     width = 4

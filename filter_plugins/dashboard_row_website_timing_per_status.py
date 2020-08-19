@@ -43,7 +43,7 @@ def panel_website_timing_per_status(host, metric_base, status, alias, width=None
     return panel
 
 
-def row_website_timing_per_status(dashboard, host, engine, website, aspect):
+def row_website_timing_per_status(host, engine, website, aspect):
     title = '%s %s timing per status' % (website, ' (' + aspect + ')' if aspect else '')
     row = new_row(title)
     width = 3

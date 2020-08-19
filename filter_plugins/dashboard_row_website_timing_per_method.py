@@ -43,7 +43,7 @@ def panel_website_timing_per_method_detailed(host, metric_base, method, width=No
     return panel
 
 
-def row_website_timing_per_method(dashboard, host, engine, website, aspect, repeated=False, collapse=True, add=True):
+def row_website_timing_per_method(host, engine, website, aspect, repeated=False, collapse=True, add=True):
     title = '%s %s timing per method' % (website, ' (' + aspect + ')' if aspect else '')
     row = new_row(title)
     width = 3

@@ -76,7 +76,7 @@ def panel_website_timing_per_method(host, metric_base, width=None):
     return panel
 
 
-def row_website_timing_kpi(dashboard, host, engine, website, aspect):
+def row_website_timing_kpi(host, engine, website, aspect):
     title = '%s %s timing KPI' % (website, ' (' + aspect + ')' if aspect else '')
     row = new_row(title)
     width = 4

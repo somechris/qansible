@@ -81,7 +81,7 @@ def panel_website_requests_per_user(host, metric_base, width=None):
     return panel
 
 
-def row_website_volume_kpi(dashboard, host, engine, website, aspect):
+def row_website_volume_kpi(host, engine, website, aspect):
     title = '%s %s volume KPI' % (
         website,
         (' (' + aspect + ')') if aspect else '')
