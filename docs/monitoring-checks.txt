@@ -46,6 +46,10 @@ what processes to expect:
 The type `website` checks if a website is working from the checking host. The config The
 following additional key/values allow to specify what processes to expect:
 * `domain`: The domain to check.
+* `kind`: The kind of website (E.g. `apache`, or None)
+* `dns`: (Default: False) If False, target the request at the host no
+  matter what DNS would resolve the domain to. If True, target the
+  request at whatever host DNS resolves the domain to.
 
 Checks for domains are taken from `monitoring_website_health_checks`, which is
 per default a merge of `monitoring_website_health_checks_defaults`, and

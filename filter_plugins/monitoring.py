@@ -63,6 +63,9 @@ def explicitize(checks):
             check.setdefault('max-procs', 1)
             check.setdefault('user', 'root')
 
+        if check['type'] == 'website':
+            check.setdefault('dns', False)
+
         ret.append(check)
     return ret
 

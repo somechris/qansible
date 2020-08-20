@@ -223,6 +223,49 @@ def icinga_http_preconfigured_checks_check(host, site, name, config={},
         dns=dns, port=port, variant=variant)
 
 
+def icinga_http_preconfigured_domain(host, kind, site, configs={},
+                                     dns=False):
+    ret = ''
+    config, checks = icinga_http_preconfigured_checks_get_config(
+        site, configs)
+
+    protocols = config['protocols']
+    ssl = config.get('ssl', None)
+
+    default_protocol = 'https' if 'https' in protocols else 'http'
+    use_suffix = (len(checks) > 1)
+    for check_name, check_config in sorted(checks.iteritems()):
+        ret += icinga_http_preconfigured_checks_check(
+            host=host, site=site, name=check_name,
+            config=check_config, use_suffix=use_suffix, dns=dns,
+            default_protocol=default_protocol, ssl=ssl)
+
+    if 'https' in protocols:
+        description = site + '/cert'
+        check = 'http_vhost_cert'
+        if dns:
+            check += '_dns'
+        check += '_ssl'
+        if ssl is not None:
+            check += str(ssl)
+        ret += '\n' + icinga_check(description=description, host=host,
+                                   check=check, args=[site],
+                                   interval='daily')
+
+    if 'http' in protocols and 'https' in protocols:
+        description = site + '/http/https redirect'
+        description = ('%s/http/https redirect') % (site)
+        ret += '\n' + icinga_http_check(description=description,
+                                        host=host,
+                                        domain=site,
+                                        expected_status_code=301,
+                                        ssl=False,
+                                        dns=dns)
+
+    # TODO: add checks for 5xx requests and total.count
+    return ret
+
+
 def icinga_http_preconfigured_checks(host, apache_sites=[], nginx_sites=[],
                                      unansiblized_sites=[], configs={},
                                      dns=False):
@@ -233,45 +276,10 @@ def icinga_http_preconfigured_checks(host, apache_sites=[], nginx_sites=[],
             None: unansiblized_sites,
             }.iteritems()):
         for site in sorted(sites):
-            config, checks = icinga_http_preconfigured_checks_get_config(
-                site, configs)
-
-            protocols = config['protocols']
-            ssl = config.get('ssl', None)
-
-            default_protocol = 'https' if 'https' in protocols else 'http'
-            use_suffix = (len(checks) > 1)
-            for check_name, check_config in sorted(checks.iteritems()):
-                ret += icinga_http_preconfigured_checks_check(
-                    host=host, site=site, name=check_name,
-                    config=check_config, use_suffix=use_suffix, dns=dns,
-                    default_protocol=default_protocol, ssl=ssl)
-
-            if 'https' in protocols:
-                description = site + '/cert'
-                check = 'http_vhost_cert'
-                if dns:
-                    check += '_dns'
-                check += '_ssl'
-                if ssl is not None:
-                    check += str(ssl)
-                ret += '\n' + icinga_check(description=description, host=host,
-                                           check=check, args=[site],
-                                           interval='daily')
-
-            if 'http' in protocols and 'https' in protocols:
-                description = site + '/http/https redirect'
-                description = ('%s/http/https redirect') % (site)
-                ret += '\n' + icinga_http_check(description=description,
-                                                host=host,
-                                                domain=site,
-                                                expected_status_code=301,
-                                                ssl=False,
-                                                dns=dns)
-
-            # TODO: add checks for 5xx requests and total.count
+            ret += icinga_http_preconfigured_domain(host, kind, site,
+                                                    configs=configs,
+                                                    dns=dns)
     return ret
-
 
 def icinga_slug(string):
     return re.sub(r'[^a-zA-Z0-9]', r'_', string.lower())
@@ -291,16 +299,20 @@ def icinga_monitoring_check_config_nrpe_formatter(config):
         if 'argument' in config:
             arg+=' --argument-array=%s' % (config['argument'])
         ret = icinga_nrpe_command(slug, 'procs', arg.strip())
+    elif config['type'] == 'website':
+        ret = '# No nrpe counter-part for check ' + config['name']
     else:
         raise RuntimeError('Unknown check type "%s" in icinga_monitoring_check_config_nrpe_formatter' % (config['type']))
     return ret
 
 
-def icinga_monitoring_check_config_check_formatter(config, inventory_hostname):
+def icinga_monitoring_check_config_check_formatter(config, inventory_hostname, website_configs):
     ret = ''
     slug=icinga_slug(config['name'])
     if config['type'] == 'process':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
+    elif config['type'] == 'website':
+        ret = icinga_http_preconfigured_domain(inventory_hostname, config['kind'], config['domain'], configs=website_configs, dns=config['dns'])
     else:
         raise RuntimeError('Unknown check type "%s" in icinga_monitoring_check_config_check_formatter' % (config['type']))
     return ret
