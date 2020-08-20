@@ -4,15 +4,6 @@
   vars:
     common_role_tasks_start_config: '{{diamond_common_role_tasks_config}}'
 
-- name: Grant diamond user access to log files
-  user:
-    state: present
-    name: diamond
-    append: yes
-    createhome: no
-    groups: adm
-  when: '"apache" in group_names or "nginx" in group_names'
-
 - name: Configure diamond
   template:
     dest: /etc/diamond/diamond.conf
