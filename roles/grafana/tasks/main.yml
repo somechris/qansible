@@ -40,7 +40,9 @@
     common_role_tasks_package_install_config: '{{grafana_common_role_tasks_config}}'
 
 - name: Set company name if needed
-  command: /usr/bin/sqlite3 --batch '{{grafana_var_lib_dir}}/{{grafana_sqlite_db}}' 'UPDATE org SET name="{{company_name}}", updated=datetime("now") WHERE id=1 AND name != "{{company_name}}"'
+  command: /usr/bin/sqlite3 --batch '{{grafana_var_lib_dir}}/{{grafana_sqlite_db}}' 'UPDATE org SET name="{{company_name}}", updated=datetime("now") WHERE id=1 AND name != "{{company_name}}"' 'SELECT CHANGES()'
+  register: grafana_reg_company_update
+  changed_when: grafana_reg_company_update['stdout'] != '0'
 
 - name: Common role tasks at end
   import_role:
