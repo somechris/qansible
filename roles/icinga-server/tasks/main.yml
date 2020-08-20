@@ -125,8 +125,10 @@
 
 - name: Update contacts
   command: /etc/icinga/update_contacts.sh
+  register: icinga_server_reg_contacts_update
   notify:
     reload icinga
+  changed_when: icinga_server_reg_contacts_update['stdout'] != ''
 
 - name: Generate virtual host icinga config
   template:
