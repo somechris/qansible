@@ -132,49 +132,6 @@
   notify:
     reload apache
 
-- name: Link effective log directory from default place
-  file:
-    state: link
-    path: '/var/log/apache2/{{item}}'
-    owner: www-data
-    group: adm
-    src: '{{web_site_root_dir}}/{{item}}/logs'
-    follow: no
-  with_items: '{{apache_updated_websites | default([])}}'
-  notify:
-    reload apache
-  tags:
-    - always
-
-- name: Link site confs to available site confs
-  file:
-    state: link
-    dest: '/etc/apache2/sites-available/{{item}}.conf'
-    src: '{{web_site_root_dir}}/{{item}}/conf/{{item}}.conf'
-    owner: root
-    group: root
-    mode: 0444
-    force: yes
-  with_items: '{{apache_updated_websites | default([])}}'
-  notify:
-    reload apache
-  tags:
-    - always
-
-- name: Enable sites
-  file:
-    state: link
-    dest: '/etc/apache2/sites-enabled/{{"00-" if item == "default" else ""}}{{item}}.conf'
-    src: '/etc/apache2/sites-available/{{item}}.conf'
-    owner: root
-    group: root
-    mode: 0444
-  with_items: '{{apache_updated_websites | default([])}}'
-  notify:
-    reload apache
-  tags:
-    - always
-
 - name: Common role tasks at end
   import_role:
     name: common-role-tasks-end

@@ -15,9 +15,23 @@ apache_website_common_role_tasks_config:
   supported_distributions:
     - 'Debian'
   user: omit
-  paths: []
+  paths:
+    - /etc/apache2
+    - /etc/apache2/sites-available
+    - /etc/apache2/sites-enabled
+    - state: link
+      path: '/etc/apache2/sites-available/{{apache_website_domain}}.conf'
+      source: '{{web_site_root_dir}}/{{apache_website_domain}}/conf/{{apache_website_domain}}.conf'
+      force: yes
+    - state: link
+      path: '/etc/apache2/sites-enabled/{{"00-" if apache_website_domain == "default" else ""}}{{apache_website_domain}}.conf'
+      source: '/etc/apache2/sites-available/{{apache_website_domain}}.conf'
+      force: yes
+    - /var/log/apache2
+    - {state: link, path: '/var/log/apache2/{{apache_website_domain}}', source: '{{web_site_root_dir}}/{{apache_website_domain}}/logs'}
   packages: []
-  notifications: []
+  notifications:
+    - 'reload apache'
   port_configs: []
   services: []
   dashboards: []

@@ -22,12 +22,6 @@
 
 - name: Collect hosted website
   set_fact:
-    apache_updated_websites: '{{apache_updated_websites | default([])}} + [ "{{apache_website_domain}}" ]'
-  when: 'apache_website_domain not in (apache_updated_websites | default([]))'
-  changed_when: False
-
-- name: Collect hosted website
-  set_fact:
     apache_websites: '{{apache_websites | default([])}} + [ "{{apache_website_domain}}" ]'
   when: 'apache_website_domain not in (apache_websites | default([]))'
   changed_when: False
