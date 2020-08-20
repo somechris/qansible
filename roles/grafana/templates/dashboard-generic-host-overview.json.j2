@@ -1,9 +1,0 @@
-{# qa:no-ansible-managed-check, as JSON does not allow comments -#}
-{{"" | grafana_create_dashboard(
-   title = "Generic Host Overview",
-   tags = [ "overview" ],
-   templates = [ "host" ],
-   )
-  | grafana_add_row_overview("$host", repeated="host")
-  | grafana_dump_dashboard()
-  }}

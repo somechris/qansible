@@ -17,7 +17,7 @@ default_dashboard = {
     "tags": [],
     }
 
-def new(title='Untitled dashboard', basename=None):
+def new(title='Untitled dashboard', basename=None, tags=[], templates=[]):
     """Prepares a new dashboard object
 
     Parameters
@@ -36,7 +36,10 @@ def new(title='Untitled dashboard', basename=None):
     if basename is None:
         basename = title.lower()
         basename = re.sub(r'[^a-z0-9.]', '_', basename)
-    dashboard['basename'] = basename
+    set_basename(dashboard, basename)
+
+    add_tags(dashboard, tags)
+    add_templates(dashboard, templates)
 
     return dashboard
 
@@ -45,6 +48,11 @@ def add_template(dashboard, template):
     if 'templates' not in dashboard:
         dashboard['templates'] = []
     dashboard['templates'].append(template)
+
+
+def add_templates(dashboard, templates):
+    for template in templates:
+        add_template(dashboard, template)
 
 
 def add_tag(dashboard, tag):
@@ -90,6 +98,7 @@ def finalize(dashboard):
 FILTERS = {
     'dashboard_add_row': add_row,
     'dashboard_add_rows': add_rows,
+    'dashboard_new': new,
     }
 
 

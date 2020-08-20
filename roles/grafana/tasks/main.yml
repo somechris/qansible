@@ -33,20 +33,6 @@
   notify:
     reload grafana
 
-- name: Render dashboard files
-  template:
-    dest: "{{grafana_dashboard_dir}}/{{item}}.json"
-    src: "dashboard-{{item}}.json.j2"
-    owner: grafana
-    group: grafana
-    mode: 0444
-  with_items:
-    - generic-host-overview
-  tags:
-    - 'grafana-dashboards'
-  notify:
-    reload grafana
-
 - name: Common role tasks for installing packages
   import_role:
     name: common-role-tasks-package-install

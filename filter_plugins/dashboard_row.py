@@ -17,7 +17,7 @@ default_row = {
     "panels": [],
     }
 
-def new(title='Untitled row', collapsed=None):
+def new(title='Untitled row', collapsed=None, repeat=None):
     """Prepares a new dashboard row object
 
     Parameters
@@ -35,6 +35,9 @@ def new(title='Untitled row', collapsed=None):
 
     if collapsed is not None:
         set_collapsed(row, collapsed)
+
+    if repeat is not None:
+        set_repeat(row, repeat)
 
     return row
 

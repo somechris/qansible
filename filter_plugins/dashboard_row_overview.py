@@ -12,9 +12,9 @@ from dashboard_row import add_panel
 del sys.path[0]
 
 
-def row_overview(host, cpu_count=False, collapsed=None):
+def row_overview(host, cpu_count=False, collapsed=None, repeat=None):
     title = 'Performance Characteristics'
-    row = new_row(title, collapsed=collapsed)
+    row = new_row(title, collapsed=collapsed, repeat=repeat)
     width = 3
 
     add_panel(row, panel_load(host, width=width, cpu_count=cpu_count))
@@ -30,4 +30,5 @@ class FilterModule(object):
 
     def filters(self):
         return {
+            'dashboard_row_overview': row_overview,
             }

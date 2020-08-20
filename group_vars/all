@@ -183,4 +183,5 @@ diamond_collector_dir: /usr/share/diamond/collectors
 #
 dashboard_host: '{{inventory_hostname_short | dashboard_host(groups=group_names, hostvars=hostvars[inventory_hostname], cpu_count=qhost_cpus)}}'
 dashboard_host_rows: []
-dashboards: []
+dashboards:
+  - "{{'Generic Host Overview' | dashboard_new('generic-host-overview', tags=['overview'], templates=['host']) | dashboard_add_row('$host' | dashboard_row_overview(repeat='host'))}}"
