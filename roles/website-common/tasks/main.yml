@@ -1,30 +1,8 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian", "Gentoo"]'
-
-- name: Create directories
-  file:
-    state: directory
-    dest: "{{item['path']}}"
-    owner: "{{item['user'] | default('root')}}"
-    group: "{{item['user'] | default('root')}}"
-    mode: "{{'775' if (item['writable'] | default(False)) else '555'}}"
-  with_items:
-    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}' }
-    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}/htdocs', user: www-data }
-    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}/conf' }
-    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}/htpasswds' }
-    - { path: '{{website_common_data_disk}}/website-{{website_common_domain}}/logs', user: www-data, writable: True }
-  notify:
-    reload webserver
-
-- name: Link effective site directory into place
-  file:
-    state: link
-    dest: '{{web_site_root_dir}}/{{website_common_domain}}'
-    src: '{{website_common_data_disk}}/website-{{website_common_domain}}'
-  notify:
-    reload webserver
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{website_common_common_role_tasks_config}}'
 
 - name: Load credentials
   include_vars: credentials.yml
@@ -39,3 +17,15 @@
   with_items: '{{website_common_htpasswds | dict2items}}'
   notify:
     reload webserver
+
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{website_common_common_role_tasks_config}}'
+
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{website_common_common_role_tasks_config}}'

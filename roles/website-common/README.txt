@@ -28,9 +28,12 @@ No Globals that are specific only for this role.
 3. Parameters
 -------------
 
+* `website_common_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `website_common_data_disk`: Directory for data disk where website's data
   effectively gets stored in.
 * `website_common_domain`: The domain to host
+* `website_common_effective_data_dir`: Directory where the websites files should
+  end up in.
 * `website_common_kind`: The kind of webserver (E.g.: `nginx`, `apache`)
 * `website_common_htpasswds`: (optional) (Default: {}) Dictionary of htpasswds
   to set up. The key is the name of the htpasswd file, and the value is a list

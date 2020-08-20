@@ -4,3 +4,26 @@ website_common_htpasswds: {}
 website_common_is_https: True
 website_common_add_www_redirects: True
 website_common_users: {}
+website_common_effective_data_dir: '{{website_common_data_disk}}/website-{{website_common_domain}}'
+
+website_common_common_role_tasks_config:
+  role: 'website-common ({{website_common_domain}})'
+  supported_distributions:
+    - 'Debian'
+    - 'Gentoo'
+  user: omit
+  paths:
+    - { path: '{{website_common_effective_data_dir}}' }
+    - { path: '{{website_common_effective_data_dir}}/htdocs', user: 'www-data' }
+    - { path: '{{website_common_effective_data_dir}}/conf' }
+    - { path: '{{website_common_effective_data_dir}}/htpasswds', user: 'www-data', mode: '750' }
+    - { path: '{{website_common_effective_data_dir}}/logs', user: 'www-data', mode: '770' }
+    - { state: 'link', path: '{{web_site_root_dir}}/{{website_common_domain}}', source: '{{website_common_effective_data_dir}}' }
+  packages: []
+  notifications:
+    - 'reload webserver'
+  port_configs: []
+  services: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks: []
