@@ -24,61 +24,6 @@ Sets up an Icinga server along with an Icinga 1 web application.
   and the domain name from whose IP address NRPE calls are made.
 * `icinga_server_object_path`: The directory holding the object configuration
   files.
-* `icinga_server_preconfigured_web_host_health_checks_defaults`: Default
-  preconfigured web domain checks. Unless you want to override defaults, you're
-  better off adding checks for your own domains to
-  `icinga_server_preconfigured_web_host_health_checks_extra`.
-* `icinga_server_preconfigured_web_host_health_checks`: (Default: merge of
-  `icinga_server_preconfigured_web_host_health_checks_defaults` and
-  `icinga_server_preconfigured_web_host_health_checks_extra`). This is the
-  configuration effectively used, but unless you want to hard override things,
-  you're better off add checks for your own domains to
-* `icinga_server_preconfigured_web_host_health_checks_extra`: Dictionary that
-  defines how to perform web domain checks for user domains. This is the
-  dictionary where you should add checks for your own domains. For a domain
-  `foo.bar.baz`, the checks defined by the following keys get added up (with the
-  later overruling the earlier ones): `foo`, `foo.bar.baz`. The value for each
-  key is again a dictionary holding the following key/value pairs:
-    * `alias`: (Default: None) Merges the definition of another web host check
-      in. So if the value of `alias` is `foo`, then the definitions of
-      `icinga_server_preconfigured_web_host_health_checks['foo']` get added in.
-    * `protocols`: (Default: ['https', 'http']) The list of protocols offered by
-      this server. (See `protocol` of the individual checks to see how to
-      specify which protocol gets used for a check). If 'https' is contained, a
-      check for certificate expiration is added automatically. If both 'http'
-      and 'https' is present, a check that 'http' requests get forwarded to
-      'https' urls gets added.
-    * `ssl`: (Default: None) If set, enforce a given SSL/TLS version
-      for https connections. The following mapping applies:
-      * 1: TLS 1
-      * 1.1: TLS 1.1
-      * 2: SSL 2
-      * 3: SSL 3
-    * Each of the remaining key is considered the name of a check and the
-      corresponding value in a dictionary that sepecifies how to check. It's
-      key/values are:
-      * `data`: (Default: 'None') The encoded data to send along with the
-        request.
-      * `encode_data`: (Default: 'None') The unencoded data to send along with
-        the request. The data will get encoded automatically.
-      * `expected_status_code`: (Default: 200) The response status code needed
-        to pass the check.
-      * `expected_content`: (Default: '') The content that needs to be in the
-        response to pass the check.
-      * `method`: (Default: 'GET') The HTTP method to use for the check. Only
-        `GET` and `POST` are supported at this time.
-      * `port`: (Default: None), If `None`, request on the default port for the
-        used protocol. Otherwise request on the given port.
-        `http`) The protocol to check on.
-      * `protocol`: (Default: 'https' if the web host offers https, otherwise
-        `http`) The protocol to check on.
-      * `uri`: (Default: '/') The uri to check.
-      * `variant`: (Default: '') If empty, warn above 1 second response. If
-        `slow`, warn above 3 seconds response time.
-  This dictionary only defines the checks, but does not run or enfocrce them. To
-  run the checks, add the relevant, fully qualified domains to for example
-  `icinga_server_virtual_external_domains`, and
-  `icinga_server_virtual_internal_domains`
 
 
 
@@ -94,14 +39,6 @@ Sets up an Icinga server along with an Icinga 1 web application.
 * `icinga_server_htdocs_dir`: The directory holding Icinga's htdocs
 * `icinga_server_net_accesses`: List of net accesses of which hosts can reach
   the service.
-* `icinga_server_virtual_external_domains`: List of domains that are considered
-  publicly accessible and should be monitored. Each of these are checked from
-  the Icinga server according to the checks specified in
-  `icinga_server_preconfigured_web_host_health_checks`
-* `icinga_server_virtual_internal_domains`: List of domains that are considered
-  only internally visible and should be monitored. Each of these are checked
-  from the Icinga server according to the checks specified in
-  `icinga_server_preconfigured_web_host_health_checks`
 
 
 

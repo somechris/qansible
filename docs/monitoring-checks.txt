@@ -40,3 +40,68 @@ what processes to expect:
 * `user`: (Default: `root`) Match only processes run by this user. Use the
   string `omit` (not Ansible's variable of name `omit`) to not check the process
   owner.
+
+## Type `website`
+
+The type `website` checks if a website is working from the checking host. The config The
+following additional key/values allow to specify what processes to expect:
+* `domain`: The domain to check.
+
+Checks for domains are taken from `monitoring_website_health_checks`, which is
+per default a merge of `monitoring_website_health_checks_defaults`, and
+`monitoring_website_health_checks_extra`. The last one is where to best put
+configurations for user-defined domains. Each of the three variables is a
+dictionary of configurations.
+
+For a domain `foo.bar.baz`, the checks defined by the following keys get added
+up (with the later overruling the earlier ones): `foo`, `foo.bar.baz`. The value
+for each key is again a dictionary holding the following key/value pairs:
+* `alias`: (Default: None) Merges the definition of another web host check
+  in. So if the value of `alias` is `foo`, then the definitions of
+  `monitoring_website_health_checks['foo']` get added in.
+* `protocols`: (Default: ['https', 'http']) The list of protocols offered by
+  this server. (See `protocol` of the individual checks to see how to specify
+  which protocol gets used for a check). If 'https' is contained, a check for
+  certificate expiration is added automatically. If both 'http' and 'https' is
+  present, a check that 'http' requests get forwarded to 'https' urls gets
+  added.
+* `ssl`: (Default: None) If set, enforce a given SSL/TLS version for https
+  connections. The following mapping applies:
+    * 1: TLS 1
+    * 1.1: TLS 1.1
+    * 2: SSL 2
+    * 3: SSL 3
+* Each of the remaining key is considered the name of a check and the
+  corresponding value in a dictionary that sepecifies how to check. It's
+  key/values are:
+    * `data`: (Default: 'None') The encoded data to send along with the request.
+    * `encode_data`: (Default: 'None') The unencoded data to send along with the
+      request. The data will get encoded automatically.
+    * `expected_status_code`: (Default: 200) The response status code needed to
+      pass the check.
+    * `expected_content`: (Default: '') The content that needs to be in the
+      response to pass the check.
+    * `method`: (Default: 'GET') The HTTP method to use for the check. Only
+      `GET` and `POST` are supported at this time.
+    * `port`: (Default: None), If `None`, request on the default port for the
+      used protocol. Otherwise request on the given port.  `http`) The protocol
+      to check on.
+    * `protocol`: (Default: 'https' if the web host offers https, otherwise
+      `http`) The protocol to check on.
+    * `uri`: (Default: '/') The uri to check.
+    * `variant`: (Default: '') If empty, warn above 1 second response. If
+      `slow`, warn above 3 seconds response time.
+
+Note that adding a domain configuration to one of the above three configuration
+variables only configures the check and does not automatically run checks. It's
+the responsibility of the roles (E.g.: `apache-website`) to bring the checks
+into place. Additionally, the domains listed in `monitoring_external_websites`,
+and `monitoring_internal_websites` have checks set up automatically:
+
+* `monitoring_external_websites`: List of domains that are considered publicly
+  accessible and should be monitored. Each of these are checked from the Icinga
+  server according to the checks specified in `monitoring_website_health_checks`
+* `monitoring_internal_websites`: List of domains that are considered only
+  internally visible and should be monitored. Each of these are checked from the
+  Icinga server according to the checks specified in
+  `monitoring_website_health_checks`

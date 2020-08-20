@@ -2,5 +2,5 @@
 {% set checking_host = item['name'] + '.virtual' %}
 {{checking_host | icinga_http_preconfigured_checks(
     unansiblized_sites=item['domains'],
-    configs=icinga_server_preconfigured_web_host_health_checks,
+    configs=monitoring_website_health_checks,
     dns=True) }}
