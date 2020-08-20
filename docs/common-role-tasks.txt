@@ -38,6 +38,9 @@ name.):
   either a string or a dictionary. A string `foo` is an abbreviation for a
   dictionary `{type: 'directory', 'path': 'foo'}`. Dictionaries can have the
   following key/values:
+  * `force`: (Default: False) If True, create symlinks even if the
+    source does not exist or if the destination is a file. If False,
+    fail in these cases.
   * `state`: (Default: 'directory') the state of the path to generate. See the
     `state` parameter of Ansible's file module.
   * `path`: the path of the directory/link to define. See the `path` parameter

@@ -30,6 +30,7 @@
     src: "{{item['source'] | default(omit)}}"
     owner: "{{common_role_tasks_start_config['user'] | replace_omit_string(omit)}}"
     group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user']) | replace_omit_string(omit)}}"
+    force: "{{item['force'] | default(False)}}"
     mode: 0755
   with_items: "{{common_role_tasks_start_config['paths']}}"
   notify: "{{common_role_tasks_start_config['notifications']}}"
