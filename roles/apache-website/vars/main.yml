@@ -22,4 +22,5 @@ apache_website_common_role_tasks_config:
   services: []
   dashboards: []
   dashboard_host_rows: "{{inventory_hostname_short | dashboard_rows_website('apache', apache_website_domain)}}"
-  monitoring_checks: []
+  monitoring_checks:
+    - {type: 'website', domain: '{{apache_website_domain}}', kind: 'apache'}
