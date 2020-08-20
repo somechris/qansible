@@ -41,6 +41,11 @@ name.):
   * `force`: (Default: False) If True, create symlinks even if the
     source does not exist or if the destination is a file. If False,
     fail in these cases.
+  * `mode`: (Default: '775' for directories, omit for files, and '444'
+    for everything else) Sets the file access mode for the path. Due
+    to the looping through Jinja, it's best to avoid octal
+    notation. So either use the descriptive form, or the octal number
+    as string without leading 0.
   * `state`: (Default: 'directory') the state of the path to generate. See the
     `state` parameter of Ansible's file module.
   * `path`: the path of the directory/link to define. See the `path` parameter

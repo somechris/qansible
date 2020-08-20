@@ -31,6 +31,6 @@
     owner: "{{common_role_tasks_start_config['user'] | replace_omit_string(omit)}}"
     group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user']) | replace_omit_string(omit)}}"
     force: "{{item['force'] | default(False)}}"
-    mode: 0755
+    mode: "{{item['mode'] | default(0755 if (item['state'] | default('directory')) == 'directory' else (omit if ((item['state'] | default('directory')) == 'link') else 0444))}}"
   with_items: "{{common_role_tasks_start_config['paths']}}"
   notify: "{{common_role_tasks_start_config['notifications']}}"
