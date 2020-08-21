@@ -159,6 +159,8 @@ No Globals that are specific only for this role.
     * `from`: A match for the part of the current URI to rewrite.
     * `to`: The target to rewrite to.
     * `flags`: A list of flags for this rewrite rule (E.g.: `['END']`)
+* `apache_website_log_level`: (Default: apache_webserver_log_level) Verbosity of
+  logs and services. See `docs/logging.txt`.
 * `apache_website_mod_configs`: (optional) (default: {}) A dictionary for
   configs for additional server mods. The keys of this dictionary are the names
   of the mod, (E.g.: `wsgi`) and the corresponding values hold the config for

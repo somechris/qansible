@@ -248,7 +248,7 @@ Aliases are only supported for static locations, but "{{location["name"]}}" is "
 
 
   ErrorLog {{web_site_root_dir}}/{{apache_website_domain}}/logs/{{port}}_error.log
-  LogLevel warn
+  LogLevel {{apache_website_log_level | logging_map_level('emerg', 'error', 'info', 'trace2', 'trace8')}}
   CustomLog {{web_site_root_dir}}/{{apache_website_domain}}/logs/{{port}}_access.log req_v2{{"_anon" if (apache_website_log_anonymously | bool) else ""}}
 </VirtualHost>
 {%   endfor %}
