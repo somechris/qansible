@@ -1,0 +1,40 @@
+logging
+=======
+
+We try to provide a common logging setup for all roles. All roles that can be
+tuned in verbosity are expected to have a '{{rolename}}_log_level' setting to
+adjust that verbosity. All possible values for this setting are
+* `none`: As little logging as possible
+* `error`: Only log errors and worse
+* `info`: Log informational messages and worse
+* `debug`: Log general debug messages and worse
+* `all`: Log every possible detail
+Using only these five values makes it easy for users to adjust verbosity of
+services without having to learn configuration details of the services, while
+still being able to cover many use cases.
+
+Of course, the services typically do not use the above 5 level, but have their
+own levels. It's the role's responsibility to map between the values. There are
+some filters that lessen this burden.  There is for example the general purpose
+`logging_map_level`. And for some standard environments there are preconfigured filters, like `logging_map_level_python`, `logging_map_level_java_jul`, or `logging_map_level_java_log4j`.
+
+`logging_map_level` takes 6 parameters. The first is the set log level. The
+other parameters are the expected outcomes from least to most verbose. So for
+example using
+
+```
+LogLevel {{apache_webserver_log_level | logging_map_level('emerg', 'error', 'info', 'trace2', 'trace8')}}
+```
+
+becomes `LogLevel emerg`, if `apache_webserver_log_level` is `none`, and
+`LogLevel trace8`, if `apache_webserver_log_level` is `all`.
+
+`logging_map_level_{environment}` helps to translate log levels for standard
+environments. For example:
+
+```
+com.mycompany.component = {{app_log_level | logging_map_level_java_jul}}
+```
+
+becomes `com.mycompany.component = SEVERE` if `app_log_level` is `error`, and
+`com.mycompany.component = FINE` if `app_log_level` is `debug`.
