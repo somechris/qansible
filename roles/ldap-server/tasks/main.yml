@@ -61,7 +61,7 @@
     - {dn: cn=config, name: olcTLSCipherSuite, values: "{{(ldap_server_ssl_type | ssl_config('gnutls'))['ciphers']}}" }
     - {dn: 'olcDatabase={-1}frontend,cn=config', name: olcPasswordHash, values: "{{'{'}}{{ldap_server_password_scheme}}}" }
     - {dn: 'olcDatabase={1}mdb,cn=config', name: olcRootPW, values: "{{ldap_server_admin_password | mkpasswd(ldap_server_admin_salt, method=ldap_server_password_scheme)}}" }
-    - {dn: 'olcDatabase={1}mdb,cn=config', name: olcDbIndex, values: ['default pres,eq,sub', 'uid,cn,givenName,sn,email', 'objectClass eq']}
+    - {dn: 'olcDatabase={1}mdb,cn=config', name: olcDbIndex, values: ['default pres,eq,sub', 'uid,cn,givenName,sn,email,memberUid', 'objectClass eq']}
   notify:
     - reload slapd
 
