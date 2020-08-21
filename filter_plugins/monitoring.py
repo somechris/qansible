@@ -1,9 +1,10 @@
 import collections
 import re
-
-def is_undefined(o):
-    return 'AnsibleUndefined' in o.__repr__()
-
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from misc import is_undefined
+del sys.path[0]
 
 def inject_user(check, role_config):
     if role_config['user'] != 'omit':

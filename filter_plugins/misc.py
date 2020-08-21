@@ -103,6 +103,10 @@ def var_shim_get(var):
     return var['val']
 
 
+def is_undefined(o):
+    return 'AnsibleUndefined' in o.__repr__()
+
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
