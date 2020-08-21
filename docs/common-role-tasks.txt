@@ -44,6 +44,7 @@ name.):
   * `force`: (Default: False) If True, create symlinks even if the
     source does not exist or if the destination is a file. If False,
     fail in these cases.
+  * `group`: (Default: the config's `group`) Sets the path's owner group.
   * `mode`: (Default: '775' for directories, omit for files, and '444'
     for everything else) Sets the file access mode for the path. Due
     to the looping through Jinja, it's best to avoid octal
@@ -55,6 +56,7 @@ name.):
     of Ansible's file module.
   * `source`: the source for links. See the `src` parameter of Ansible's file
     module.
+  * `user`: (Default: the config's `user`) Sets the path's owner.
 * `port_configs`: A list of firewall port configurations. Each item is a
   dictionary and covers a single port. Each such dictionary can have the
   following key/values.
