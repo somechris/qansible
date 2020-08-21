@@ -185,3 +185,9 @@ dashboard_host: '{{inventory_hostname_short | dashboard_host(groups=group_names,
 dashboard_host_rows: []
 dashboards:
   - "{{'Generic Host Overview' | dashboard_new('generic-host-overview', tags=['overview'], templates=['host']) | dashboard_add_row('$host' | dashboard_row_overview(repeat='host'))}}"
+
+#---------------------------------------------------------------------------
+# Logging
+#
+logging_default_format_python: '%(asctime)s.%(msecs)03d %(levelname)-5s [%(threadName)s] %(filename)s:%(lineno)d - %(message)s'
+logging_default_format_python_date: '%Y-%m-%dT%H:%M:%S'

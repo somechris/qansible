@@ -190,8 +190,8 @@ args = ('{{diamond_log_dir}}/diamond.log', 'midnight', 1, 7)
 
 [formatter_default]
 
-format = %(asctime)s [%(threadName)s] %(message)s
-datefmt = %Y-%m-%dT%H:%M:%S
+format = {{logging_default_format_python}}
+datefmt = {{logging_default_format_python_date}}
 
 ################################################################################
 ### Options for config merging
