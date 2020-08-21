@@ -1,0 +1,13 @@
+# {{ansible_managed}}
+
+[Unit]
+Description=diamond - A system statistics collector for graphite
+
+[Service]
+ExecStart=/usr/bin/python /usr/bin/diamond --foreground
+# ^ is without --log-stdout, as we want to collect logs in separate files
+Restart=on-abort
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

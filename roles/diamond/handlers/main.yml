@@ -4,3 +4,9 @@
   service:
     name: diamond
     state: restarted
+
+- name: restart diamond
+  systemd:
+    name: diamond
+    daemon_reload: True
+    state: restarted
