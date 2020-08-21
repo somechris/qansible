@@ -1,9 +1,6 @@
 ldap_server_organization: '{{company_name}}'
 
-# ldap_server_log_level allows to tune how verbose the syslog messages are.
-# See http://www.openldap.org/doc/admin24/slapdconf2.html
-# You probably want either none, stats, or -1 for debug
-ldap_server_log_level: stats
+ldap_server_log_level: '{{logging_default_log_level}}'
 
 ldap_server_mdb_access:
   - 'attrs=userPassword,shadowLastChange by self write by anonymous auth by dn="cn=admin,{{ldap_server_base_dn}}" write by * none'

@@ -50,7 +50,9 @@
     values: "{{item['values']}}"
     state: exact
   with_items:
-    - {dn: cn=config, name: olcLogLevel, values: '{{ldap_server_log_level}}' }
+    # For the meaning of the log levels on olcLogLevel, see
+    # https://www.openldap.org/doc/admin24/slapdconf2.html#olcLogLevel:%20%3Clevel%3E
+    - {dn: cn=config, name: olcLogLevel, values: "{{ldap_server_log_level | logging_map_level(0, 'none', 'none', 'stats stats2', 'any')}}" }
     - {dn: cn=config, name: olcTLSDHParamFile, values: '{{dhparams_file}}' }
     - {dn: cn=config, name: olcTLSCACertificateFile, values: '{{ssl_cert_dir}}/{{ldap_server_host}}__chain.pem' }
     - {dn: cn=config, name: olcTLSCertificateFile, values: '{{ssl_cert_dir}}/{{ldap_server_host}}__cert.pem' }
