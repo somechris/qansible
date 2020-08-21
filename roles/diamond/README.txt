@@ -47,6 +47,8 @@ apache/nginx log files, gather metrics from data in databases, ...
 * `diamond_metric_proxy_hosts_jetdirect`: (Default: []) Hosts to proxy
   metrics for that expose a JetDirect web interface.
 * `diamond_log_dir`: Directory proccesses will write logs to.
+* `diamond_log_level`: (Default: logging_default_log_level) Verbosity of logs
+  and services. See `docs/logging.txt`.
 * `diamond_effective_data_disk`: Directory for data disk where data effectively
   gets stored in.
 * `diamond_effective_data_dir`: Directory where data effectively gets stored in.

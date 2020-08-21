@@ -43,3 +43,5 @@ diamond_custom_collectors:
     - ProxyNetwork
 diamond_custom_collector_configs:
     - DiskUsage
+
+diamond_log_level: '{{logging_default_log_level}}'

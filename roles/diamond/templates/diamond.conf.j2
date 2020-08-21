@@ -9,8 +9,8 @@
 [server]
 
 # Handlers for published metrics.
-handlers = diamond.handler.graphite.GraphiteHandler, diamond.handler.archive.ArchiveHandler
-#TODO: Turn off ArchiveHandler ^
+handlers = diamond.handler.graphite.GraphiteHandler{% if (diamond_log_level | logging_level_includes('debug')) %}, diamond.handler.archive.ArchiveHandler{% endif %}
+
 
 # User diamond will run as
 # Leave empty to use the current user
@@ -176,7 +176,7 @@ keys = default
 [logger_root]
 
 # to increase verbosity, set DEBUG
-level = INFO
+level = {{diamond_log_level | logging_map_level_python}}
 handlers = rotated_file
 propagate = 1
 
@@ -186,7 +186,10 @@ class = handlers.TimedRotatingFileHandler
 level = DEBUG
 formatter = default
 # rotate at midnight, each day and keep 7 days
-args = ('{{diamond_log_dir}}/diamond.log', 'midnight', 1, 7)
+{# Instead of switching the output file to /dev/null, we'd like to switch    #}
+{# the class to the NullHandler. But NullHandler does not yet exist in       #}
+{# Debian Buster's Python :-/, so we resort to writing to /dev/null.         #}
+args = ('{{(diamond_log_dir + '/diamond.log') if diamond_log_level != 'none' else '/dev/null'}}', 'midnight', 1, 7)
 
 [formatter_default]
 
