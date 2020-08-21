@@ -98,6 +98,7 @@ default_ssl_setup: compat
 
 apache_webserver_ports_plain: '{{webserver_ports_plain}}'
 apache_webserver_ports_encrypted: '{{webserver_ports_encrypted}}'
+apache_webserver_log_level: '{{logging_default_log_level}}'
 apache_websites: []
 nginx_websites: []
 

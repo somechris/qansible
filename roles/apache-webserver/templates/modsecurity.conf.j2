@@ -175,6 +175,9 @@ SecDataDir /tmp/
 #SecDebugLog /opt/modsecurity/var/log/debug.log
 #SecDebugLogLevel 3
 
+SecDebugLog {{apache_webserver_log_dir}}/modsec_debug.log
+SecDebugLogLevel {{apache_webserver_log_level | logging_map_level(0, 1, 3, 5, 9)}}
+
 
 # -- Audit log configuration -------------------------------------------------
 
@@ -182,17 +185,17 @@ SecDataDir /tmp/
 # trigger a server error (determined by a 5xx or 4xx, excluding 404,  
 # level response status codes).
 #
-SecAuditEngine RelevantOnly
+SecAuditEngine {{apache_webserver_log_level | logging_map_level('Off', 'RelevantOnly', 'RelevantOnly', 'RelevantOnly', 'On')}}
 SecAuditLogRelevantStatus "^(?:5|4(?!04))"
 
 # Log everything we know about a transaction.
-SecAuditLogParts ABDEFHIJZ
+SecAuditLogParts ABDEFHIJ{% if apache_webserver_log_level == 'all' %}K{% endif %}Z
 
 # Use a single file for logging. This is much easier to look at, but
 # assumes that you will use the audit log only ocassionally.
 #
 SecAuditLogType Serial
-SecAuditLog /var/log/apache2/modsec_audit.log
+SecAuditLog {{apache_webserver_log_dir}}/modsec_audit.log
 
 # Specify the path for concurrent audit logging.
 #SecAuditLogStorageDir /opt/modsecurity/var/audit/

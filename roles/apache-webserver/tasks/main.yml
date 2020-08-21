@@ -12,7 +12,7 @@
     group: root
     mode: 0444
   with_items:
-    - log_formats.conf
+    - logging.conf
     - server_headers.conf
     - error_documents.conf
   notify:
@@ -27,7 +27,7 @@
     group: root
     mode: 0444
   with_items:
-    - log_formats.conf
+    - logging.conf
     - server_headers.conf
     - error_documents.conf
   notify:

@@ -20,7 +20,8 @@ site. To configure further sites, see the `website-apache` role.
 2. Globals
 ----------
 
-No Globals that are specific only for this role.
+* `apache_webserver_log_level`: (Default: logging_default_log_level) Verbosity
+  of logs and services. See `docs/logging.txt`.
 
 
 
