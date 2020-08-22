@@ -1,3 +1,5 @@
 firewall_late_rules_file: '/etc/iptables.rules'
 
 firewall_late_port_config: {}
+
+firewall_late_log_level: '{{firewall_log_level}}'

@@ -1,4 +1,5 @@
 # lint-distribution-independent
+# lint:no-logging-needed
 
 - name: Render configured dashboards
   template:

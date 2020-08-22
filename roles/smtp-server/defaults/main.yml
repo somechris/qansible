@@ -2,6 +2,7 @@ smtp_server_port: 25
 smtp_server_localpart_lists: {}
 smtp_server_domain_lists: {}
 smtp_server_local_domains: []
+smtp_server_log_level: '{{logging_default_log_level}}'
 smtp_server_relay_domains_from_host: {}
 smtp_server_alias_files: '{{smtp_server_alias_files_defaults | update_dict(smtp_server_alias_files_extra)}}'
 smtp_server_alias_files_defaults:

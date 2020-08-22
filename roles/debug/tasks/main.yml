@@ -1,4 +1,5 @@
 # lint-distribution-independent
+# lint:no-logging-needed
 
 - name: Output debug message
   debug: msg='{{debug_msg}}'

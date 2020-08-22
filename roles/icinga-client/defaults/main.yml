@@ -5,3 +5,4 @@ icinga_client_nrpe_server_port: 5666
 icinga_client_net_accesses: '{{([{"net_key": icinga_client_server_net, "hosts": [icinga_client_server_ip_address]}]) if icinga_client_server_net is defined else []}}'
 icinga_client_ping_net_accesses: '{{icinga_client_net_accesses}}'
 icinga_client_nrpe_net_accesses: '{{icinga_client_net_accesses}}'
+icinga_client_log_level: '{{logging_default_log_level}}'

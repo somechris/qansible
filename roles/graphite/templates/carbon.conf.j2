@@ -154,10 +154,10 @@ USE_FLOW_CONTROL = True
 # By default, carbon-cache will log every whisper update and cache hit.
 # This can be excessive and degrade performance if logging on the same
 # volume as the whisper data is stored.
-LOG_UPDATES = False
-LOG_CREATES = False
-LOG_CACHE_HITS = False
-LOG_CACHE_QUEUE_SORTS = False
+LOG_UPDATES = {{graphite_log_level | logging_map_level('False', 'False', 'False', 'True', 'True')}}
+LOG_CREATES = {{graphite_log_level | logging_map_level('False', 'False', 'False', 'True', 'True')}}
+LOG_CACHE_HITS = {{graphite_log_level | logging_map_level('False', 'False', 'False', 'True', 'True')}}
+LOG_CACHE_QUEUE_SORTS = {{graphite_log_level | logging_map_level('False', 'False', 'False', 'False', 'True')}}
 
 # The thread that writes metrics to disk can use one of the following strategies
 # determining the order in which metrics are removed from cache and flushed to
@@ -351,6 +351,7 @@ ENABLE_TAGS = False
 # In order to turn off logging of successful connections for the line
 # receiver, set this to False
 # LOG_LISTENER_CONN_SUCCESS = True
+LOG_LISTENER_CONN_SUCCESS = {{graphite_log_level | logging_map_level('False', 'False', 'False', 'True', 'True')}}
 
 #[relay]
 #LINE_RECEIVER_INTERFACE = 0.0.0.0

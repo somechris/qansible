@@ -3,6 +3,7 @@ static_website_build: ''
 static_website_server_flavor: 'apache'
 static_website_artifact_domain: '{{static_website_domain}}'
 static_website_locations: []
+static_website_log_level: '{{webserver_log_level}}'
 static_website_htpasswds: {}
 static_website_net_accesses:
   - loopback

@@ -290,7 +290,7 @@ syslog_local_facility=5
 # If you don't want notifications to be logged, set this value to 0.
 # If notifications should be logged, set the value to 1.
 
-log_notifications=1
+log_notifications={{icinga_server_log_level | logging_map_level(0,0,1,1,1)}}
 
 
 
@@ -298,7 +298,7 @@ log_notifications=1
 # If you don't want service check retries to be logged, set this value
 # to 0.  If retries should be logged, set the value to 1.
 
-log_service_retries=1
+log_service_retries={{icinga_server_log_level | logging_map_level(0,0,0,0,1)}}
 
 
 
@@ -306,7 +306,7 @@ log_service_retries=1
 # If you don't want host check retries to be logged, set this value to
 # 0.  If retries should be logged, set the value to 1.
 
-log_host_retries=1
+log_host_retries={{icinga_server_log_level | logging_map_level(0,0,0,0,1)}}
 
 
 
@@ -315,7 +315,7 @@ log_host_retries=1
 # this value to 0.  If event handlers should be logged, set the value
 # to 1.
 
-log_event_handlers=1
+log_event_handlers={{icinga_server_log_level | logging_map_level(0,0,0,1,1)}}
 
 
 
@@ -327,7 +327,7 @@ log_event_handlers=1
 # statistics reporting, you do not need to enable this option.  In
 # this case, set the value to 0.
 
-log_initial_states=0
+log_initial_states={{icinga_server_log_level | logging_map_level(0,0,0,0,1)}}
 
 
 
@@ -336,7 +336,7 @@ log_initial_states=0
 # after log has been rotated to the main log file, you can disable this
 # option by setting this value to 0. Default value is 1.
 
-log_current_states=1
+log_current_states={{icinga_server_log_level | logging_map_level(0,0,0,0,1)}}
 
 
 
@@ -347,7 +347,7 @@ log_current_states=1
 # checks - see the option below for controlling whether or not
 # passive checks are logged.
 
-log_external_commands=1
+log_external_commands={{icinga_server_log_level | logging_map_level(0,0,0,1,1)}}
 
 
 
@@ -358,7 +358,7 @@ log_external_commands=1
 # icinga compliant with data retention laws on various countries.
 # This option is disabled by default.
 
-log_anonymized_external_command_author=0
+log_anonymized_external_command_author={{icinga_server_log_level | logging_map_level(1,1,1,1,0)}}
 
 
 
@@ -367,7 +367,7 @@ log_anonymized_external_command_author=0
 # this value to 0.  If passive checks should be logged, set
 # this value to 1.
 
-log_passive_checks=1
+log_passive_checks={{icinga_server_log_level | logging_map_level(0,0,0,1,1)}}
 
 
 
@@ -376,7 +376,7 @@ log_passive_checks=1
 # to the log instead of only the first line then set this value to 1.
 # Default value is 0.
 
-log_long_plugin_output=0
+log_long_plugin_output={{icinga_server_log_level | logging_map_level(0,0,0,0,1)}}
 
 
 
@@ -1145,7 +1145,7 @@ check_service_freshness=1
 # If you don't want notifications to be logged, set this value to 0.
 # If notifications should be logged, set the value to 1.
 
-log_stale_services=1
+log_stale_services={{icinga_server_log_level | logging_map_level(0,0,1,1,1)}}
 
 
 
@@ -1153,7 +1153,7 @@ log_stale_services=1
 # If you don't want notifications to be logged, set this value to 0.
 # If notifications should be logged, set the value to 1.
 
-log_stale_hosts=1
+log_stale_hosts={{icinga_server_log_level | logging_map_level(0,0,1,1,1)}}
 
 
 
@@ -1483,7 +1483,7 @@ enable_environment_macros=1
 #          2048 = Macros
 
 {# lint-ignore: debug_level <-- is not relate to role debug #}
-debug_level=0
+debug_level={{icinga_server_log_level | logging_map_level(0,0,0,16+32+128+256,-1)}}
 
 
 
@@ -1494,7 +1494,7 @@ debug_level=0
 #         2 = Very detailed
 
 {# lint-ignore: debug_verbosity <-- is not relate to role debug #}
-debug_verbosity=2
+debug_verbosity={{icinga_server_log_level | logging_map_level(0,0,0,1,2)}}
 
 
 

@@ -8,6 +8,7 @@ dependencies:
   - role: apache-website
     apache_website_domain: '{{grafana_web_host}}'
     apache_website_net_accesses: '{{grafana_net_accesses}}'
+    apache_website_log_level: '{{grafana_log_level}}'
     apache_website_locations:
       - name: '/'
         auth:

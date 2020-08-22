@@ -9,6 +9,7 @@ dependencies:
       # either someone trying to break in or from us. So either way we
       # can/should log request details.
     apache_website_net_accesses: []
+    apache_website_log_level: '{{apache_website_default_log_level}}'
     apache_website_locations:
       - name: /server-status
         auth_merging: Off

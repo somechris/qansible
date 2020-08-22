@@ -16,6 +16,8 @@ graphite_database_port: ''
 graphite_database_user: ''
 graphite_database_password: ''
 
+graphite_log_level: '{{logging_default_log_level}}'
+
 graphite_line_receiver_port: 2003
 graphite_cache_query_port: 7002
 

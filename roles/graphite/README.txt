@@ -69,6 +69,8 @@ Sets up Graphite backend and web application.
 * `graphite_effective_whisper_dir`: Directory where whisper files effectively
   get stored in.
 * `graphite_log_dir`: Directory graphite proccess will write logs to.
+* `graphite_log_level`: (Default: logging_default_log_level)
+  Verbosity of logs and services. See `docs/logging.txt`.
 * `graphite_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `graphite_service_users`: List of common web users to grant access. (See
   `website_common_htpasswds` of `roles/website-common/README.txt`)

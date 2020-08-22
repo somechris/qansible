@@ -8,8 +8,18 @@
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 # Default ssh port as fallback
+{% if (firewall_early_log_level | logging_level_includes('debug')) %}
+-A INPUT -p tcp -m tcp --dport 22 -j LOG --log-prefix 'attempt:ssh-connection'
+-A INPUT -p tcp -m tcp --dport {{ssh_server_port}} -j LOG --log-prefix 'attempt:ssh-connection'
+{% endif %}
+
 -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
 # Custom ssh port for half-configured systems
 -A INPUT -p tcp -m tcp --dport {{ssh_server_port}} -j ACCEPT
+
+{% if (firewall_early_log_level | logging_level_includes('debug')) %}
+-A INPUT -p tcp -m tcp --dport 22 -j LOG --log-prefix 'unmatched:ssh-connection'
+-A INPUT -p tcp -m tcp --dport {{ssh_server_port}} -j LOG --log-prefix 'unmatched:ssh-connection'
+{% endif %}
 
 COMMIT

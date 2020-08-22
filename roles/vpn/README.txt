@@ -26,4 +26,5 @@ No Globals that are specific only for this role.
 3. Parameters
 -------------
 
-This role does not have parameters.
+* `vpn_log_level`: (Default: logging_default_log_level) Verbosity of logs and
+  services. See `docs/logging.txt`.

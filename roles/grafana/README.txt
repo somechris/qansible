@@ -45,6 +45,8 @@ it.
 * `grafana_effective_var_lib_dir`: Directory where grafana data underneath
   `/var/lib` effectively gets stored in.
 * `grafana_log_dir`: Directory grafana proccess will write logs to.
+* `grafana_log_level`: (Default: logging_default_log_level) Verbosity of logs
+  and services. See `docs/logging.txt`.
 * `grafana_net_accesses`: (Default: []) List of net accesses of which hosts can
   reach the grafana server through the reverse proxy.
 * `grafana_server_net_accesses`: (Default: []) List of net accesses of which

@@ -34,6 +34,8 @@ No Globals that are specific only for this role.
   information and similar things in.
 * `pop3_server_index_directory`: Directory to store mail index
   information in.
+* `pop3_server_log_level`: (Default: logging_default_log_level) Verbosity of
+  logs and services. See `docs/logging.txt`.
 * `pop3_server_net_accesses`: List of net accesses of which hosts can reach
   the service.
 * `pop3_server_port`: The port to listen for initially unencrypted but

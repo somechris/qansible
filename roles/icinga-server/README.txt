@@ -37,6 +37,8 @@ Sets up an Icinga server along with an Icinga 1 web application.
   that should get generated, and whose corresponding values are lists of members
   to those groups.
 * `icinga_server_htdocs_dir`: The directory holding Icinga's htdocs
+* `icinga_server_log_level`: (Default: logging_default_log_level) Verbosity of
+  logs and services. See `docs/logging.txt`.
 * `icinga_server_net_accesses`: List of net accesses of which hosts can reach
   the service.
 

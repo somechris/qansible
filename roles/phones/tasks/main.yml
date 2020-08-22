@@ -1,4 +1,5 @@
 # lint-distribution-independent
+# lint:no-logging-needed
 
 - name: 'Add phone dashboard'
   set_fact:

@@ -1,4 +1,5 @@
 # lint-distribution-independent
+# lint:no-logging-needed
 
 # If the `add_host_to_group_new_groups` parameter contains a Jinja2 template, starting
 # with Ansible 2, add_hosts no longer renders the template afresh for

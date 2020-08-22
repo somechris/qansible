@@ -1,9 +1,9 @@
-def iptables_init_chain(name):
-    return '\n'.join([
-        ':%s DROP [0:0]' % (name),
-        iptables_rule(name, 'LOG', log_prefix=('"DROP %s\: "' % (name))),
-        iptables_rule(name, 'DROP'),
-        ])
+def iptables_init_chain(name, log_dropped=True):
+    lines = [':%s DROP [0:0]' % (name)]
+    if log_dropped:
+        lines.append(iptables_rule(name, 'LOG', log_prefix=('"DROP %s\: "' % (name))))
+    lines.append(iptables_rule(name, 'DROP'))
+    return '\n'.join(lines)
 
 def dict_remove(key, dictionary):
     if key in dictionary:

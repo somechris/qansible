@@ -28,3 +28,5 @@ Sets up an ssh server.
 
 * `ssh_server_net_accesses`: List of net accesses of which hosts can reach
   the service.
+* `ssh_server_log_level`: (Default: logging_default_log_level) Verbosity of logs
+  and services. See `docs/logging.txt`.

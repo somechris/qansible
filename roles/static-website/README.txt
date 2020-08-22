@@ -29,6 +29,8 @@ Deploys a static html page from S3.
 3. Parameters
 -------------
 
+* `static_website_log_level`: (Default: webserver_log_level)
+  Verbosity of logs and services. See `docs/logging.txt`.
 * `static_website_artifact_domain`: (Default: '{{static_website_domain}}')
   The artifact domain to host the site with. Typically, the default
   should be good enough as it picks the artifact that matches the

@@ -6,6 +6,7 @@ dependencies:
     # to-do: implementieren
     apache_website_domain: '{{icinga_server_web_host}}'
     apache_website_net_accesses: '{{icinga_server_net_accesses}}'
+    apache_website_log_level: '{{icinga_server_log_level}}'
     apache_website_locations:
       - name: '/'
         # Relies on

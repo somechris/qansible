@@ -65,6 +65,8 @@ PermitOpen none
 
 DebianBanner no
 
+LogLevel {{ssh_server_log_level | logging_map_level('QUIET', 'ERROR', 'INFO', 'DEBUG', 'DEBUG3')}}
+
 Banner none
 AcceptEnv LANG LC_*
 

@@ -33,7 +33,7 @@ log_facility=daemon
 # syslog facility.
 # Values: 0=debugging off, 1=debugging on
 
-debug=0
+debug={{icinga_client_log_level | logging_map_level(0,0,0,1,1)}}
 
 
 
@@ -265,6 +265,7 @@ connection_timeout=300
 #         -1 or 0xff or 0x2f = All of the above
 
 #ssl_logging=0x00
+ssl_logging=0x{{icinga_client_log_level | logging_map_level('00', '00', '00', '1f', 'ff')}}
 
 
 

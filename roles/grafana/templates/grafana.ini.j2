@@ -67,6 +67,7 @@ root_url = https://{{grafana_web_host}}:443/
 
 # Log web requests
 ;router_logging = false
+router_logging = {{grafana_log_level | logging_map_level('false','false','false','false','true')}}
 
 # the path relative working path
 ;static_root_path = public
@@ -123,6 +124,7 @@ path = {{grafana_sqlite_db}}
 
 # Set to true to log the sql calls and execution times.
 ;log_queries =
+log_queries = {{grafana_log_level | logging_map_level('false','false','false','true','true')}}
 
 # For "sqlite3" only. cache mode setting used for connecting to the database. (private, shared)
 ;cache_mode = private
@@ -143,6 +145,7 @@ path = {{grafana_sqlite_db}}
 
 # This enables data proxy logging, default is false
 ;logging = false
+logging = {{grafana_log_level | logging_map_level('false','false','false','true','true')}}
 
 # How long the data proxy should wait before timing out default is 30 (seconds)
 ;timeout = 30
@@ -510,6 +513,7 @@ enable_login_token = false
 
 # Either "debug", "info", "warn", "error", "critical", default is "info"
 ;level = info
+level = {{grafana_log_level | logging_map_level('critical','error','info','debug','debug')}}
 
 # optional settings to set different levels for specific loggers. Ex filters = sqlstore:debug
 ;filters =

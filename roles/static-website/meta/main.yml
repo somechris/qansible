@@ -8,6 +8,7 @@ dependencies:
     apache_website_net_accesses: '{{static_website_net_accesses}}'
     apache_website_redirects: '{{static_website_redirects}}'
     apache_website_rewrites: '{{static_website_rewrites}}'
+    apache_website_log_level: '{{static_website_log_level}}'
     when: static_website_server_flavor == 'apache'
 
   - role: fail

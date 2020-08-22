@@ -1,3 +1,5 @@
+# lint:no-logging-needed
+
 - name: Drop-out for unsupported distributions
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
   when: 'qhost_distribution not in ["Debian", "Gentoo"]'

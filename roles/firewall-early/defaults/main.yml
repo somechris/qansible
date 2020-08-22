@@ -1,1 +1,2 @@
 firewall_early_rules_file: '/etc/iptables.restricted.rules'
+firewall_early_log_level: '{{firewall_log_level}}'

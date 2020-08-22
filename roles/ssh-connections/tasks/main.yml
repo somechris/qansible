@@ -1,4 +1,5 @@
 # lint-distribution-independent
+# lint:no-logging-needed
 
 # While the split into client and server part seems obvious, note that we
 # determining home directories is split between client and server too. This is

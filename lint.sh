@@ -254,6 +254,16 @@ lint_role() {
             | sed -e 's/\* `//' -e 's/`//' \
             || true )
 
+        local LOG_VAR="${ROLE_VAR_START}_log_level"
+        if ! grep --quiet "$LOG_VAR" "$ROLE_README_FILE_RELS"
+        then
+            local NO_LOGGING_NEEDED_MARKER="lint:no-logging-needed"
+            local ROLE_MAIN_TASKS_FILE="roles/$ROLE/tasks/main.yml"
+            if ! grep --quiet "$NO_LOGGING_NEEDED_MARKER" "$ROLE_MAIN_TASKS_FILE" &>/dev/null
+            then
+                warn "No log variable $LOG_VAR defined, and $ROLE_MAIN_TASKS_FILE also not marked with $NO_LOGGING_NEEDED_MARKER"
+            fi
+        fi
     else
         warn "No README.txt for role '$ROLE'"
     fi

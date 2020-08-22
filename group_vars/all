@@ -72,6 +72,7 @@ public_interface_name: ''
 #
 firewall_early_rules_file: '/etc/iptables.restricted.rules'
 firewall_late_rules_file: '/etc/iptables.rules'
+firewall_log_level: '{{logging_default_log_level}}'
 
 #---------------------------------------------------------------------------
 # Web sites
@@ -83,6 +84,7 @@ webserver_ports_encrypted:
   - 443
 webserver_net_accesses:
   - 'loopback'
+webserver_log_level: '{{logging_default_log_level}}'
 web_site_root_dir: /var/www
 
 web_site_authenticated_user_header: 'X-Proxy-User'
@@ -98,7 +100,7 @@ default_ssl_setup: compat
 
 apache_webserver_ports_plain: '{{webserver_ports_plain}}'
 apache_webserver_ports_encrypted: '{{webserver_ports_encrypted}}'
-apache_webserver_log_level: '{{logging_default_log_level}}'
+apache_webserver_log_level: '{{webserver_log_level}}'
 apache_websites: []
 nginx_websites: []
 

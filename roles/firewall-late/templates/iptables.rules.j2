@@ -12,12 +12,15 @@
 {%   set protocol=(config['protocol'] | default(None)) %}
 {%   set icmp_type=(config['icmp-type'] | default(None)) %}
 
-{{chain | iptables_init_chain}}
+{{chain | iptables_init_chain(log_dropped=(firewall_late_log_level | logging_level_includes('info')))}}
 {%   for net_access in (config['incoming_net_accesses'] | reverse | default([])) %}
 {%     for rule in (net_access | net_access_to_incoming_rules(net_configs, inventory_hostname, hostvars) | reverse) %}
 {{chain | iptables_insert_rule('ACCEPT', icmp_type=icmp_type, **rule)}}
 {%     endfor %}
 {%   endfor %}
+{% if (firewall_late_log_level | logging_level_includes('debug')) %}
+{{chain | iptables_insert_rule('LOG', log_prefix=('"NEW %s: "' % (chain)))}}
+{% endif %}
 {{'INPUT' | iptables_append_rule(chain, p=protocol, dport=port)}}
 {% endfor %}
 

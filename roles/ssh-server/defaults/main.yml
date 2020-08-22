@@ -1,2 +1,3 @@
 ssh_server_port: 22
 ssh_server_net_accesses: '{{inventory_hostname | host_net_keys(net_configs, exclude=["internet"]) | list}}'
+ssh_server_log_level: '{{logging_default_log_level}}'

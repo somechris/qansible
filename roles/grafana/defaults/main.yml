@@ -6,6 +6,8 @@ grafana_effective_data_dir: '{{grafana_effective_data_disk}}/grafana'
 grafana_effective_var_lib_dir: '{{grafana_effective_data_dir}}/var-lib-grafana'
 grafana_effective_log_dir: '{{grafana_effective_data_dir}}/logs'
 
+grafana_log_level: '{{logging_default_log_level}}'
+
 grafana_common_role_tasks_config:
   role: grafana
   supported_distributions:

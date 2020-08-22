@@ -29,4 +29,5 @@ applications.
 3. Parameters
 -------------
 
-This role does not have parameters.
+* `firewall_early_log_level`: (Default: firewall_log_level) Verbosity of logs
+  and services. See `docs/logging.txt`.

@@ -47,6 +47,8 @@ No Globals that are specific only for this role.
   up. Each key holds the name of the localpartlist to set up, and the
   corresponding value holds a list of localparts to use for the
   localpartlist.
+* `smtp_server_log_level`: (Default: logging_default_log_level)
+  Verbosity of logs and services. See `docs/logging.txt`.
 * `smtp_server_net_accesses`: List of net accesses of which hosts can reach
   the service.
 * `smtp_server_net_accesses_defaults`: Defaults for

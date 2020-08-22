@@ -26,6 +26,8 @@ Sets up the system's firewall.
 3. Parameters
 -------------
 
+* `firewall_late_log_level`: (Default: firewall_log_level) Verbosity of logs
+  and services. See `docs/logging.txt`.
 * `firewall_late_port_config`: Dictionary holding the configuration
   for the individual ports. The dictionary's keys are port numbers,
   and the values are the configuration for incoming packets on that
