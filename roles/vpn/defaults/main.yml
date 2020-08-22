@@ -21,6 +21,7 @@ vpn_common_role_tasks_config:
   notifications: []
   port_configs: "{% set collector = ([] | var_shim_init) %}{% for item in (inventory_hostname | host_nets(net_configs, type='vpn'))%}{{collector|var_shim_add([{'port': item['port'], 'name': 'VPN_' ~ (item | net_slug(inventory_hostname)), 'incoming_net_accesses': [{'net_key': 'internet', 'hosts': [item[item | net_host_key('remote', inventory_hostname)]]}]}])}}{% endfor %}{{collector|var_shim_get}}"
   services: []
+  log_files: "{% set collector = ([] | var_shim_init) %}{% for item in (inventory_hostname | host_nets(net_configs, type='vpn'))%}{{collector|var_shim_add([{'file': vpn_log_dir + '/' + (item| net_slug(inventory_hostname)) + '.log', 'group': 'vpn', 'item': (item| net_slug(inventory_hostname)), 'description': 'VPN log file for connection to ' + item[item | net_host_key('remote', inventory_hostname)]}])}}{% endfor %}{{collector|var_shim_get}}"
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks: []

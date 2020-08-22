@@ -84,6 +84,19 @@ def expand_log_files(log_files):
     return [expand_log_file(log_file) for log_file in log_files]
 
 
+def expand_log_file_for_common_task_rules(log_file, config):
+    if not isinstance(log_file, dict):
+        log_file = {'file': log_file}
+
+    log_file.setdefault('group', config['role'])
+
+    return expand_log_file(log_file)
+
+
+def expand_log_files_for_common_task_rules(log_files, config):
+    return [expand_log_file_for_common_task_rules(log_file, config) for log_file in log_files]
+
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
@@ -96,4 +109,5 @@ class FilterModule(object):
             'logging_map_level_java_jul': map_level_java_jul,
             'logging_map_level_java_log4j': map_level_java_log4j,
             'logging_expand_log_files': expand_log_files,
+            'logging_expand_log_files_for_common_task_rules': expand_log_files_for_common_task_rules,
             }

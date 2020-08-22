@@ -32,6 +32,8 @@ name.):
   service. The group will get created, if it's missing. Use the string 'omit'
   (not `{{omit}}`) to omit all group actions (group creation, setting owner
   groups on files, ...).
+* `log_files`: A list of log file definitions following the format
+  described in `docs/logging.txt`
 * `monitoring_checks`: A list of definitions of monitoring checks for
   this server.
 #TO-DO: add documentation for monitoring key

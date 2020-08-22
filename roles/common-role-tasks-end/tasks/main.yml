@@ -42,3 +42,11 @@
   changed_when: False
   tags:
     - always
+
+- name: '{{common_role_tasks_end_parent_role}}: Update log file config'
+  set_fact:
+    logging_log_files: "{{logging_log_files + (common_role_tasks_end_config['log_files'] | default([]) | logging_expand_log_files_for_common_task_rules(common_role_tasks_end_config))}}"
+  # todo: remove the above default `log_files` once all roles define it
+  changed_when: False
+  tags:
+    - always
