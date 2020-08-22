@@ -6,7 +6,14 @@
 
 - name: '{{common_role_tasks_package_install_parent_role}}: Install packages'
   apt:
-    name: "{{common_role_tasks_package_install_config['packages']}}"
+    name: "{{common_role_tasks_package_install_config['packages']['Debian'] | default(common_role_tasks_package_install_config['packages'])}}"
     state: present
-  when: "common_role_tasks_package_install_config['packages'] is defined"
+  when: "common_role_tasks_package_install_config['packages'] is defined and qhost_distribution == 'Debian'"
+  notify: "{{common_role_tasks_package_install_config['notifications']}}"
+
+- name: '{{common_role_tasks_package_install_parent_role}}: Install packages'
+  portage:
+    name: "{{common_role_tasks_package_install_config['packages']['Gentoo'] | default(common_role_tasks_package_install_config['packages'])}}"
+    state: present
+  when: "common_role_tasks_package_install_config['packages'] is defined and qhost_distribution == 'Gentoo'"
   notify: "{{common_role_tasks_package_install_config['notifications']}}"

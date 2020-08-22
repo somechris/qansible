@@ -36,7 +36,11 @@ name.):
   this server.
 #TO-DO: add documentation for monitoring key
 * `notifications`: A list of handlers to notify upon changes.
-* `packages`: A list of packages to install for the including role.
+* `packages`: If all supported distributions use the same package
+  name, it is a list of packages to install for the including role. If
+  packages names differ, it is a dictionary, where the key is the
+  distribution and the value is the list of package names to install
+  for that distribution.
 * `paths`: A list of directory/link definitions set up. Each definition is a
   either a string or a dictionary. A string `foo` is an abbreviation for a
   dictionary `{type: 'directory', 'path': 'foo'}`. Dictionaries can have the
