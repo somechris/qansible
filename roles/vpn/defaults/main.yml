@@ -1,1 +1,17 @@
 vpn_log_level: '{{logging_default_log_level}}'
+vpn_common_role_tasks_config:
+  role: vpn
+  supported_distributions:
+    - 'Debian'
+    - 'Gentoo'
+  user: omit
+  paths:
+    - { path: '/etc/openvpn', mode: '400' }
+  packages:
+    - openvpn
+  notifications: []
+  port_configs: "{% set collector = ([] | var_shim_init) %}{% for item in (inventory_hostname | host_nets(net_configs, type='vpn'))%}{{collector|var_shim_add([{'port': item['port'], 'name': 'VPN_' ~ (item | net_slug(inventory_hostname)), 'incoming_net_accesses': [{'net_key': 'internet', 'hosts': [item[item | net_host_key('remote', inventory_hostname)]]}]}])}}{% endfor %}{{collector|var_shim_get}}"
+  services: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks: []
