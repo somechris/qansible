@@ -318,7 +318,10 @@ lint_role() {
             then
                 if ! grep --quiet "name: common-role-tasks-start" "roles/$ROLE/tasks/main.yml"
                 then
-                    warn "No distribution guard in role $ROLE"
+                    if ! grep --quiet -e "- role: common-role-tasks-start" "roles/$ROLE/meta/main.yml"
+                    then
+                        warn "No distribution guard in role $ROLE"
+                    fi
                 fi
             fi
         fi

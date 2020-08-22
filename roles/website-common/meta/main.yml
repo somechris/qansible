@@ -20,3 +20,14 @@ dependencies:
     - '{{website_common_kind}}'
     - 'website_{{website_common_domain}}_server'
     - 'website_{{website_common_domain}}_server_{{website_common_kind}}'
+
+  # The following common-role-tasks-* roles should actually be in
+  # tasks/main.yml. See the comment there on why they are here instead.
+  - role: common-role-tasks-start
+    common_role_tasks_start_config: '{{website_common_common_role_tasks_config}}'
+
+  - role: common-role-tasks-package-install
+    common_role_tasks_package_install_config: '{{website_common_common_role_tasks_config}}'
+
+  - role: common-role-tasks-end
+    common_role_tasks_end_config: '{{website_common_common_role_tasks_config}}'

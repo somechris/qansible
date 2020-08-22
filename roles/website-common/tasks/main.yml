@@ -1,10 +1,25 @@
 # lint:no-logging-needed
 
-- name: Common role tasks at start
-  import_role:
-    name: common-role-tasks-start
-  vars:
-    common_role_tasks_start_config: '{{website_common_common_role_tasks_config}}'
+# We would want to have the common-role-tasks, like common-role-task-start etc,
+# here. However, when having them in tasks/main.yml, Ansible fails to resolve
+# variables properly. For example when running for static websites
+# (static-website-foo -> static-website -> apache-website -> website-common),
+# `static_website_domain` (which gits indirectly used within
+# `website_common_common_role_tasks_config`) has a proper value in this
+# file. But in the imported `common-role-tasks-*` role, it is empty which makes
+# it's indirect uses break the config. Simply passing `static_website_domain`
+# explicitly to the imported role does not work, as Ansible complains about
+# detected loops. But for static-websites, one can work around it by first
+# `set_fact`-ing the value to some temporary variable, and then passing that set
+# variable to the imported role. While that works for `website-common` when used
+# through `static-website`, it does not work for other sites. For example it
+# breaks for the use from the `graphite` role. Coming from the `graphite` role,
+# Ansible (even with the above set_fact and with adding a default) complains
+# that `static_website_domain` is undefined. We tried many more things, but
+# could not get it to work reliably in all use-cases. So we resort to calling
+# the `common-role-tasks-*` roles from `meta`, which seems to work
+# reliably. This is not ideal, as it does not allow to easily run tasks between
+# `common-role-tasks-*` roles. But at least it's working reliably.
 
 - name: Load credentials
   include_vars: credentials.yml
@@ -19,15 +34,3 @@
   with_items: '{{website_common_htpasswds | dict2items}}'
   notify:
     reload webserver
-
-- name: Common role tasks for installing packages
-  import_role:
-    name: common-role-tasks-package-install
-  vars:
-    common_role_tasks_package_install_config: '{{website_common_common_role_tasks_config}}'
-
-- name: Common role tasks at end
-  import_role:
-    name: common-role-tasks-end
-  vars:
-    common_role_tasks_end_config: '{{website_common_common_role_tasks_config}}'
