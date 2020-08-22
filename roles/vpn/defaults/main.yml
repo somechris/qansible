@@ -1,3 +1,9 @@
+vpn_log_dir: '/var/log/openvpn'
+
+vpn_effective_data_disk: '{{common_directories_default_data_dir}}'
+vpn_effective_data_dir: '{{vpn_effective_data_disk}}/vpn'
+vpn_effective_log_dir: '{{vpn_effective_data_dir}}/logs'
+
 vpn_log_level: '{{logging_default_log_level}}'
 vpn_common_role_tasks_config:
   role: vpn
@@ -7,6 +13,9 @@ vpn_common_role_tasks_config:
   user: omit
   paths:
     - { path: '/etc/openvpn', mode: '400' }
+    - '{{vpn_effective_data_dir}}'
+    - '{{vpn_effective_log_dir}}'
+    - {state: link, path: '{{vpn_log_dir}}', source: '{{vpn_effective_log_dir}}'}
   packages:
     - openvpn
   notifications: []

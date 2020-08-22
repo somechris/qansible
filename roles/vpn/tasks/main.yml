@@ -46,6 +46,16 @@
   notify:
     - reload openvpn-{{qhost_distribution}}
 
+- name: Make sure logs are accessible
+  file:
+    dest: '{{vpn_log_dir}}/{{item | net_slug(inventory_hostname)}}.log'
+    owner: root
+    group: adm
+    mode: 0640
+  with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
+  notify:
+    - reload openvpn-{{qhost_distribution}}
+
 - name: Common role tasks for installing packages
   import_role:
     name: common-role-tasks-package-install
