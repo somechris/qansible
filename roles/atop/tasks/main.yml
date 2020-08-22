@@ -1,0 +1,17 @@
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{atop_common_role_tasks_config}}'
+
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{atop_common_role_tasks_config}}'
+
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{atop_common_role_tasks_config}}'

@@ -5,16 +5,12 @@ common_packages_common_role_tasks_config:
   user: omit
   paths: []
   packages:
-    - atop
     - psmisc # provides pstree
     - net-tools # provides netstat
     - aptitude # Ansible prefers `aptitude` over `apt-get`
   notifications: []
   port_configs: []
-  services:
-    - atop
+  services: []
   dashboards: []
   dashboard_host_rows: []
-  monitoring_checks:
-    - {name: 'atop/Accounting monitor', command: 'atopacctd', name_prefix: False}
-    - {name: 'atop/Daemon', command: 'atop', name_prefix: False}
+  monitoring_checks: []

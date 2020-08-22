@@ -1,0 +1,17 @@
+atop_common_role_tasks_config:
+  role: atop
+  supported_distributions:
+    - 'Debian'
+  user: omit
+  paths: []
+  packages:
+    - atop
+  notifications: []
+  port_configs: []
+  services:
+    - atop
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks:
+    - {name: 'Accounting monitor', command: 'atopacctd'}
+    - {name: 'Daemon', command: 'atop'}

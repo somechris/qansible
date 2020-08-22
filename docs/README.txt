@@ -108,6 +108,7 @@ agreements.
   - `apache-website`: Configures an apache site (along with
     provisioning apache itself).
   - `apache-website-default`: Configures apache's default website.
+  - `atop`: Collects profiling data about processes
   - `add-host-to-group`: Dynamically adds a host to a group in Ansible.
   - `common-directories`: Sets up common directories needed on all hosts.
   - `common-role-tasks-start`: Runs common role start tasks

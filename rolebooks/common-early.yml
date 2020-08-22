@@ -47,3 +47,8 @@
     - role: name-service-switch
       tags:
         - name-service-switch
+
+    - role: atop
+      tags:
+        - atop
+
