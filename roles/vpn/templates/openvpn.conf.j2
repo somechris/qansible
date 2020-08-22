@@ -26,6 +26,7 @@ remote {{hostvars[item['server']]['public_ipv4_address']}}
 rport {{item['port']}}
 {% endif %}
 
+auth-nocache
 secret /etc/openvpn/{{item | net_slug(inventory_hostname)}}.key {{ 0 if (item | net_served_by(inventory_hostname)) else 1 }}
 
 verb {{vpn_log_level | logging_map_level(0, 1, 1, 3, 11)}}
