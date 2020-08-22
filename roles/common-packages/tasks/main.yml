@@ -1,4 +1,4 @@
-# lint:no-logging-needed
+# qa:lint:no-log-level-needed
 
 - name: Common role tasks at start
   import_role:

@@ -1,4 +1,4 @@
-# lint:no-logging-needed
+# qa:lint:no-log-level-needed
 
 - name: Drop-out for unsupported distributions
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"

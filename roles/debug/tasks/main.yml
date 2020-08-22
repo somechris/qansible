@@ -1,5 +1,5 @@
 # qa:lint:distribution-independent
-# lint:no-logging-needed
+# qa:lint:no-log-level-needed
 
 - name: Output debug message
   debug: msg='{{debug_msg}}'

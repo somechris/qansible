@@ -1,4 +1,4 @@
-# lint:no-logging-needed
+# qa:lint:no-log-level-needed
 
 # We would want to have the common-role-tasks, like common-role-task-start etc,
 # here. However, when having them in tasks/main.yml, Ansible fails to resolve

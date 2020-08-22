@@ -1,4 +1,4 @@
-# lint:no-logging-needed
+# qa:lint:no-log-level-needed
 
 - name: '{{common_role_tasks_start_parent_role}}: Drop-out for unsupported distributions'
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{common_role_tasks_start_parent_role}}' role. Supported are {{common_role_tasks_start_config['supported_distributions'] | default([])}}"
