@@ -186,8 +186,8 @@ lint_role() {
 
                 local LINT_IGNORE=false
                 local FULL_LINE="$(sed -n "${LINE_NO}p" "$FILE" ; true)"
-                if [ "lint-ignore" = "${FULL_LINE: -11}" \
-                    -o "lint-ignore #}" = "${FULL_LINE: -14}" \
+                if [ "qa:lint:ignore" = "${FULL_LINE: -14}" \
+                    -o "qa:lint:ignore #}" = "${FULL_LINE: -17}" \
                     ]
                 then
                     LINT_IGNORE=true
@@ -195,7 +195,7 @@ lint_role() {
 
                 if [ "$BELONGS_TO_OTHER_ROLE" = "false" -a "$LINT_IGNORE" = "false" ]
                 then
-                    if ! grep "^{# lint-ignore: $VAR " "$FILE" &>/dev/null
+                    if ! grep "^{# qa:lint:ignore: $VAR " "$FILE" &>/dev/null
                     then
                         warn "Could not find documentation for variable '$VAR' (see $FILE, line $LINE_NO) in role '$ROLE'"
                     fi
@@ -278,7 +278,7 @@ lint_role() {
                 local TEMPLATE_FIRST_RELEVANT_LINE="$(grep -v '^\(#[!%]\|<?xml\)' "$TEMPLATE" | grep -v "^[[:space:]]*$" | head -n 1 || true)"
                 if [[ ! "$TEMPLATE_FIRST_RELEVANT_LINE"  =~ "{{ansible_managed}}" ]]
                 then
-                    if [[ ! "$TEMPLATE_FIRST_RELEVANT_LINE"  =~ "{# qa:no-ansible-managed-check"(-#}|[, .#]) ]]
+                    if [[ ! "$TEMPLATE_FIRST_RELEVANT_LINE"  =~ "{# qa:lint:no-ansible-managed-check"(-#}|[, .#]) ]]
                     then
                       warn "Could not find {{ansible_managed}} marker in $TEMPLATE. Either add a '{{ansible_managed}} comment at the top of the file (after an eventual shebang), or add a '{# qa:no-ansible-managed-check, as <INSERT REASON HERE> -#}' Jinja comment."
                     fi
@@ -314,7 +314,7 @@ lint_role() {
     then
         if ! grep --quiet "fail: msg=\"Unsupported distribution" "roles/$ROLE/tasks/main.yml"
         then
-            if ! grep --quiet "^# lint-distribution-independent" "roles/$ROLE/tasks/main.yml"
+            if ! grep --quiet "^# qa:lint:distribution-independent" "roles/$ROLE/tasks/main.yml"
             then
                 if ! grep --quiet "name: common-role-tasks-start" "roles/$ROLE/tasks/main.yml"
                 then

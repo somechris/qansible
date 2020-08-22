@@ -607,7 +607,7 @@ soft_state_dependencies=0
 # These options determine when Icinga will react to detected changes
 # in system time (forward into the future).
 
-{# lint-ignore: time_change_threshold <-- is not relate to role time #}
+{# qa:lint:ignore: time_change_threshold <-- is not relate to role time #}
 #time_change_threshold=900
 
 
@@ -1482,7 +1482,7 @@ enable_environment_macros=1
 #          1024 = Comments
 #          2048 = Macros
 
-{# lint-ignore: debug_level <-- is not relate to role debug #}
+{# qa:lint:ignore: debug_level <-- is not relate to role debug #}
 debug_level={{icinga_server_log_level | logging_map_level(0,0,0,16+32+128+256,-1)}}
 
 
@@ -1493,7 +1493,7 @@ debug_level={{icinga_server_log_level | logging_map_level(0,0,0,16+32+128+256,-1
 #         1 = More detailed
 #         2 = Very detailed
 
-{# lint-ignore: debug_verbosity <-- is not relate to role debug #}
+{# qa:lint:ignore: debug_verbosity <-- is not relate to role debug #}
 debug_verbosity={{icinga_server_log_level | logging_map_level(0,0,0,1,2)}}
 
 
@@ -1501,7 +1501,7 @@ debug_verbosity={{icinga_server_log_level | logging_map_level(0,0,0,1,2)}}
 # DEBUG FILE
 # This option determines where Icinga should write debugging information.
 
-{# lint-ignore: debug_file <-- is not relate to role debug #}
+{# qa:lint:ignore: debug_file <-- is not relate to role debug #}
 debug_file=/var/log/icinga/icinga.debug
 
 

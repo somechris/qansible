@@ -309,7 +309,7 @@ auto_assign_org_role = Editor
 [auth]
 # Login cookie name
 ;login_cookie_name = grafana_session
-{# lint-ignore: grafana_session above as that is not an undocumented Grafana session variable #}
+{# qa:lint:ignore: grafana_session above as that is not an undocumented Grafana session variable #}
 
 # The lifetime (days) an authenticated user can be inactive before being required to login at next visit. Default is 7 days,
 ;login_maximum_inactive_lifetime_days = 7
@@ -394,7 +394,7 @@ disable_signout_menu = true
 
 #################################### Grafana.com Auth ####################
 [auth.grafana_com]
-{# lint-ignore: grafana_com above as that is not an undocumented Grafana com variable #}
+{# qa:lint:ignore: grafana_com above as that is not an undocumented Grafana com variable #}
 ;enabled = false
 ;allow_sign_up = true
 ;client_id = some_id
