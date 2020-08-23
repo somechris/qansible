@@ -10,6 +10,7 @@ atop_common_role_tasks_config:
   port_configs: []
   services:
     - atop
+  log_files: []
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks:

@@ -36,6 +36,7 @@ grafana_common_role_tasks_config:
       incoming_net_accesses: '{{grafana_server_net_accesses}}'
   services:
     - grafana-server
+  log_files: [] # TO-DO: Configure logging
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks:

@@ -42,6 +42,7 @@ apache_webserver_common_role_tasks_config:
   port_configs: "{% set collector = ([] | var_shim_init) %}{% for item in (apache_webserver_ports_plain + apache_webserver_ports_encrypted)%}{{collector|var_shim_add([{'port': item, 'name': 'WEBSERVER_' ~ item, 'incoming_net_accesses': apache_webserver_net_accesses}])}}{% endfor %}{{collector|var_shim_get}}"
   services:
     - apache2
+  log_files: [] # TO-DO: Configure logging
   dashboards: []
   dashboard_host_rows:
     - '{{inventory_hostname_short | dashboard_row_apache(apache_websites)}}'

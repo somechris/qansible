@@ -24,6 +24,7 @@ website_common_common_role_tasks_config:
     - 'reload webserver'
   port_configs: []
   services: []
+  log_files: []
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks: []

@@ -11,6 +11,7 @@ common_packages_common_role_tasks_config:
   notifications: []
   port_configs: []
   services: []
+  log_files: []
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks: []

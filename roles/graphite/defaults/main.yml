@@ -56,6 +56,7 @@ graphite_common_role_tasks_config:
       incoming_net_accesses: '{{graphite_query_net_accesses}}'
   services:
     - carbon-cache
+  log_files: [] # TO-DO: Configure logging
   dashboards: []
   dashboard_host_rows:
     - '{{inventory_hostname_short | dashboard_row_graphite}}'

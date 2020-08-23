@@ -35,6 +35,7 @@ apache_website_common_role_tasks_config:
     - 'reload apache'
   port_configs: []
   services: []
+  log_files: [] # TO-DO: Configure logging
   dashboards: []
   dashboard_host_rows: "{{inventory_hostname_short | dashboard_rows_website('apache', apache_website_domain)}}"
   monitoring_checks:
