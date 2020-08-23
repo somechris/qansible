@@ -190,6 +190,9 @@ This format publishes the following metrics per file
 
 * `total.count`: The number of lines
 * `total.length.average`: Average line length
+* `failword.<FAILWORD>.count`: The number of lines that contained the work
+  <FAILWORD>. Where FAILWORD is one of 'denied', 'disconnect', ...
+  Look for the global array FAILWORDS in the source code for a complete list.
 
 
 #### Log rotation
@@ -374,6 +377,14 @@ class LogFacadeBase(object):
         except Exception as e:
             self._destruct_file()
             self.log.error(e)
+
+    def search_failwords(self, line):
+        line = line.lower()
+        found = []
+        for failword in FAILWORDS:
+            if failword in line:
+                found.append(failword)
+        return found
 
     def get_prefix(self):
         return self._prefix
@@ -597,19 +608,28 @@ class LogFacadeLines(LogFacadeBase):
                                              options)
 
     def parse_line(self, line):
-        return len(line)
+        failwords = self.search_failwords(line)
+        return {'length': len(line), 'failwords': failwords}
 
     def get_target_buckets(self, request_parsed):
-        return ['total']
+        ret = ['total']
+        for failword in request_parsed['failwords']:
+            ret.append('failword.' + failword)
+        return ret
 
     def get_required_buckets(self):
-        return {'total': []}
+        ret = {'total': []}
+        for failword in FAILWORDS:
+            ret['failword.' + failword] = []
+        return ret
 
     def get_metrics_for_bucket(self, bucket, items):
         ret = {}
         n_items = len(items)
         ret['count'] = n_items
-        ret['length.average'] = (sum(items) / n_items) if n_items else 0
+        if bucket == 'total':
+          lengths = [item['length'] for item in items]
+          ret['length.average'] = (sum(lengths) / n_items) if n_items else 0
         return ret
 
 
@@ -645,14 +665,6 @@ class LogFacadeStandardLog(LogFacadeBase):
             source_raw = split[1].lstrip().split(':')[0]
             source = re.sub('[_./]+', '_', source_raw)
         return source
-
-    def search_failwords(self, line):
-        line = line.lower()
-        found = []
-        for failword in FAILWORDS:
-            if failword in line:
-                found.append(failword)
-        return found
 
     def parse_line(self, line):
         level = None

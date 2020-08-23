@@ -43,8 +43,9 @@ def row_log_file_custom(host, log_file):
     row = new(host, log_file)
 
     base = metric_base(log_file)
-    add_panel(row, panel_count(host, base, width=6))
-    add_panel(row, panel_length_average(host, base, width=6))
+    add_panel(row, panel_count(host, base, width=4))
+    add_panel(row, panel_count(host, base, kinds=['failword.*'], by='Failword', width=4))
+    add_panel(row, panel_length_average(host, base, width=4))
     return row
 
 
