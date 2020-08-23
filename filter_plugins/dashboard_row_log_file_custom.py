@@ -10,20 +10,20 @@ from dashboard_metrics import set_yaxis_labels
 from dashboard_metrics import set_yaxis_units
 from dashboard_graph import new as new_graph
 from dashboard_row import add_panel
+from dashboard_metrics import zero_missing_points
 del sys.path[0]
 
-def panel_count(host, base, kinds=['*'], width=None):
-    if kinds == ['*']:
-        title = 'Any'
-    else:
-        title = '/'.join(kinds)
-    title += " log lines"
+def panel_count(host, base, kinds=['*'], prefix='All', by=None, width=None, zero_missing=False):
+    title = prefix + ' Log Lines'
+    if by:
+        title += ' by ' + by
     panel = new_graph(title, width=width)
 
     for kind in kinds:
         add_metric(panel, host, '%s.%s.count' % (base, kind), [-2])
 
     set_yaxis_labels(panel, "Lines/min")
+    zero_missing_points(panel)
 
     return panel
 

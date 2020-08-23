@@ -171,8 +171,10 @@ This format publishes the following metrics per file
 
 * `total.count`: The number of lines
 * `unparsable.count`: The number of lines where no log level was found
-* `<LEVEL>.count`: The number of lines in log level <LEVEL>, where <LEVEL>
+* `level.<LEVEL>.count`: The number of lines in log level <LEVEL>, where <LEVEL>
   is any of `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`.
+* `source.<SOURCE>.count`: The number of lines a source file <SOURCE> could get
+  parsed.
 
 
 
@@ -201,6 +203,7 @@ condition is typically trivially met.
 
 import diamond.collector
 import os
+import re
 
 from math import ceil
 
@@ -621,8 +624,17 @@ class LogFacadeStandardLog(LogFacadeBase):
 
         self._required_levels = required_levels
 
+    def parse_source(self, line):
+        source = ''
+        split = (line).split(']', 1)
+        if len(split) > 1:
+            source_raw = split[1].lstrip().split(':')[0]
+            source = re.sub('[_./]+', '_', source_raw)
+        return source
+
     def parse_line(self, line):
         level = None
+        source = None
 
         # Quick test to sieve out mismatches early
         # This quick test shaves off 10% runtime on our files
@@ -634,21 +646,41 @@ class LogFacadeStandardLog(LogFacadeBase):
             else:
                 level = self.parse_unknown_level(line_level, line)
 
+            source = self.parse_source(line)
+
         if not level:
             level = "unparsable"
 
-        return {'level': level}
+        if not source:
+            source = "unparsable"
+
+        return {'level': level, 'source': source}
 
     def parse_unknown_level(line_level, line):
         return None
 
     def get_target_buckets(self, request_parsed):
-        return ['total', request_parsed['level']]
+        ret = ['total',
+               'level.total',
+               'level.' + request_parsed['level'],
+               'source.total',
+               'source.' + request_parsed['source'],
+               ]
+        if 'unparsable' in request_parsed.values():
+            ret.append('unparsable')
+        return ret
 
     def get_required_buckets(self):
-        ret = {'total': [], 'unparsable': []}
+        ret = {
+            'total': [],
+            'unparsable': [],
+            'level.total': [],
+            'level.unparsable': [],
+            'source.total': [],
+            'source.unparsable': [],
+            }
         for level in self._required_levels:
-            ret[level] = []
+            ret['level.' + level] = []
         return ret
 
     def get_metrics_for_bucket(self, bucket, items):
