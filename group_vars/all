@@ -152,6 +152,7 @@ monitoring_website_health_checks_extra: {}
 monitoring_website_health_checks: '{{monitoring_website_health_checks_defaults | update_dict(monitoring_website_health_checks_extra)}}'
 monitoring_external_websites: []
 monitoring_internal_websites: []
+monitoring_check_config: []
 
 #---------------------------------------------------------------------------
 # Graphite
