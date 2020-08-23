@@ -17,7 +17,7 @@
 
 - name: Explicitizing dashboard configs
   set_fact:
-    dashboards: '{{dashboards + [dashboard_host | dashboard_add_rows(dashboard_host_rows)]}}'
+    dashboards: '{{dashboards + [dashboard_host | dashboard_add_rows(dashboard_host_rows) | dashboard_add_rows(inventory_hostname_short | dashboard_rows_log_files(logging_log_files))]}}'
   changed_when: False
   tags:
     - always
