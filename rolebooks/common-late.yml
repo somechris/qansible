@@ -28,6 +28,14 @@
     - dashboards
     - grafana
 
+- name: Make sure globals are expanded for easier consumption
+  hosts: all
+  gather_facts: no
+  roles:
+    - expand-globals
+  tags:
+    - always
+
 - name: common-late (generic for all, even unmanaged)
   hosts: all
   gather_facts: no

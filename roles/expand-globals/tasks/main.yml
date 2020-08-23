@@ -1,0 +1,9 @@
+# qa:lint:distribution-independent
+# qa:lint:no-log-level-needed
+
+- name: Explicitizing log files
+  set_fact:
+    logging_log_files: '{{logging_log_files | logging_expand_log_files}}'
+  changed_when: False
+  tags:
+    - always

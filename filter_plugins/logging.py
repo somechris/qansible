@@ -4,6 +4,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from misc import is_undefined
 del sys.path[0]
 
+import re
+
+
 DEFAULT_LOG_LEVEL='info'
 
 def map_level(level, none, error, info, debug, all):
@@ -65,6 +68,22 @@ def level_includes(level, margin):
     return map_level_numeric(level) <= map_level_numeric(margin)
 
 
+def expand_log_file(log_file):
+    if not isinstance(log_file, dict):
+        log_file = {'file': log_file}
+
+    log_file.setdefault('description', 'Custom log file at ' + log_file['file'])
+    log_file.setdefault('group', 'ungrouped')
+    log_file.setdefault('item', re.sub('[.-/]+', '_', log_file['file']))
+    log_file.setdefault('slug', log_file['group'] + '-' + log_file['item'])
+
+    return log_file
+
+
+def expand_log_files(log_files):
+    return [expand_log_file(log_file) for log_file in log_files]
+
+
 class FilterModule(object):
     '''Misc ansible jinja2 filter'''
 
@@ -76,4 +95,5 @@ class FilterModule(object):
             'logging_map_level_python': map_level_python,
             'logging_map_level_java_jul': map_level_java_jul,
             'logging_map_level_java_log4j': map_level_java_log4j,
-        }
+            'logging_expand_log_files': expand_log_files,
+            }

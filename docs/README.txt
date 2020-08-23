@@ -122,6 +122,8 @@ agreements.
     LDAP, ...)
   - `diamond`: Handles the diamond application, which collects
     system/application metrics and sends them to graphite.
+  - `expand-globals`: Normalizes globals and fills in defaults for easier
+    consumption in subsequent roles.
   - `smtp-server`: Sets up an SMTP server.
   - `emergency-user`: Sets up a local user that allows login even if
   - `fail`: Fails a playbook. This can be used to fail early in `meta` parts.

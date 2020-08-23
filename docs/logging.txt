@@ -1,6 +1,15 @@
 logging
 =======
 
+1. Log levels
+2. Service configuration
+3. Log file integration
+
+
+
+1. Log levels
+-------------
+
 We try to provide a common logging setup for all roles. All roles that can be
 tuned in verbosity are expected to have a '{{rolename}}_log_level' setting to
 adjust that verbosity. All possible values for this setting are
@@ -12,6 +21,11 @@ adjust that verbosity. All possible values for this setting are
 Using only these five values makes it easy for users to adjust verbosity of
 services without having to learn configuration details of the services, while
 still being able to cover many use cases.
+
+
+
+2. Service configuration
+------------------------
 
 Of course, the services typically do not use the above 5 level, but have their
 own levels. It's the role's responsibility to map between the values. There are
@@ -38,3 +52,24 @@ com.mycompany.component = {{app_log_level | logging_map_level_java_jul}}
 
 becomes `com.mycompany.component = SEVERE` if `app_log_level` is `error`, and
 `com.mycompany.component = FINE` if `app_log_level` is `debug`.
+
+
+
+3. Log file integration
+-----------------------
+
+To allow the environment to integrate log files (e.g.: Automatically generate a
+row for it on the host's dashboard), we collect them in the global
+`logging_log_files` list. Each item in that list specifies a log file and is
+either a string (which is an abbreviation for `{'file': '<string>'}`) or
+directly a dictionary This dictionary can have the following key/values:
+* `file`: The absolute path to the log file.
+* `description: (Default: `Custom log file at ` + file) A description for the
+  file for humans.
+* `group`: (Default: `ungrouped`) A group for the file. This group is optional,
+  but may be used for structure. For example the file's metrics are filed
+  underneath the group.
+* `item`: (Default: file name with all of `.`, `_`, and `/` replaced by `_`) A
+  description of the item for machines. This is typically used as 2nd level
+  grouping. Items should be unique for a given group.
+* `slug: (Default: group `-` item) id to be used for sorting.
