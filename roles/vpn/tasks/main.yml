@@ -48,10 +48,13 @@
 
 - name: Make sure logs are accessible
   file:
+    state: touch
     dest: '{{vpn_log_dir}}/{{item | net_slug(inventory_hostname)}}.log'
     owner: root
     group: adm
     mode: 0640
+    access_time: preserve
+    modification_time: preserve
   with_items: '{{inventory_hostname | host_nets(net_configs, type="vpn")| list}}'
   notify:
     - reload openvpn-{{qhost_distribution}}
