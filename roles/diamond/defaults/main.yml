@@ -30,6 +30,7 @@ diamond_common_role_tasks_config:
       group: diamond
       item: main
       description: Diamond logs
+      format: python
       skip: "{{diamond_log_level == 'none'}}"
   dashboards: []
   dashboard_host_rows: []
