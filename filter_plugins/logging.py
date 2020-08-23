@@ -73,6 +73,7 @@ def expand_log_file(log_file):
         log_file = {'file': log_file}
 
     log_file.setdefault('description', 'Custom log file at ' + log_file['file'])
+    log_file.setdefault('format', 'custom')
     log_file.setdefault('group', 'ungrouped')
     log_file.setdefault('item', re.sub('[.-/]+', '_', log_file['file']))
     log_file.setdefault('slug', log_file['group'] + '-' + log_file['item'])

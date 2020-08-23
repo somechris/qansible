@@ -12,11 +12,16 @@ from dashboard_graph import new as new_graph
 from dashboard_row import add_panel
 del sys.path[0]
 
-def panel_total_count(host, base, width=None):
-    title = "Number of Lines"
+def panel_count(host, base, kinds=['*'], width=None):
+    if kinds == ['*']:
+        title = 'Any'
+    else:
+        title = '/'.join(kinds)
+    title += " log lines"
     panel = new_graph(title, width=width)
 
-    add_metric(panel, host, '%s.total.count' % (base), 'Lines/min')
+    for kind in kinds:
+        add_metric(panel, host, '%s.%s.count' % (base, kind), [-2])
 
     set_yaxis_labels(panel, "Lines/min")
 
@@ -38,7 +43,7 @@ def row_log_file_custom(host, log_file):
     row = new(host, log_file)
 
     base = metric_base(log_file)
-    add_panel(row, panel_total_count(host, base, width=6))
+    add_panel(row, panel_count(host, base, width=6))
     add_panel(row, panel_length_average(host, base, width=6))
     return row
 

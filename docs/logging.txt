@@ -64,6 +64,11 @@ row for it on the host's dashboard), we collect them in the global
 either a string (which is an abbreviation for `{'file': '<string>'}`) or
 directly a dictionary This dictionary can have the following key/values:
 * `file`: The absolute path to the log file.
+* `format`: (Default: `custom`) The format of the logs in the file. It has to be
+  one of the following:
+  * `custom`: Undefined format. Only basic line counts are evaluated
+  * `python`: Python log output formatted by `logging_default_format_python`,
+    and `logging_default_format_python_date`
 * `description: (Default: `Custom log file at ` + file) A description for the
   file for humans.
 * `group`: (Default: `ungrouped`) A group for the file. This group is optional,
