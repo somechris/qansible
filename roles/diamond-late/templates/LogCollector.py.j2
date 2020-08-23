@@ -175,6 +175,9 @@ This format publishes the following metrics per file
   is any of `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`.
 * `source.<SOURCE>.count`: The number of lines a source file <SOURCE> could get
   parsed.
+* `failword.<FAILWORD>.count`: The number of lines that contained the work
+  <FAILWORD>. Where FAILWORD is one of 'denied', 'disconnect', ...
+  Look for the global array FAILWORDS in the source code for a complete list.
 
 
 
@@ -251,6 +254,17 @@ PYTHON_LOG_LEVELS = [
     'DEBUG',
 ]
 
+FAILWORDS = [
+    'denied',
+    'disconnect',
+    'empty',
+    'err',
+    'fail',
+    'full',
+    'missing',
+    'refuse',
+    'severe',
+]
 
 class LogFacadeFactory(object):
     def __init__(self):
@@ -632,9 +646,18 @@ class LogFacadeStandardLog(LogFacadeBase):
             source = re.sub('[_./]+', '_', source_raw)
         return source
 
+    def search_failwords(self, line):
+        line = line.lower()
+        found = []
+        for failword in FAILWORDS:
+            if failword in line:
+                found.append(failword)
+        return found
+
     def parse_line(self, line):
         level = None
         source = None
+        message = None
 
         # Quick test to sieve out mismatches early
         # This quick test shaves off 10% runtime on our files
@@ -648,13 +671,21 @@ class LogFacadeStandardLog(LogFacadeBase):
 
             source = self.parse_source(line)
 
+            if level and source:
+                message = line.split(']',1)[1].split(' - ',1)[1]
+
+        if not message:
+            message = line
+
+        failwords = self.search_failwords(message)
+
         if not level:
             level = "unparsable"
 
         if not source:
             source = "unparsable"
 
-        return {'level': level, 'source': source}
+        return {'level': level, 'source': source, 'failwords': failwords}
 
     def parse_unknown_level(line_level, line):
         return None
@@ -668,6 +699,8 @@ class LogFacadeStandardLog(LogFacadeBase):
                ]
         if 'unparsable' in request_parsed.values():
             ret.append('unparsable')
+        for failword in request_parsed['failwords']:
+            ret.append('failword.' + failword)
         return ret
 
     def get_required_buckets(self):
@@ -681,6 +714,8 @@ class LogFacadeStandardLog(LogFacadeBase):
             }
         for level in self._required_levels:
             ret['level.' + level] = []
+        for failword in FAILWORDS:
+            ret['failword.' + failword] = []
         return ret
 
     def get_metrics_for_bucket(self, bucket, items):

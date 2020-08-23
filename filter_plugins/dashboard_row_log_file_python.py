@@ -17,9 +17,10 @@ def row_log_file_python(host, log_file):
     row = new(host, log_file)
 
     base = metric_base(log_file)
-    add_panel(row, panel_count(host, base, kinds=['level.CRITICAL', 'level.ERROR'], prefix='CRICITAL/ERROR', width=4))
-    add_panel(row, panel_count(host, base, kinds=['level.*'], by='Level', width=4))
-    add_panel(row, panel_count(host, base, kinds=['source.*'], by='Source', width=4))
+    add_panel(row, panel_count(host, base, kinds=['level.CRITICAL', 'level.ERROR'], prefix='CRICITAL/ERROR', width=3))
+    add_panel(row, panel_count(host, base, kinds=['level.*'], by='Level', width=3))
+    add_panel(row, panel_count(host, base, kinds=['source.*'], by='Source', width=3))
+    add_panel(row, panel_count(host, base, kinds=['failword.*'], by='Failword', width=3))
     return row
 
 
