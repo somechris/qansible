@@ -10,7 +10,7 @@
     mode: 0444
   delegate_to: "{{item[1]}}"
   with_cartesian:
-    - '{{dashboards + [dashboard_host | dashboard_add_rows(dashboard_host_rows)]}}'
+    - '{{dashboards}}'
     - '{{groups["grafanas"]}}'
   notify:
     - reload grafana
