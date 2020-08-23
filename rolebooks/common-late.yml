@@ -36,6 +36,14 @@
   tags:
     - always
 
+- name: Make sure managed hosts gathered facts for dashboards
+  hosts: '!unmanaged'
+  roles:
+    - role: diamond-late
+      tags:
+        - diamond-late
+        - diamond
+
 - name: common-late (generic for all, even unmanaged)
   hosts: all
   gather_facts: no

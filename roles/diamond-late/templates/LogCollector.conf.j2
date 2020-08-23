@@ -36,3 +36,12 @@ prefix = {{server['name']}}.other_vhosts
 
 {%   endif %}
 {% endfor %}
+
+{% for log_file in logging_log_files %}
+
+[[{{log_file['file']}}]]
+description = {{log_file['description']}}
+file_name = {{log_file['file']}}
+format = lines
+prefix = {{[log_file['group'], log_file['item']] | join('.')}}
+{% endfor %}
