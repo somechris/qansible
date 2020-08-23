@@ -615,7 +615,7 @@ class LogFacadeStandardLog(LogFacadeBase):
     def __init__(self, file_name, prefix, log, options, required_levels=[]):
         super(LogFacadeStandardLog, self).__init__(file_name, prefix, log,
                                                    options)
-        self._line_start = options.get('line_start', '201')
+        self._line_start = options.get('line_start', '20')
         self._level_start = int(options.get('level_start', 24))
         self._level_end = int(options.get('level_end', 32))
 
