@@ -1,9 +1,16 @@
 # qa:lint:distribution-independent
 # qa:lint:no-log-level-needed
 
-- name: Explicitizing log files
+- name: Explicitizing log file config
   set_fact:
     logging_log_files: '{{logging_log_files | logging_expand_log_files}}'
+  changed_when: False
+  tags:
+    - always
+
+- name: Explicitizing monitoring check config
+  set_fact:
+    monitoring_check_config: '{{monitoring_check_config | monitoring_checks_explicitize}}'
   changed_when: False
   tags:
     - always

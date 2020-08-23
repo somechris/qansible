@@ -18,6 +18,6 @@
 {{('OpenVPN/' + slug + '/Server') | icinga_nrpe_check(inventory_hostname, 'openvpn_' + slug + '_daemon')}}
 {{('OpenVPN/' + slug + '/Status') | icinga_nrpe_check(inventory_hostname, 'openvpn_' + slug + '_status')}}
 {% endfor %}
-{% for check in (monitoring_check_config | monitoring_checks_explicitize) %}
+{% for check in monitoring_check_config %}
 {{check | icinga_monitoring_check_config_check_formatter(inventory_hostname, monitoring_website_health_checks)}}
 {% endfor %}
