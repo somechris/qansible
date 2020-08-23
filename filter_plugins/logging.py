@@ -76,12 +76,15 @@ def expand_log_file(log_file):
     log_file.setdefault('group', 'ungrouped')
     log_file.setdefault('item', re.sub('[.-/]+', '_', log_file['file']))
     log_file.setdefault('slug', log_file['group'] + '-' + log_file['item'])
+    log_file.setdefault('skip', False)
 
     return log_file
 
 
 def expand_log_files(log_files):
-    return [expand_log_file(log_file) for log_file in log_files]
+    ret = [expand_log_file(log_file) for log_file in log_files]
+    ret = [log_file for log_file in ret if not log_file['skip']]
+    return ret
 
 
 def expand_log_file_for_common_task_rules(log_file, config):

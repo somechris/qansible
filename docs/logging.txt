@@ -72,4 +72,8 @@ directly a dictionary This dictionary can have the following key/values:
 * `item`: (Default: file name with all of `.`, `_`, and `/` replaced by `_`) A
   description of the item for machines. This is typically used as 2nd level
   grouping. Items should be unique for a given group.
+* `skip: (Default: False) If true, skip this log file. This is useful simplify
+  config and get it more static, while still allowing to only use relevant
+  files. E.g.: If the log level is none, some file might not get written and can
+  get ignored by setting `skip` to True.
 * `slug: (Default: group `-` item) id to be used for sorting.
