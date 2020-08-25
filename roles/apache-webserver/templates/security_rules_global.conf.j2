@@ -19,3 +19,6 @@ SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:Sec-Fetch-User
 
 # The auth mail header typically contains an @ which triggers 920274.
 SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:{{web_site_authenticated_email_header}}
+
+# The Via header often contains a parentheses which triggers 920274. E.g.: Via=1.1 pr-[...]-pxy1.stark-deutschland.de:80 (Cisco-WSA/11.8.0-453)'
+SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:Via
