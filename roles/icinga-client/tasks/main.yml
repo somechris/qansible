@@ -7,6 +7,7 @@
     name:
       - nagios-plugins
       - nagios-nrpe-server
+      - perl # check_file_age complains about missing Tie::Hash::NamedCapture.pm otherwise
     state: present
   when: '"unmanaged" not in group_names'
 
