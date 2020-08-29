@@ -15,6 +15,7 @@ diamond_common_role_tasks_config:
     - '{{diamond_effective_data_dir}}'
     - '{{diamond_effective_log_dir}}'
     - {state: link, path: '{{diamond_log_dir}}', source: '{{diamond_effective_log_dir}}'}
+    - '{{diamond_collector_dir}}'
     - '{{diamond_collector_conf_dir}}'
     - /etc/diamond
   packages:
