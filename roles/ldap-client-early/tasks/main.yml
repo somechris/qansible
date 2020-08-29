@@ -8,6 +8,7 @@
   apt:
     name:
       - ldap-utils
+      - nscd
       - nslcd
     state: present
   when: 'qhost_distribution == "Debian"'
