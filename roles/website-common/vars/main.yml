@@ -13,7 +13,7 @@ website_common_common_role_tasks_config:
     - 'Gentoo'
   user: omit
   paths:
-    - { path: '{{web_site_root_dir}}' }
+    - { path: '{{web_site_root_dir}}', mode: '555' }
     - { path: '{{website_common_effective_data_dir}}' }
     - { path: '{{website_common_effective_data_dir}}/htdocs', user: 'www-data' }
     - { path: '{{website_common_effective_data_dir}}/conf' }
