@@ -17,6 +17,8 @@ apache_website_common_role_tasks_config:
     - 'Debian'
   user: omit
   paths:
+    - '{{apache_webserver_effective_data_dir}}'
+    - '{{apache_webserver_effective_log_dir}}'
     - /etc/apache2
     - /etc/apache2/sites-available
     - /etc/apache2/sites-enabled
@@ -28,8 +30,7 @@ apache_website_common_role_tasks_config:
       path: '/etc/apache2/sites-enabled/{{"00-" if apache_website_domain == "default" else ""}}{{apache_website_domain}}.conf'
       source: '/etc/apache2/sites-available/{{apache_website_domain}}.conf'
       force: yes
-    - /var/log/apache2
-    - {state: link, path: '/var/log/apache2/{{apache_website_domain}}', source: '{{web_site_root_dir}}/{{apache_website_domain}}/logs'}
+    - {state: link, path: '{{apache_webserver_effective_log_dir}}/{{apache_website_domain}}', source: '{{web_site_root_dir}}/{{apache_website_domain}}/logs'}
   packages: []
   notifications:
     - 'reload apache'

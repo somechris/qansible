@@ -22,6 +22,12 @@ site. To configure further sites, see the `website-apache` role.
 
 * `apache_webserver_log_level`: (Default: webserver_default_log_level) Verbosity
   of logs and services. See `docs/logging.txt`.
+* `apache_webserver_effective_data_disk`: Directory for data disk where data
+  effectively gets stored in.
+* `apache_webserver_effective_data_dir`: Directory where all data effectively
+  gets stored in.
+* `apache_webserver_effective_log_dir`: Directory where logs effectively get
+  stored in.
 
 
 
@@ -36,12 +42,6 @@ site. To configure further sites, see the `website-apache` role.
   unencrypted plaintext connections.
 * `apache_webserver_ports_encrypted`: The ports to listen on for
   encrypted connections.
-* `apache_webserver_effective_data_disk`: Directory for data disk where data
-  effectively gets stored in.
-* `apache_webserver_effective_data_dir`: Directory where all data effectively
-  gets stored in.
-* `apache_webserver_effective_log_dir`: Directory where logs effectively get
-  stored in.
 * `apache_webserver_error_documents`: Dictionary of overrides for
   Apache's default error pages. The keys are the status codes. The
   values are themselves dictionaries holding the following

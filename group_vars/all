@@ -98,6 +98,9 @@ dhparams_file: '{{ssl_private_dir}}/dhparams.pem'
 
 default_ssl_setup: compat
 
+apache_webserver_effective_data_disk: '{{common_directories_default_data_dir}}'
+apache_webserver_effective_data_dir: '{{apache_webserver_effective_data_disk}}/apache-webserver'
+apache_webserver_effective_log_dir: '{{apache_webserver_effective_data_dir}}/logs'
 apache_webserver_ports_plain: '{{webserver_ports_plain}}'
 apache_webserver_ports_encrypted: '{{webserver_ports_encrypted}}'
 apache_webserver_log_level: '{{webserver_log_level}}'
