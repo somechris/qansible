@@ -22,7 +22,7 @@ website_common_common_role_tasks_config:
     - { state: 'link', path: '{{web_site_root_dir}}/{{website_common_domain}}', source: '{{website_common_effective_data_dir}}' }
   packages: []
   notifications:
-    - 'reload webserver'
+    - 'mark webserver config changed'
   port_configs: []
   services: []
   log_files: []

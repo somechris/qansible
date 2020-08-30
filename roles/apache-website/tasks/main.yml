@@ -12,7 +12,7 @@
     group: root
     mode: 0444
   notify:
-    reload apache
+    mark webserver config changed
 
 - name: Common role tasks for installing packages
   import_role:

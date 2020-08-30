@@ -28,6 +28,11 @@ site. To configure further sites, see the `website-apache` role.
   gets stored in.
 * `apache_webserver_effective_log_dir`: Directory where logs effectively get
   stored in.
+* `apache_webserver_config_changed`: (Default: False) If true by the time this
+  role runs, Apache will be told to pick up config changes. Roles that set up
+  apache websites can set this to true to achieve a `notify` for Apache
+  reloading, although the apache-webserver will get installed only later in the
+  play.
 
 
 

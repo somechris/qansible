@@ -1,4 +1,3 @@
-- name: reload webserver
-  service:
-    name: '{{website_common_kind if website_common_kind != "apache" else "apache2"}}'
-    state: reloaded
+- name: mark webserver config changed
+  set_fact:
+    apache_webserver_config_changed: "{{apache_webserver_config_changed or website_common_kind == 'apache'}}"

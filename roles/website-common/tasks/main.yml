@@ -33,4 +33,4 @@
     mode: 0440
   with_items: '{{website_common_htpasswds | dict2items}}'
   notify:
-    reload webserver
+    mark webserver config changed

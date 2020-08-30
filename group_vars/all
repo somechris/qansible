@@ -104,6 +104,7 @@ apache_webserver_effective_log_dir: '{{apache_webserver_effective_data_dir}}/log
 apache_webserver_ports_plain: '{{webserver_ports_plain}}'
 apache_webserver_ports_encrypted: '{{webserver_ports_encrypted}}'
 apache_webserver_log_level: '{{webserver_log_level}}'
+apache_webserver_config_changed: False
 apache_websites: []
 nginx_websites: []
 

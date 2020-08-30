@@ -33,7 +33,7 @@ apache_website_common_role_tasks_config:
     - {state: link, path: '{{apache_webserver_effective_log_dir}}/{{apache_website_domain}}', source: '{{web_site_root_dir}}/{{apache_website_domain}}/logs'}
   packages: []
   notifications:
-    - 'reload apache'
+    - 'mark webserver config changed'
   port_configs: []
   services: []
   log_files: [] # TO-DO: Configure logging

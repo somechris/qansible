@@ -132,6 +132,16 @@
   notify:
     reload apache
 
+- name: Pickup needed restart
+  set_fact:
+    apache_webserver_config_changed: False
+  changed_when: True
+  when: apache_webserver_config_changed
+  notify:
+    reload apache
+  tags:
+    - always
+
 - name: Common role tasks at end
   import_role:
     name: common-role-tasks-end
