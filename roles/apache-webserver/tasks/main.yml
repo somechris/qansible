@@ -74,6 +74,7 @@
     owner: root
     group: root
     mode: 0444
+    force: yes
   with_items:
     - authnz_ldap.load
     - cgi.load
