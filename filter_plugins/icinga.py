@@ -111,7 +111,7 @@ def icinga_nrpe_command(name, command, arg="", raw=False):
 def icinga_http_check(description, host, domain, expected_status_code=200,
                       uri='/', ssl=True, method='GET', data=None,
                       encode_data=False, expected_content='', dns=False,
-                      port=None, variant=''):
+                      port=None, max_seconds=''):
     name = 'http_vhost_' + (method.lower())
     if dns:
         name += '_dns'
@@ -132,8 +132,9 @@ def icinga_http_check(description, host, domain, expected_status_code=200,
     if port:
         name += '_port'
         arguments += [port]
-    if variant:
-        name += '_' + variant
+    if not max_seconds:
+        max_seconds = 2
+    name += '_' + str(max_seconds) + 's'
     return icinga_check(description, host, name,
                         arguments)
 
@@ -204,7 +205,7 @@ def icinga_http_preconfigured_checks_check(host, site, name, config={},
     if use_suffix:
         description += '/' + name
 
-    variant = config.get('variant', '')
+    max_seconds = config.get('max_seconds', '')
     method = config.get('method', 'GET')
     uri = config.get('uri', '/')
     ssl = (protocol != 'http') if ssl is None else str(ssl)
@@ -220,7 +221,7 @@ def icinga_http_preconfigured_checks_check(host, site, name, config={},
         data=data, encode_data=encode_data,
         expected_status_code=expected_status_code,
         expected_content=expected_content,
-        dns=dns, port=port, variant=variant)
+        dns=dns, port=port, max_seconds=max_seconds)
 
 
 def icinga_http_preconfigured_domain(host, kind, site, configs={},

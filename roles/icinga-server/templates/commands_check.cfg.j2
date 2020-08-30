@@ -15,9 +15,9 @@
 {%       for data in [True, False] %}
 {%         for dns in [True, False] %}
 {%           for port in [True, False] %}
-{%             for suffix, warn_time in {'': 1, 'slow': 3}.iteritems() %}
+{%             for critical_time in [2, 5, 10, 15, 20, 30, 45] %}
 define command {
-  command_name check_http_vhost_{{method | lower}}{{'_dns' if dns else ''}}{{'_ssl' if ssl else ''}}{{(ssl | replace(".", "_")) if ssl is string else ''}}{{'_data' if data else ''}}_{{spec.name | default(spec.status_code)}}{{('_' + suffix) if suffix else ''}}{{('_port') if port else ''}}
+  command_name check_http_vhost_{{method | lower}}{{'_dns' if dns else ''}}{{'_ssl' if ssl else ''}}{{(ssl | replace(".", "_")) if ssl is string else ''}}{{'_data' if data else ''}}_{{spec.name | default(spec.status_code)}}_{{critical_time}}s{{('_port') if port else ''}}
   command_line /usr/lib/nagios/plugins/check_http \
 {%               if not dns %}
     -I '$HOSTADDRESS$' \
@@ -27,8 +27,9 @@ define command {
     -u '$ARG2$' \
     --expect '{{spec.status_code}} {{spec.message}}' \
     --string '$ARG3$' \
-    --warning {{warn_time}} \
-    --critical 5 \
+    --warning {{critical_time}} \
+    --critical {{critical_time}} \
+    --timeout {{critical_time + 30}} \
 {{"    --post '$ARG4$' \\\n" if data else ''}} \
 {%               if port %}
     --port '$ARG{{5 if data else 4}}$' \

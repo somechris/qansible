@@ -85,6 +85,9 @@ for each key is again a dictionary holding the following key/value pairs:
       pass the check.
     * `expected_content`: (Default: '') The content that needs to be in the
       response to pass the check.
+    * `max_seconds`: (Default: 2) The maximum number of seconds to allow the
+      request to finish. Possible values are `2`, `5`, `10`, `15`, `20`, `30`,
+      and `45`.
     * `method`: (Default: 'GET') The HTTP method to use for the check. Only
       `GET` and `POST` are supported at this time.
     * `port`: (Default: None), If `None`, request on the default port for the
@@ -93,9 +96,6 @@ for each key is again a dictionary holding the following key/value pairs:
     * `protocol`: (Default: 'https' if the web host offers https, otherwise
       `http`) The protocol to check on.
     * `uri`: (Default: '/') The uri to check.
-    * `variant`: (Default: '') If empty, warn above 1 second response. If
-      `slow`, warn above 3 seconds response time.
-
 Note that adding a domain configuration to one of the above three configuration
 variables only configures the check and does not automatically run checks. It's
 the responsibility of the roles (E.g.: `apache-website`) to bring the checks
