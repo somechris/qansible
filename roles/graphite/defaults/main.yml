@@ -8,6 +8,8 @@ graphite_effective_data_dir: '{{graphite_effective_data_disk}}/graphite'
 graphite_effective_var_lib_dir: '{{graphite_effective_data_dir}}/var-lib-graphite'
 graphite_effective_whisper_dir: '{{graphite_effective_data_dir}}/whisper'
 graphite_effective_log_dir: '{{graphite_effective_data_dir}}/logs'
+graphite_effective_carbon_log_dir: '{{graphite_effective_log_dir}}/carbon'
+graphite_effective_webapp_log_dir: '{{graphite_effective_log_dir}}/webapp'
 
 graphite_database_backend: sqlite3
 graphite_database_name: '{{graphite_var_lib_dir}}/graphite.db'
@@ -35,10 +37,12 @@ graphite_common_role_tasks_config:
     - '{{graphite_effective_var_lib_dir}}'
     - '{{graphite_effective_whisper_dir}}'
     - '{{graphite_effective_log_dir}}'
+    - '{{graphite_effective_webapp_log_dir}}'
+    - '{{graphite_effective_carbon_log_dir}}'
     - {state: link, path: '{{graphite_var_lib_dir}}', source: '{{graphite_effective_var_lib_dir}}'}
     - {state: link, path: '{{graphite_whisper_dir}}', source: '{{graphite_effective_whisper_dir}}'}
-    - {state: link, path: '{{graphite_log_dir}}', source: '{{graphite_effective_log_dir}}'}
-    - {state: link, path: '{{graphite_alternate_log_dir}}', source: '{{graphite_effective_log_dir}}'}
+    - {state: link, path: '{{graphite_log_dir}}', source: '{{graphite_effective_webapp_log_dir}}'}
+    - {state: link, path: '{{graphite_alternate_log_dir}}', source: '{{graphite_effective_carbon_log_dir}}'}
     - /etc/carbon
     - /etc/graphite
   packages:

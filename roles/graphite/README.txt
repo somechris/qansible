@@ -58,6 +58,8 @@ Sets up Graphite backend and web application.
   database. Not used if `graphite_database_backend` is `sqlite3`.
 * `graphite_database_user`: (default: '') The user as which to connect to
   Graphite's database. Not used if `graphite_database_backend` is `sqlite3`.
+* `graphite_effective_carbon_log_dir`: Directory to store logs from carbon-cache
+  application in.
 * `graphite_effective_data_disk`: Directory for data disk where graphite data
   effectively gets stored in.
 * `graphite_effective_data_dir`: Directory where graphite data effectively gets
@@ -68,6 +70,8 @@ Sets up Graphite backend and web application.
   `/var/lib` effectively gets stored in.
 * `graphite_effective_whisper_dir`: Directory where whisper files effectively
   get stored in.
+* `graphite_effective_webapp_log_dir`: Directory to store logs from the web
+  application in.
 * `graphite_log_dir`: Directory graphite proccess will write logs to.
 * `graphite_log_level`: (Default: logging_default_log_level)
   Verbosity of logs and services. See `docs/logging.txt`.
