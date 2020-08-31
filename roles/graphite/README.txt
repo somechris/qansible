@@ -75,6 +75,12 @@ Sets up Graphite backend and web application.
 * `graphite_log_dir`: Directory graphite proccess will write logs to.
 * `graphite_log_level`: (Default: logging_default_log_level)
   Verbosity of logs and services. See `docs/logging.txt`.
+* `graphite_max_persisted_updates_per_second`: (Default: 500) The maximum number
+  of metric updates to persist to disk per second. Updates that cannot get
+  stored to disk, will be kept in memory and persisted later. Lowering this
+  value reduced pressure on the disks, but also means that in case graphite or
+  the host dies, some cached data might not yet have made it to disk and is
+  lost.
 * `graphite_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `graphite_service_users`: List of common web users to grant access. (See
   `website_common_htpasswds` of `roles/website-common/README.txt`)
