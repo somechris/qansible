@@ -6,6 +6,7 @@ common_packages_common_role_tasks_config:
   paths: []
   packages:
     - iotop
+    - lsof
     - psmisc # provides pstree
     - net-tools # provides netstat
     - aptitude # Ansible prefers `aptitude` over `apt-get`
