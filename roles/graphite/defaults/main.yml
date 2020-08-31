@@ -18,7 +18,7 @@ graphite_database_port: ''
 graphite_database_user: ''
 graphite_database_password: ''
 
-graphite_max_persisted_updates_per_second: 500
+graphite_max_persisted_updates_per_second: 20
 
 graphite_log_level: '{{logging_default_log_level}}'
 
