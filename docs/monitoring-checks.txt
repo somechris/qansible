@@ -31,6 +31,9 @@ child of the root process. The following additional key/values allow to specify
 what processes to expect:
 * `argument`: If specified, match only processes that are run with this
   argument.
+* `command`: (Default: If the monitoring action is a string (not a dictionary),
+  then the default for `command` is that string. Otherwise it is unset) If set,
+  match only processes that are run this command (without path)
 * `min-procs`: (Default: 1) The minimal number of processes that need to match
   the other conditions. Use the empty string to not check the minimum number of
   processes.
