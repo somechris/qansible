@@ -59,6 +59,11 @@ def explicitize(checks):
                 }
         check.setdefault('type', 'process')
 
+        if check['type'] == 'file_age':
+            check.setdefault('path', check['name'])
+            check.setdefault('warn', 300)
+            check.setdefault('critical', 300)
+
         if check['type'] == 'process':
             check.setdefault('min-procs', 1)
             check.setdefault('max-procs', 1)

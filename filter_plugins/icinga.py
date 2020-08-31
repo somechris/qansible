@@ -288,7 +288,10 @@ def icinga_slug(string):
 def icinga_monitoring_check_config_nrpe_formatter(config):
     ret = ''
     slug=icinga_slug(config['name'])
-    if config['type'] == 'process':
+    if config['type'] == 'file_age':
+        arg='-w %s -c %s %s' % (str(config['warn']), str(config['critical']), str(config['path']))
+        ret = icinga_nrpe_command(slug, 'file_age', arg.strip())
+    elif config['type'] == 'process':
         arg=''
         if 'command' in config:
             arg=' --command=%s' % (config['command'])
@@ -310,7 +313,9 @@ def icinga_monitoring_check_config_nrpe_formatter(config):
 def icinga_monitoring_check_config_check_formatter(config, inventory_hostname, website_configs):
     ret = ''
     slug=icinga_slug(config['name'])
-    if config['type'] == 'process':
+    if config['type'] == 'file_age':
+        ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
+    elif config['type'] == 'process':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
     elif config['type'] == 'website':
         ret = icinga_http_preconfigured_domain(inventory_hostname, config['kind'], config['domain'], configs=website_configs, dns=config['dns'])

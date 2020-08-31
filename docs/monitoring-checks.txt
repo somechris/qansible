@@ -21,7 +21,18 @@ dictionary
 A dictionary definition has the following key/values:
 * `name`: The check's name.
 * `type`: (Default: `process`) The type of the check. Has to be one of
-  `process`.
+  `process`, `file_age`, or `website`.
+
+
+## Type `file_age`
+
+The type `file_age` checks that file has a recent modification timestamp.  The
+following additional key/values allow to specify what processes to expect:
+* `path`: (Default: The action's name) The path to the file to check argument.
+* `warn`: (Default: 300) If the file is older than this many seconds, a warning
+  is raised.
+* `critical`: (Default: 300) If the file is older than this many seconds, a
+  critical alert is raised.
 
 
 ## Type `process`
