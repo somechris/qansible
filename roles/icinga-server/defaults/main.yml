@@ -4,3 +4,23 @@ icinga_server_command_file: '{{icinga_server_command_dir}}/icinga.cmd'
 icinga_server_net_accesses:
   - loopback
 icinga_server_log_level: '{{logging_default_log_level}}'
+
+icinga_server_common_role_tasks_config:
+  role: icinga-server
+  supported_distributions:
+    - 'Debian'
+  user: nagios
+  paths: []
+  packages:
+    - icinga
+    - monitoring-plugins
+    - nagios-nrpe-plugin
+  notifications:
+    - 'reload icinga'
+  port_configs: []
+  services:
+    - icinga
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks: []

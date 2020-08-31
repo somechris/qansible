@@ -1,14 +1,14 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{icinga_server_common_role_tasks_config}}'
 
-- name: Install icinga packages
-  apt:
-    name:
-      - icinga
-      - monitoring-plugins
-      - nagios-nrpe-plugin
-    state: present
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{icinga_server_common_role_tasks_config}}'
 
 - name: Fixup directory permissions for current install
   file:
@@ -160,8 +160,8 @@
   tags:
     - 'icinga-client'
 
-- name: Enable Icinga
-  service:
-    name: icinga
-    state: started
-    enabled: yes
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{icinga_server_common_role_tasks_config}}'

@@ -36,6 +36,7 @@ Sets up an Icinga server along with an Icinga 1 web application.
 * `icinga_server_contact_groups`: A dictionary whose keys hold the contactgroups
   that should get generated, and whose corresponding values are lists of members
   to those groups.
+* `icinga_server_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `icinga_server_htdocs_dir`: The directory holding Icinga's htdocs
 * `icinga_server_log_level`: (Default: logging_default_log_level) Verbosity of
   logs and services. See `docs/logging.txt`.
