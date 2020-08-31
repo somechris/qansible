@@ -12,12 +12,6 @@
 {% if 'icinga_servers' in group_names %}
 {{'Icinga/Server' | icinga_nrpe_check(inventory_hostname, 'icinga_proc')}}
 {% endif %}
-{# qa:lint:ignore: vpn_net_config <-- not a setting for `vpn` role #}
-{% for vpn_net_config in (inventory_hostname | host_nets(net_configs, type="vpn")| list) %}
-{%  set slug = (vpn_net_config | net_slug(inventory_hostname)) %}
-{{('OpenVPN/' + slug + '/Server') | icinga_nrpe_check(inventory_hostname, 'openvpn_' + slug + '_daemon')}}
-{{('OpenVPN/' + slug + '/Status') | icinga_nrpe_check(inventory_hostname, 'openvpn_' + slug + '_status')}}
-{% endfor %}
 {% for check in monitoring_check_config %}
 {{check | icinga_monitoring_check_config_check_formatter(inventory_hostname, monitoring_website_health_checks)}}
 {% endfor %}
