@@ -152,6 +152,11 @@ enabled = True
 
 [[NetworkCollector]]
 enabled = True
+# We want to match each interface. So a single '\S' would do. But the
+# `interfaces` setting has to be a list. So we take a random letter (that is
+# matched by the first list element anyways) and add it as second element to get
+# a list.
+interfaces = \S,x
 
 [[VMStatCollector]]
 enabled = True
