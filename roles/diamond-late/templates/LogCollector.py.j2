@@ -274,7 +274,7 @@ class LogFacadeFactory(object):
         self._default_format = 'web:req_v2'
 
     def create(self, file_name, options, log):
-        log.info("Setting up reader for %s" % (file_name))
+        log.debug("Setting up reader for %s" % (file_name))
 
         if 'prefix' in options:
             prefix = options['prefix']
@@ -409,7 +409,7 @@ class LogFacadeBase(object):
                     # File got logrotated, so we switch to the new file
                     self._file.close()
 
-                    self.log.info('Following fresh %s file'
+                    self.log.debug('Following fresh %s file'
                                   % (self._file_name))
                     self._init_file(reopened_file, file_stat)
 
