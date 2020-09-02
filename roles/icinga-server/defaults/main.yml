@@ -5,12 +5,39 @@ icinga_server_net_accesses:
   - loopback
 icinga_server_log_level: '{{logging_default_log_level}}'
 
+icinga_server_log_dir: '/var/log/icinga'
+icinga_server_service_log_dir: '{{icinga_server_log_dir}}/service'
+icinga_server_service_debug_log_dir: '{{icinga_server_log_dir}}/service-debug'
+icinga_server_cgi_log_dir: '{{icinga_server_log_dir}}/cgi'
+icinga_server_effective_data_disk: '{{common_directories_default_data_dir}}'
+icinga_server_effective_data_dir: '{{icinga_server_effective_data_disk}}/icinga-server'
+icinga_server_effective_log_dir: '{{icinga_server_effective_data_dir}}/logs'
+
 icinga_server_common_role_tasks_config:
   role: icinga-server
   supported_distributions:
     - 'Debian'
   user: nagios
-  paths: []
+  paths:
+    # The Icinga user (nagios), and the log file reader (adm) need access to the
+    # log files. Additionally, also the webserver user (www-data) needs access
+    # to icinga.log, as it allows to expose them. Yet, Icinga decides to force
+    # nagios:nagios ownership upon start. So we create the needed directories
+    # here, and resort to acl tasks to grant needed accesses.
+    - '{{icinga_server_effective_data_dir}}'
+    - { path: '{{icinga_server_effective_log_dir}}', group: www-data, mode: '750' }
+    - { state: link, path: '{{icinga_server_log_dir}}', source: '{{icinga_server_effective_log_dir}}', group: www-data }
+
+    - { path: '{{icinga_server_cgi_log_dir}}', user: www-data, group: www-data, mode: '750' }
+    - { state: 'touch', path: '{{icinga_server_cgi_log_dir}}/icinga.log', user: www-data, group: www-data, mode: '640' }
+    - { state: 'touch', path: '{{icinga_server_cgi_log_dir}}/icinga-cgi.log', user: www-data, group: www-data, mode: '640' }
+
+    - { path: '{{icinga_server_service_log_dir}}', mode: '750' }
+    - { path: '{{icinga_server_service_log_dir}}/archive', mode: '750' }
+    - { state: 'touch', path: '{{icinga_server_service_log_dir}}/icinga.log', mode: '640' }
+
+    - { path: '{{icinga_server_service_debug_log_dir}}', mode: '750' }
+    - { state: 'touch', path: '{{icinga_server_service_debug_log_dir}}/icinga-debug.log', mode: '640' }
   packages:
     - icinga
     - monitoring-plugins
@@ -20,7 +47,21 @@ icinga_server_common_role_tasks_config:
   port_configs: []
   services:
     - icinga
-  log_files: []
+  log_files:
+    # Files are in a custom, hard-coded format. So no generic parser fits :-(
+    - file: '{{icinga_server_cgi_log_dir}}/icinga.log'
+      description: 'Icinga Log: CGI (secondary)'
+      item: cgi_log_secondary
+    - file: '{{icinga_server_cgi_log_dir}}/icinga-cgi.log'
+      description: 'Icinga Log: CGI'
+      item: cgi_log
+    - file: '{{icinga_server_service_log_dir}}/icinga.log'
+      description: 'Icinga Log: Service'
+      item: service_log
+    - file: '{{icinga_server_service_debug_log_dir}}/icinga-debug.log'
+      description: 'Icinga Log: Service (Debug)'
+      item: service_log_debug
+      skip: "{{not (icinga_server_log_level | logging_level_includes('debug'))}}"
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks: []

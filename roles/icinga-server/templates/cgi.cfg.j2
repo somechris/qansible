@@ -643,7 +643,7 @@ sort_status_data_by_default=1
 # WARNING:
 # This log is highly experimental and changes may occur without notice. Use at your own risk!!
 
-use_logging=0
+use_logging={{icinga_server_log_level | logging_map_level(0,0,0,1,1)}}
 
 
 
@@ -651,7 +651,7 @@ use_logging=0
 # This is the cgi log file for information about what users are doing.
 # At the moment only submitted commands from cmd.cgi will be logged.
 
-cgi_log_file={{icinga_server_htdocs_dir}}/log/icinga-cgi.log
+cgi_log_file={{icinga_server_cgi_log_dir}}/icinga-cgi.log
 
 
 
@@ -664,7 +664,7 @@ cgi_log_file={{icinga_server_htdocs_dir}}/log/icinga-cgi.log
 #	w	= Weekly rotation (midnight on Saturday evening)
 #	m	= Monthly rotation (midnight last day of month)
 
-cgi_log_rotation_method=d
+cgi_log_rotation_method=n
 
 
 
@@ -672,7 +672,7 @@ cgi_log_rotation_method=d
 # This is the directory where archived (rotated) cgi log files should be
 # placed (assuming you've chosen to do log rotation).
 
-cgi_log_archive_path={{icinga_server_htdocs_dir}}/log
+cgi_log_archive_path={{icinga_server_cgi_log_dir}}/archive
 
 
 
@@ -1016,7 +1016,7 @@ status_update_interval=10
 # in the config file!!!
 # Icinga 2 provides this file through its compat component, if enabled.
 
-log_file=/var/log/icinga/icinga.log
+log_file={{icinga_server_cgi_log_dir}}/icinga.log
 
 
 
@@ -1029,7 +1029,7 @@ log_file=/var/log/icinga/icinga.log
 #	w	= Weekly rotation (midnight on Saturday evening)
 #	m	= Monthly rotation (midnight last day of month)
 
-log_rotation_method=d
+log_rotation_method=n
 
 
 
@@ -1038,7 +1038,7 @@ log_rotation_method=d
 # placed (assuming you've chosen to do log rotation).
 # Icinga 2 provides this file through its compat component, if enabled.
 
-log_archive_path=/var/log/icinga/archives
+log_archive_path={{icinga_server_cgi_log_dir}}/archive
 
 
 

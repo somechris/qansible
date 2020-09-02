@@ -4,6 +4,42 @@
   vars:
     common_role_tasks_start_config: '{{icinga_server_common_role_tasks_config}}'
 
+- name: Granting adm access to log files
+  acl:
+    path: "{{item['path']}}"
+    entity: adm
+    etype: group
+    permissions: "{{item['permissions']}}"
+    default: "{{item['default']}}"
+    state: present
+  with_items:
+    - { path: '{{icinga_server_effective_log_dir}}', default: False, permissions: rx }
+    - { path: '{{icinga_server_cgi_log_dir}}', default: False, permissions: rx }
+    - { path: '{{icinga_server_cgi_log_dir}}', default: True, permissions: r }
+    - { path: '{{icinga_server_cgi_log_dir}}/icinga.log', default: False, permissions: r }
+    - { path: '{{icinga_server_cgi_log_dir}}/icinga-cgi.log', default: False, permissions: r }
+    - { path: '{{icinga_server_service_log_dir}}', default: False, permissions: rx }
+    - { path: '{{icinga_server_service_log_dir}}', default: True, permissions: r }
+    - { path: '{{icinga_server_service_log_dir}}/icinga.log', default: False, permissions: r }
+    - { path: '{{icinga_server_service_debug_log_dir}}', default: False, permissions: rx }
+    - { path: '{{icinga_server_service_debug_log_dir}}', default: True, permissions: r }
+    - { path: '{{icinga_server_service_debug_log_dir}}/icinga-debug.log', default: False, permissions: r }
+
+- name: Granting www-data access to service log files
+  acl:
+    path: "{{item['path']}}"
+    entity: www-data
+    etype: user
+    permissions: "{{item['permissions']}}"
+    default: "{{item['default']}}"
+    state: present
+  with_items:
+    - { path: '{{icinga_server_service_log_dir}}', default: False, permissions: rx }
+    - { path: '{{icinga_server_service_log_dir}}', default: True, permissions: r }
+    - { path: '{{icinga_server_service_log_dir}}/icinga.log', default: False, permissions: r }
+    - { path: '{{icinga_server_service_log_dir}}/archive', default: False, permissions: rx }
+    - { path: '{{icinga_server_service_log_dir}}/archive', default: True, permissions: r }
+
 - name: Common role tasks for installing packages
   import_role:
     name: common-role-tasks-package-install

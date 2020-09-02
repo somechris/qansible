@@ -30,18 +30,31 @@ Sets up an Icinga server along with an Icinga 1 web application.
 3. Parameters
 -------------
 
+* `icinga_server_cgi_log_dir`: Directory where logs from CGI get stored in.
 * `icinga_server_command_dir`: The directory holding the command file.
 * `icinga_server_command_file`: The command file. This file can be used to
   inject commands into Icinga.
 * `icinga_server_contact_groups`: A dictionary whose keys hold the contactgroups
   that should get generated, and whose corresponding values are lists of members
   to those groups.
+* `icinga_server_effective_data_disk`: Directory for data disk where data effectively
+  gets stored in.
+* `icinga_server_effective_data_dir`: Directory where data effectively gets stored in.
+* `icinga_server_effective_log_dir`: Directory where logs effectively get stored in.
 * `icinga_server_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `icinga_server_htdocs_dir`: The directory holding Icinga's htdocs
+* `icinga_server_log_dir`: Directory where logs effectively get stored in.
 * `icinga_server_log_level`: (Default: logging_default_log_level) Verbosity of
   logs and services. See `docs/logging.txt`.
 * `icinga_server_net_accesses`: List of net accesses of which hosts can reach
   the service.
+* `icinga_server_service_debug_log_dir`: Directory where debug logs from the
+  Icinga service daemon get stored in. This is split out from
+  `icinga_server_service_log_dir` to allow using acl defaults to assign proper
+  ownership to files, that grant access to `www-data` for `icinga.log`, but
+  not icinga-debug.log`.
+* `icinga_server_service_log_dir`: Directory where logs from the Icinga service
+  daemon get stored in.
 
 
 
