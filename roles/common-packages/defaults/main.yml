@@ -5,6 +5,7 @@ common_packages_common_role_tasks_config:
   user: omit
   paths: []
   packages:
+    - acl # getfacl/setfacl. Needed by Ansible's acl module
     - iotop
     - lsof
     - psmisc # provides pstree
