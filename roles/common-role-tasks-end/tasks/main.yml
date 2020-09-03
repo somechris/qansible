@@ -28,7 +28,7 @@
       (None if (item["protocol"] | default("tcp")) == "icmp" else item["port"]): {
         "name": item["name"],
         "protocol": (item["protocol"] | default("tcp")),
-        "icmp-type": (item["icmp_type"] | default(omit)),
+        "icmp_type": (item["icmp_type"] | default(omit)),
         "incoming_net_accesses": item["incoming_net_accesses"],
       }
     }, merge_lists=True)}}'

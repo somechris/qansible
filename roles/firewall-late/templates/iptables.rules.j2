@@ -10,7 +10,7 @@
 {% for port, config in (firewall_late_port_config | dictsort) %}
 {%   set chain=(config['name'] | default('PORT_' ~ port)) ~ '_in' %}
 {%   set protocol=(config['protocol'] | default(None)) %}
-{%   set icmp_type=(config['icmp-type'] | default(None)) %}
+{%   set icmp_type=(config['icmp_type'] | default(None)) %}
 
 {{chain | iptables_init_chain(log_dropped=(firewall_late_log_level | logging_level_includes('info')))}}
 {%   for net_access in (config['incoming_net_accesses'] | reverse | default([])) %}
