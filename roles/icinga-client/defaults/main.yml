@@ -44,4 +44,5 @@ icinga_client_common_role_tasks_config:
       item: nrpe_log
   dashboards: []
   dashboard_host_rows: []
-  monitoring_checks: []
+  monitoring_checks:
+    - {'name': 'NRPE', command: 'nrpe', user: 'nagios', 'max-procs': 10}
