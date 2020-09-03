@@ -31,6 +31,13 @@ No Globals that are specific only for this role.
 
 * `icinga_client_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `icinga_client_ip_address`: The IP address to monitor the host at.
+* `icinga_client_effective_data_disk`: Directory for data disk where data
+  effectively gets stored in.
+* `icinga_client_effective_data_dir`: Directory where data effectively gets
+  stored in.
+* `icinga_client_effective_log_dir`: Directory where logs effectively get stored
+  in.
+* `icinga_client_log_dir`: Directory proccesses will write logs to.
 * `icinga_client_log_level`: (Default: logging_default_log_level) Verbosity of
   logs and services. See `docs/logging.txt`.
 * `icinga_client_server_ip_address`: The IP address Icinga connects from.

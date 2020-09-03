@@ -5,6 +5,10 @@ icinga_client_net_accesses: '{{([{"net_key": icinga_client_server_net, "hosts": 
 icinga_client_ping_net_accesses: '{{icinga_client_net_accesses}}'
 icinga_client_nrpe_net_accesses: '{{icinga_client_net_accesses}}'
 icinga_client_log_level: '{{logging_default_log_level}}'
+icinga_client_effective_data_disk: '{{common_directories_default_data_dir}}'
+icinga_client_effective_data_dir: '{{icinga_client_effective_data_disk}}/icinga-client'
+icinga_client_effective_log_dir: '{{icinga_client_effective_data_dir}}/logs'
+icinga_client_log_dir: '/var/log/icinga-client'
 
 icinga_client_common_role_tasks_config:
   role: icinga-client
@@ -13,6 +17,9 @@ icinga_client_common_role_tasks_config:
   user: nagios
   paths:
     - /etc/nagios
+    - '{{icinga_client_effective_data_dir}}'
+    - '{{icinga_client_effective_log_dir}}'
+    - {state: link, path: '{{icinga_client_log_dir}}', source: '{{icinga_client_effective_log_dir}}'}
   packages:
     - nagios-plugins
     - nagios-nrpe-server
@@ -29,7 +36,10 @@ icinga_client_common_role_tasks_config:
       incoming_net_accesses: '{{icinga_client_ping_net_accesses}}'
   services:
     - nagios-nrpe-server
-  log_files: []
+  log_files:
+    - file: '{{icinga_client_log_dir}}/nrpe.log'
+      description: 'Icinga Client Log: NRPE Server'
+      item: nrpe_log
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks: []
