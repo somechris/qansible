@@ -27,6 +27,7 @@ No Globals that are specific only for this role.
 3. Parameters
 -------------
 
+* `icinga_client_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `icinga_client_ip_address`: The IP address to monitor the host at.
 * `icinga_client_log_level`: (Default: logging_default_log_level) Verbosity of
   logs and services. See `docs/logging.txt`.
