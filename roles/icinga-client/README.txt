@@ -13,7 +13,9 @@ Role: icinga-client
 1. Description
 --------------
 
-Configures the host for monitoring by Icinga
+Configures the host for monitoring by Icinga. `icinga-client-late` covers the
+parts that relies on expanded variables. This role covers the part that does not
+rely on expanded variables.
 
 
 
@@ -31,8 +33,6 @@ No Globals that are specific only for this role.
 * `icinga_client_ip_address`: The IP address to monitor the host at.
 * `icinga_client_log_level`: (Default: logging_default_log_level) Verbosity of
   logs and services. See `docs/logging.txt`.
-* `icinga_client_monitor_ssh`: (Default: True) If true, monitor that the host
-  allows ssh connections.
 * `icinga_client_server_ip_address`: The IP address Icinga connects from.
 * `icinga_client_server_net`: The key of net access that Icinga connects from.
 * `icinga_client_net_accesses`: Default list of net accesses for

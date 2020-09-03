@@ -1,5 +1,5 @@
 # {{ansible_managed}}
-{% if icinga_client_monitor_ssh %}
+{% if icinga_client_late_monitor_ssh %}
 {{'SSH/Server' | icinga_check(inventory_hostname,
   'ssh_port_4', [ssh_server_port])}}
 {% endif %}

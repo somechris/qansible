@@ -1,14 +1,16 @@
+# qa:lint:no-log-level-needed
+
 - name: Common role tasks at start
   import_role:
     name: common-role-tasks-start
   vars:
-    common_role_tasks_start_config: '{{icinga_client_common_role_tasks_config}}'
+    common_role_tasks_start_config: '{{icinga_client_late_common_role_tasks_config}}'
   when: '"unmanaged" not in group_names'
 
-- name: Setup base nrpe config
+- name: Setup nrpe checks config
   template:
-    dest: '/etc/nagios/nrpe.cfg'
-    src: nrpe.cfg.j2
+    dest: /etc/nagios/nrpe_ansiblized_checks.cfg
+    src: ansiblized_checks.cfg.j2
     owner: root
     group: root
     mode: 0444
@@ -16,19 +18,23 @@
     - reload nagios-nrpe-server
   when: '"unmanaged" not in group_names'
 
-- name: Drop unspecified default host config
-  file:
-    dest: '{{icinga_server_object_path}}/hosts/{{inventory_hostname}}-unspecified.cfg'
-    state: absent
+- name: Setup remote service configs
+  template:
+    dest: '{{icinga_server_object_path}}/services/{{inventory_hostname}}-nrpe.cfg'
+    src: services-nrpe.cfg.j2
+    owner: root
+    group: root
+    mode: 0444
   delegate_to: "{{item}}"
   with_items: '{{groups["icinga_servers"]}}'
   notify:
     - reload icinga
+  when: '"unmanaged" not in group_names'
 
-- name: Setup host config
+- name: Setup remote service configs
   template:
-    dest: '{{icinga_server_object_path}}/hosts/{{inventory_hostname}}.cfg'
-    src: host.cfg.j2
+    dest: '{{icinga_server_object_path}}/services/{{inventory_hostname}}-remote.cfg'
+    src: services-remote.cfg.j2
     owner: root
     group: root
     mode: 0444
@@ -41,13 +47,13 @@
   import_role:
     name: common-role-tasks-package-install
   vars:
-    common_role_tasks_package_install_config: '{{icinga_client_common_role_tasks_config}}'
+    common_role_tasks_package_install_config: '{{icinga_client_late_common_role_tasks_config}}'
   when: '"unmanaged" not in group_names'
 
 - name: Common role tasks at end
   import_role:
     name: common-role-tasks-end
   vars:
-    common_role_tasks_end_config: '{{icinga_client_common_role_tasks_config}}'
+    common_role_tasks_end_config: '{{icinga_client_late_common_role_tasks_config}}'
   when: '"unmanaged" not in group_names'
 

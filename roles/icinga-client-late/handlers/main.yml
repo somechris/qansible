@@ -1,0 +1,13 @@
+- name: reload icinga
+  service: name=icinga state=reloaded
+  delegate_to: "{{item}}"
+  run_once: true # run_once is cutting the dice at the wrong dimension.
+                 # But as long as we're only having one icinga host, it
+                 # comes down to the right thing: 10 hosts that request a
+                 # restart each cause only one effective restart.
+  with_items: '{{groups["icinga_servers"]}}'
+
+- name: reload nagios-nrpe-server
+  service:
+    name: nagios-nrpe-server
+    state: reloaded

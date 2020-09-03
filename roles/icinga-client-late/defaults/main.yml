@@ -1,0 +1,17 @@
+icinga_client_late_monitor_ssh: True
+
+icinga_client_late_common_role_tasks_config:
+  role: icinga-client-late
+  supported_distributions:
+    - 'Debian'
+  user: omit
+  paths: []
+  packages: []
+  notifications:
+    - reload nagios-nrpe-server
+  port_configs: []
+  services: []
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks: []

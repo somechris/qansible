@@ -28,6 +28,15 @@
     - dashboards
     - grafana
 
+- name: common-late before expansion (generic for all, even unmanaged)
+  hosts: all
+  gather_facts: no
+  roles:
+    - role: icinga-client
+      tags:
+       - icinga-client
+       - icinga
+
 - name: Make sure globals are expanded for easier consumption
   hosts: all
   gather_facts: no
@@ -48,8 +57,9 @@
   hosts: all
   gather_facts: no
   roles:
-    - role: icinga-client
+    - role: icinga-client-late
       tags:
+       - icinga-client-late
        - icinga-client
        - icinga
 

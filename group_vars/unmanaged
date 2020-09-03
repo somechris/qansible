@@ -1,1 +1,1 @@
-icinga_client_monitor_ssh: False
+icinga_client_late_monitor_ssh: False

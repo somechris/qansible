@@ -137,7 +137,8 @@ agreements.
   - `graphite`: Sets up a Graphite/Carbon server as metrics host.
   - `gnupg-public-key`: Installs a GnuPG public key.
   - `hostnames`: Sets up host identifications.
-  - `icinga-client`: Configures hosts for Icinga monitoring.
+  - `icinga-client`: Main part of host configuration for Icinga monitoring.
+  - `icinga-client-late`: Late part of host configuration for Icinga monitoring.
   - `icinga-server`: Sets up an Icinga server.
   - `install-packages`: Install packages. This is useful to install
     packages before role dependencies get executed.
