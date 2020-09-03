@@ -18,6 +18,8 @@ icinga_server_common_role_tasks_config:
   supported_distributions:
     - 'Debian'
   user: nagios
+  user_comment: Service user for nagios
+  user_home: /var/lib/nagios
   paths:
     # The Icinga user (nagios), and the log file reader (adm) need access to the
     # log files. Additionally, also the webserver user (www-data) needs access
