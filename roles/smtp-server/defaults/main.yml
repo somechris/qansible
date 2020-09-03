@@ -48,3 +48,29 @@ smtp_server_relay_net_accesses: '{{(smtp_server_relay_net_accesses_defaults + sm
 smtp_server_net_accesses_defaults: '{{smtp_server_relay_net_accesses}}'
 smtp_server_net_accesses_extra: []
 smtp_server_net_accesses: '{{(smtp_server_net_accesses_defaults + smtp_server_net_accesses_extra)}}'
+
+smtp_server_common_role_tasks_config:
+  role: smtp-server
+  supported_distributions:
+    - 'Debian'
+  user: Debian-exim
+  extra_groups:
+    - ssl-cert
+  paths:
+    - { path: '/etc/exim4', user: root, group: root, mode: '555' }
+    - { path: '/etc/exim4/dkim', user: root, group: root, mode: '555' }
+    - { path: '/etc/mail', user: root, group: root, mode: '555' }
+  packages:
+    - exim4-daemon-heavy
+  notifications:
+    - reload exim
+  port_configs:
+    - name: SMTP
+      port: '{{smtp_server_port}}'
+      incoming_net_accesses: '{{smtp_server_net_accesses}}'
+  services:
+    - exim4
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks: []

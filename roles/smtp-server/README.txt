@@ -36,6 +36,7 @@ No Globals that are specific only for this role.
 * `smtp_server_alias_files_defaults`: Defaults for
   `smtp_server_alias_files`.
 * `smtp_server_alias_files_extra`: Additional custom alias file config.
+* `smtp_server_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `smtp_server_dkim_domains`: List of domain names to render DKIM keys
   for.
 * `smtp_server_domain_lists`: Dictionary of domain lists to set
