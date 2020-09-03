@@ -66,4 +66,5 @@ icinga_server_common_role_tasks_config:
       skip: "{{not (icinga_server_log_level | logging_level_includes('debug'))}}"
   dashboards: []
   dashboard_host_rows: []
-  monitoring_checks: []
+  monitoring_checks:
+    - {'name': 'Daemon', command: 'icinga', user: 'nagios', 'max-procs': 20}

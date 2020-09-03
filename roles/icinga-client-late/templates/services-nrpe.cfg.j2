@@ -9,9 +9,6 @@
 {% if 'ldap_servers' in group_names %}
 {{'LDAP/Server' | icinga_nrpe_check(inventory_hostname, 'slapd_proc')}}
 {% endif %}
-{% if 'icinga_servers' in group_names %}
-{{'Icinga/Server' | icinga_nrpe_check(inventory_hostname, 'icinga_proc')}}
-{% endif %}
 {% for check in monitoring_check_config %}
 {{check | icinga_monitoring_check_config_check_formatter(inventory_hostname, monitoring_website_health_checks)}}
 {% endfor %}
