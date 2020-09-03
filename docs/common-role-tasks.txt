@@ -87,3 +87,8 @@ name.):
   files (after the packages got installed). The user get created as system user
   automatically, if it is missing. Use the string 'omit' (not `{{omit}}`) to
   omit all user actions (user creation, setting file owners, ...).
+* `user_comment`: (Default: Service user for {{role_name}}) The
+  comment (gecos field) for the service user.
+* `user_home`: (Default: /var/lib/{{role_name}}) The home directory for the
+  service user. Note that this directory does not automatically get created or
+  otherwise prepared.

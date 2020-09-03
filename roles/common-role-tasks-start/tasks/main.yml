@@ -15,10 +15,10 @@
   user:
     name: "{{common_role_tasks_start_config['user']}}"
     state: present
-    comment: "Service user for {{common_role_tasks_start_config['role']}}"
+    comment: "{{common_role_tasks_start_config['user_comment'] | default('Service user for ' + common_role_tasks_start_config['role'])}}"
     group: "{{common_role_tasks_start_config['group'] | default(common_role_tasks_start_config['user']) | replace_omit_string(omit)}}"
     groups: "{{common_role_tasks_start_config['extra_groups'] | default([]) | reject('equalto', '') | join(',')}}"
-    home: "/var/lib/{{common_role_tasks_start_config['role']}}"
+    home: "{{common_role_tasks_start_config['user_home'] | default('/var/lib/' + common_role_tasks_start_config['role'])}}"
     create_home: no
     shell: /usr/sbin/nologin
     password: '!'
