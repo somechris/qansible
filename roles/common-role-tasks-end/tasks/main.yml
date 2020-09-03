@@ -25,9 +25,10 @@
 - name: '{{common_role_tasks_end_parent_role}}: Updating firewall port config'
   set_fact:
     firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
-      item["port"]: {
+      (None if (item["protocol"] | default("tcp")) == "icmp" else item["port"]): {
         "name": item["name"],
         "protocol": (item["protocol"] | default("tcp")),
+        "icmp-type": (item["icmp_type"] | default(omit)),
         "incoming_net_accesses": item["incoming_net_accesses"],
       }
     }, merge_lists=True)}}'

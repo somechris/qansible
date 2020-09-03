@@ -70,8 +70,9 @@ name.):
   following key/values.
   * `name`: The name of this rule. This will get use as name of the firewall
     chain..
-  * `port`: The port to use for this config.
+  * `port`: For protocols `tcp` and `udp`, the port to use for this config.
   * `protocol`: (Default: `tcp`) The protocol to use for this config.
+  * `icmp_type`: If protocol is icmp, it gives the icmp type to allow.
   * `incoming_net_accesses`: List of net-accesses that can access the port.
 * `role`: The name of the role that includes the `common-role-tasks-*` role. We
   need to hard-wire this, as `{{role_path|basename}}` would get evaluated in the
