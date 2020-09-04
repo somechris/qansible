@@ -30,7 +30,8 @@ pop3_server_common_role_tasks_config:
       port: '{{pop3_server_ssl_port}}'
       incoming_net_accesses: '{{pop3_server_net_accesses}}'
       skip: '{{pop3_server_ssl_port == 0}}'
-  services: []
+  services:
+    - dovecot
   log_files: []
   dashboards: []
   dashboard_host_rows: []
