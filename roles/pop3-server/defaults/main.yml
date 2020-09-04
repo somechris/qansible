@@ -8,6 +8,11 @@ pop3_server_index_directory: '{{pop3_server_db_directory}}/index'
 pop3_server_control_directory: '{{pop3_server_db_directory}}/control'
 pop3_server_users: {}
 
+pop3_server_log_dir: '/var/log/dovecot'
+pop3_server_effective_data_disk: '{{common_directories_default_data_dir}}'
+pop3_server_effective_data_dir: '{{pop3_server_effective_data_disk}}/pop3-server'
+pop3_server_effective_log_dir: '{{pop3_server_effective_data_dir}}/logs'
+
 pop3_server_common_role_tasks_config:
   role: pop3_server
   supported_distributions:
@@ -17,6 +22,10 @@ pop3_server_common_role_tasks_config:
     - {path: '{{pop3_server_db_directory}}', user: mail, group: mail, mode: '770'}
     - {path: '{{pop3_server_index_directory}}', user: mail, group: mail, mode: '770'}
     - {path: '{{pop3_server_control_directory}}', user: mail, group: mail, mode: '770'}
+    - '{{pop3_server_effective_data_dir}}'
+    - {path: '{{pop3_server_effective_log_dir}}', group: adm, mode: '2750'}
+    - {state: link, path: '{{pop3_server_log_dir}}', source: '{{pop3_server_effective_log_dir}}', group: adm}
+    - {state: touch, path: '{{pop3_server_effective_log_dir}}/dovecot.log', group: adm, mode: '640' }
   packages:
     - dovecot-pop3d
   notifications:
@@ -32,7 +41,11 @@ pop3_server_common_role_tasks_config:
       skip: '{{pop3_server_ssl_port == 0}}'
   services:
     - dovecot
-  log_files: []
+  log_files:
+    - file: '{{pop3_server_log_dir}}/dovecot.log'
+      group: dovecot
+      item: main
+      description: 'Dovecot Log'
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks:

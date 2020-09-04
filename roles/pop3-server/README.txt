@@ -35,6 +35,13 @@ No Globals that are specific only for this role.
   information and similar things in.
 * `pop3_server_index_directory`: Directory to store mail index
   information in.
+* `pop3_server_effective_data_dir`: Directory where data effectively gets stored
+  in.
+* `pop3_server_effective_data_disk`: Directory for data disk where data
+  effectively gets stored in.
+* `pop3_server_effective_log_dir`: Directory where logs effectively get stored
+  in.
+* `pop3_server_log_dir`: Directory proccesses will write logs to.
 * `pop3_server_log_level`: (Default: logging_default_log_level) Verbosity of
   logs and services. See `docs/logging.txt`.
 * `pop3_server_net_accesses`: List of net accesses of which hosts can reach

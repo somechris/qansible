@@ -47,7 +47,7 @@ passdb {
 
 # Log file to use for error messages. "syslog" logs to syslog,
 # /dev/stderr logs to stderr.
-log_path = syslog
+log_path = {{pop3_server_effective_log_dir}}/dovecot.log
 
 auth_verbose = {{pop3_server_log_level | logging_map_level('no', 'no', 'no', 'yes', 'yes')}}
 
