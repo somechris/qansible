@@ -45,7 +45,8 @@ def append_common_role_tasks_config(monitoring_check_config, role_config):
                 else:
                     check['name'] = role_name_formatted + '/' + check['name']
             if check.setdefault('type', 'process') == 'process':
-                check = inject_user(check, role_config)
+                if 'user' not in check:
+                    check = inject_user(check, role_config)
             monitoring_check_config.append(check)
         return monitoring_check_config
 
