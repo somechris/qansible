@@ -33,6 +33,7 @@
       }
     }, merge_lists=True)}}'
   changed_when: False
+  when: "not (item['skip'] | default(False))"
   with_items: "{{common_role_tasks_end_config['port_configs']}}"
   tags:
     - always

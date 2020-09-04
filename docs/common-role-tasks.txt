@@ -74,6 +74,8 @@ name.):
   * `protocol`: (Default: `tcp`) The protocol to use for this config.
   * `icmp_type`: If protocol is icmp, it gives the icmp type to allow.
   * `incoming_net_accesses`: List of net-accesses that can access the port.
+  * `skip`: (Default: False) If true, ignore this item. This is useful to easily
+    switch parts of the list on/off based on some configuration value.
 * `role`: The name of the role that includes the `common-role-tasks-*` role. We
   need to hard-wire this, as `{{role_path|basename}}` would get evaluated in the
   context of the `common-role-task-*` and hence would not give the including,
