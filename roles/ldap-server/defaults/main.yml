@@ -39,13 +39,16 @@ ldap_server_common_role_tasks_config:
     - ldap-utils
     - ldapscripts
     - python-ldap # Needed only for Ansible's LDAP modules
-  notifications: []
+  notifications:
+    - reload slapd
   port_configs:
     - name: LDAP
       port: '{{ldap_server_port}}'
       incoming_net_accesses: '{{ldap_server_net_accesses}}'
-  services: []
+  services:
+    - slapd
   log_files: []
   dashboards: []
   dashboard_host_rows: []
-  monitoring_checks: []
+  monitoring_checks:
+    - {'name': 'Daemon', command: 'slapd'}
