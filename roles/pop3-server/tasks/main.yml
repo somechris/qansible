@@ -1,23 +1,14 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{pop3_server_common_role_tasks_config}}'
 
-- name: Install needed packages
-  apt:
-    name: dovecot-pop3d
-    state: present
-
-- name: Ensure index directory exists
-  file:
-    path: '{{item}}'
-    state: directory
-    owner: mail
-    group: mail
-    mode: 0770
-  with_items:
-    - '{{pop3_server_db_directory}}'
-    - '{{pop3_server_index_directory}}'
-    - '{{pop3_server_control_directory}}'
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{pop3_server_common_role_tasks_config}}'
 
 - name: Load secrets
   include_vars: secrets.yml
@@ -42,30 +33,8 @@
   notify:
     dovecot restart
 
-- name: Updating port config
-  set_fact:
-    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
-      pop3_server_port: {
-        "name": "POP3",
-        "protocol": "tcp",
-        "incoming_net_accesses": pop3_server_net_accesses,
-      }
-    }, merge_lists=True)}}'
-  changed_when: False
-  when: 'pop3_server_port != 0'
-  tags:
-    - always
-
-- name: Updating port config
-  set_fact:
-    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
-      pop3_server_ssl_port: {
-        "name": "POP3S",
-        "protocol": "tcp",
-        "incoming_net_accesses": pop3_server_net_accesses,
-      }
-    }, merge_lists=True)}}'
-  changed_when: False
-  when: 'pop3_server_ssl_port != 0'
-  tags:
-    - always
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{pop3_server_common_role_tasks_config}}'

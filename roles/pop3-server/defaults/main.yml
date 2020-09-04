@@ -7,3 +7,31 @@ pop3_server_db_directory: '{{common_directories_db}}/dovecot'
 pop3_server_index_directory: '{{pop3_server_db_directory}}/index'
 pop3_server_control_directory: '{{pop3_server_db_directory}}/control'
 pop3_server_users: {}
+
+pop3_server_common_role_tasks_config:
+  role: pop3_server
+  supported_distributions:
+    - 'Debian'
+  user: dovecot
+  paths:
+    - {path: '{{pop3_server_db_directory}}', user: mail, group: mail, mode: '770'}
+    - {path: '{{pop3_server_index_directory}}', user: mail, group: mail, mode: '770'}
+    - {path: '{{pop3_server_control_directory}}', user: mail, group: mail, mode: '770'}
+  packages:
+    - dovecot-pop3d
+  notifications:
+    - dovecot restart
+  port_configs:
+    - name: POP3
+      port: '{{pop3_server_port}}'
+      incoming_net_accesses: '{{pop3_server_net_accesses}}'
+      skip: '{{pop3_server_port == 0}}'
+    - name: POP3S
+      port: '{{pop3_server_ssl_port}}'
+      incoming_net_accesses: '{{pop3_server_net_accesses}}'
+      skip: '{{pop3_server_ssl_port == 0}}'
+  services: []
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks: []

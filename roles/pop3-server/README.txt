@@ -30,6 +30,7 @@ No Globals that are specific only for this role.
 -------------
 
 * `pop3_server_db_directory`: Directory holding the services databases.
+* `pop3_server_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `pop3_server_control_directory`: Directory to store mail UIDL
   information and similar things in.
 * `pop3_server_index_directory`: Directory to store mail index
