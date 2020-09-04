@@ -25,3 +25,27 @@ ldap_server_extra_schemas:
   - cn: auxiliary-posix-group
     attributes:
       olcObjectClasses: "{0}( 2.25.339083012180962215434722360736538961521 NAME 'auxiliaryPosixGroup' SUP top AUXILIARY DESC 'Auxiliary posixGroup' MUST ( cn $ gidNumber ) MAY ( userPassword $ memberUid $ description ) )"
+
+ldap_server_common_role_tasks_config:
+  role: ldap-server
+  supported_distributions:
+    - 'Debian'
+  user: openldap
+  extra_groups:
+    - ssl-cert
+  paths: []
+  packages:
+    - slapd
+    - ldap-utils
+    - ldapscripts
+    - python-ldap # Needed only for Ansible's LDAP modules
+  notifications: []
+  port_configs:
+    - name: LDAP
+      port: '{{ldap_server_port}}'
+      incoming_net_accesses: '{{ldap_server_net_accesses}}'
+  services: []
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks: []

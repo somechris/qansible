@@ -1,6 +1,8 @@
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{ldap_server_common_role_tasks_config}}'
 
 - name: Preseed ldap domain
   debconf:
@@ -13,23 +15,6 @@
     # into the right places
     value: '{{ldap_server_base_dn | regex_replace(",", ".") | regex_replace("dc=", "") }}'
 
-- name: Install ldap packages
-  apt:
-    name:
-      - slapd
-      - ldap-utils
-      - ldapscripts
-      - python-ldap # Needed only for Ansible's LDAP modules
-    state: present
-
-- name: Make sure openldap user can access certs
-  user:
-    state: present
-    name: openldap
-    append: yes
-    createhome: no
-    groups: ssl-cert
-
 - name: Create init script defaults
   template:
     dest: '/etc/default/slapd'
@@ -39,6 +24,12 @@
     mode: 0444
   notify:
     - reload slapd
+
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{ldap_server_common_role_tasks_config}}'
 
 - name: Load credentials
   include_vars: credentials.yml
@@ -217,15 +208,8 @@
   tags:
     - always
 
-- name: Updating port config
-  set_fact:
-    firewall_late_port_config: '{{firewall_late_port_config | default({}) | update_dict({
-      ldap_server_port: {
-        "name": "LDAP",
-        "protocol": "tcp",
-        "incoming_net_accesses": ldap_server_net_accesses,
-      }
-    }, merge_lists=True)}}'
-  changed_when: False
-  tags:
-    - always
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{ldap_server_common_role_tasks_config}}'

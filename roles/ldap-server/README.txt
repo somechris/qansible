@@ -37,6 +37,7 @@ Sets up an LDAP server.
 
 * `ldap_server_admin_password`: Password for the LDAP admin account.
 * `ldap_server_admin_salt`: Salt for the LDAP admin password.
+* `ldap_server_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `ldap_server_log_level`: (Default: logging_default_log_level) Verbosity
   of logs and services. See `docs/logging.txt`.
 * `ldap_server_ldapscripts_log_file`: Log file for ldapscripts.
