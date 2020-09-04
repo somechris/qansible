@@ -43,11 +43,18 @@ No Globals that are specific only for this role.
   up. Each key holds the name of the domain list to set up, and the
   corresponding value holds a list of domain names to use for the
   domain list.
+* `smtp_server_effective_data_dir`: Directory where data effectively gets stored
+  in.
+* `smtp_server_effective_data_disk`: Directory for data disk where data
+  effectively gets stored in.
+* `smtp_server_effective_log_dir`: Directory where logs effectively get stored
+  in.
 * `smtp_server_local_domains`: List of local domains to accept mail for.
 * `smtp_server_localpart_lists`: Dictionary of localpartlists to set
   up. Each key holds the name of the localpartlist to set up, and the
   corresponding value holds a list of localparts to use for the
   localpartlist.
+* `smtp_server_log_dir`: Directory proccesses will write logs to.
 * `smtp_server_log_level`: (Default: logging_default_log_level)
   Verbosity of logs and services. See `docs/logging.txt`.
 * `smtp_server_net_accesses`: List of net accesses of which hosts can reach

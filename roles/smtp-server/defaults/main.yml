@@ -3,6 +3,10 @@ smtp_server_localpart_lists: {}
 smtp_server_domain_lists: {}
 smtp_server_local_domains: []
 smtp_server_log_level: '{{logging_default_log_level}}'
+smtp_server_log_dir: '/var/log/exim'
+smtp_server_effective_data_disk: '{{common_directories_default_data_dir}}'
+smtp_server_effective_data_dir: '{{smtp_server_effective_data_disk}}/smtp-server'
+smtp_server_effective_log_dir: '{{smtp_server_effective_data_dir}}/logs'
 smtp_server_relay_domains_from_host: {}
 smtp_server_alias_files: '{{smtp_server_alias_files_defaults | update_dict(smtp_server_alias_files_extra)}}'
 smtp_server_alias_files_defaults:
@@ -60,6 +64,12 @@ smtp_server_common_role_tasks_config:
     - { path: '/etc/exim4', user: root, group: root, mode: '555' }
     - { path: '/etc/exim4/dkim', user: root, group: root, mode: '555' }
     - { path: '/etc/mail', user: root, group: root, mode: '555' }
+    - '{{smtp_server_effective_data_dir}}'
+    - {path: '{{smtp_server_effective_log_dir}}', group: adm, mode: '2750'}
+    - {state: link, path: '{{smtp_server_log_dir}}', source: '{{smtp_server_effective_log_dir}}', group: adm}
+    - {state: touch, path: '{{smtp_server_effective_log_dir}}/main.log', group: adm, mode: '640' }
+    - {state: touch, path: '{{smtp_server_effective_log_dir}}/reject.log', group: adm, mode: '640' }
+    - {state: touch, path: '{{smtp_server_effective_log_dir}}/panic.log', group: adm, mode: '640' }
   packages:
     - exim4-daemon-heavy
   notifications:
@@ -70,7 +80,19 @@ smtp_server_common_role_tasks_config:
       incoming_net_accesses: '{{smtp_server_net_accesses}}'
   services:
     - exim4
-  log_files: []
+  log_files:
+    - file: '{{smtp_server_log_dir}}/main.log'
+      group: exim
+      item: main
+      description: 'Exim Log: Main'
+    - file: '{{smtp_server_log_dir}}/reject.log'
+      group: exim
+      item: reject
+      description: 'Exim Log: Reject'
+    - file: '{{smtp_server_log_dir}}/panic.log'
+      group: exim
+      item: panic
+      description: 'Exim Log: Panic'
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks:

@@ -5,6 +5,8 @@ log_selector = {{smtp_server_log_level | logging_map_level('-all',
              '+acl_warn_skipped +connection_reject +delay_delivery +dnslist_defer +etrn +host_lookup_failed +lost_incoming_connection +queue_run +rejected_header +retry_defer +sender_verify_fail +size_reject +skip_delivery +tls_cipher',
              '+address_rewrite +arguments +acl_warn_skipped +connection_reject +delay_delivery +dnslist_defer +etrn +host_lookup_failed +lost_incoming_connection +queue_run +rejected_header +retry_defer +sender_verify_fail +size_reject +subject +skip_delivery +tls_cipher',
              '+all')}}
+log_file_path = {{smtp_server_effective_log_dir}}/%s.log
+write_rejectlog = true
 
 # $Cambridge: exim/exim-src/src/configure.default,v 1.13 2007/06/26 11:21:36 ph10 Exp $
 
