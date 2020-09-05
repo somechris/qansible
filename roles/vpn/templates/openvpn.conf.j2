@@ -9,7 +9,9 @@ proto tcp{{'' if qhost_distribution == 'Gentoo' else '4'}}-{{ 'server' if (item 
 {% endif %}
 lport {{item['port']}}
 
-keepalive 60 300
+{% set heartbeat_rate = (item['heartbeat_rate'] | default(60)) %}
+{% set heartbeat_timeout = (item['heartbeat_timeout'] | default(3 * heartbeat_rate + ([heartbeat_rate / 2 | round(method='floor'), 10] | min | int))) %}
+keepalive {{heartbeat_rate}} {{heartbeat_timeout}}
 
 cipher AES-256-CBC
 auth SHA256
