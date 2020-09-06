@@ -20,20 +20,8 @@
 
 - name: Setup remote service configs
   template:
-    dest: '{{icinga_server_object_path}}/services/{{inventory_hostname}}-nrpe.cfg'
-    src: services-nrpe.cfg.j2
-    owner: root
-    group: root
-    mode: 0444
-  delegate_to: "{{item}}"
-  with_items: '{{groups["icinga_servers"]}}'
-  notify:
-    - reload icinga
-
-- name: Setup remote service configs
-  template:
-    dest: '{{icinga_server_object_path}}/services/{{inventory_hostname}}-remote.cfg'
-    src: services-remote.cfg.j2
+    dest: '{{icinga_server_object_path}}/services/{{inventory_hostname}}.cfg'
+    src: services.cfg.j2
     owner: root
     group: root
     mode: 0444
