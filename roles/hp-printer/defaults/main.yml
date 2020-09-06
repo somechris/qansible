@@ -1,0 +1,15 @@
+hp_printer_common_role_tasks_config:
+  role: hp-printer
+  supported_distributions:
+    - 'HP'
+  user: omit
+  paths: []
+  packages: []
+  notifications: []
+  port_configs: []
+  services: []
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks:
+    - {type: 'website', domain: 'hp-jetdirect', kind: None}

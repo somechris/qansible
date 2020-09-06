@@ -29,7 +29,6 @@
   with_items: '{{groups["icinga_servers"]}}'
   notify:
     - reload icinga
-  when: '"unmanaged" not in group_names'
 
 - name: Setup remote service configs
   template:

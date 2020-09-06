@@ -1,0 +1,7 @@
+- name: "HP Printer"
+  hosts: hp_printers
+  gather_facts: no
+  roles:
+    - role: hp-printer
+      tags:
+        - hp-printer
