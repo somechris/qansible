@@ -26,6 +26,7 @@ Sets up an ssh server.
 3. Parameters
 -------------
 
+* `ssh_server_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
 * `ssh_server_net_accesses`: List of net accesses of which hosts can reach
   the service.
 * `ssh_server_log_level`: (Default: logging_default_log_level) Verbosity of logs
