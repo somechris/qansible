@@ -1,6 +1,5 @@
 # {{ansible_managed}}
 
-{{"load_per_cpu" | icinga_nrpe_command("load", "-r -w 2,1.1,0.8 -c 4,1.5,0.9")}}
 {% for check in monitoring_check_config %}
 {{check | icinga_monitoring_check_config_nrpe_formatter}}
 {% endfor %}

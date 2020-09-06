@@ -298,6 +298,11 @@ def icinga_monitoring_check_config_nrpe_formatter(config):
     elif config['type'] == 'file_age':
         arg='-w %s -c %s %s' % (str(config['warn']), str(config['critical']), str(config['path']))
         ret = icinga_nrpe_command(slug, 'file_age', arg.strip())
+    elif config['type'] == 'load':
+        arg = '-r'
+        arg += ' -w %s,%s,%s' % (str(config['load1_warn']), str(config['load5_warn']), str(config['load15_warn']))
+        arg += ' -c %s,%s,%s' % (str(config['load1_critical']), str(config['load5_critical']), str(config['load15_critical']))
+        ret = icinga_nrpe_command(slug, 'load', arg.strip())
     elif config['type'] == 'process':
         arg=''
         if 'command' in config:
@@ -323,6 +328,8 @@ def icinga_monitoring_check_config_check_formatter(config, inventory_hostname, w
     if config['type'] == 'disk':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
     elif config['type'] == 'file_age':
+        ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
+    elif config['type'] == 'load':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
     elif config['type'] == 'process':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)

@@ -21,7 +21,7 @@ dictionary
 A dictionary definition has the following key/values:
 * `name`: The check's name.
 * `type`: (Default: `process`) The type of the check. Has to be one of `disk`,
-  `process`, `file_age`, or `website`.
+  `load`, `process`, `file_age`, or `website`.
 
 
 ## Type `disk`
@@ -51,6 +51,24 @@ following additional key/values allow to specify what processes to expect:
   is raised.
 * `critical`: (Default: 300) If the file is older than this many seconds, a
   critical alert is raised.
+
+
+## Type `load`
+
+The type `load` checks the computing load on the host. The following additional
+key/values allow to specify what processes to expect:
+* `load1_warn`: (Default: 2) Raise a warning, if the 1 minute load average per
+  processor is above this value.
+* `load1_critical`: (Default: 4) Raise a critical alert, if the 1 minute load
+  average per processor is above this value.
+* `load5_warn`: (Default: 1.1) Raise a warning, if the 5 minute load average per
+  processor is above this value.
+* `load5_critical`: (Default: 1.5) Raise a critical alert, if the 5 minute load
+  average per processor is above this value.
+* `load15_warn`: (Default: 0.8) Raise a warning, if the 15 minute load average per
+  processor is above this value.
+* `load15_critical`: (Default: 0.9) Raise a critical alert, if the 15 minute load
+  average per processor is above this value.
 
 
 ## Type `process`

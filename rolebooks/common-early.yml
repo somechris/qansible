@@ -18,6 +18,10 @@
       tags:
         - 'common-packages'
 
+    - role: cpu-tuner
+      tags:
+        - 'cpu-tuner'
+
     - role: disk-tuner
       tags:
         - 'disk-tuner'

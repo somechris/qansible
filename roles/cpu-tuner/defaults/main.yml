@@ -1,0 +1,23 @@
+cpu_tuner_common_role_tasks_config:
+  role: cpu-tuner
+  supported_distributions:
+    - 'Debian'
+  user: omit
+  paths: []
+  packages: []
+  notifications: []
+  port_configs: []
+  services: []
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks:
+    - name: 'Load per CPU'
+      name_prefix: False
+      type: 'load'
+      load1_warn: 2
+      load1_crit: 4
+      load5_warn: 1.1
+      load5_crit: 1.5
+      load15_warn: 0.8
+      load15_crit: 0.9

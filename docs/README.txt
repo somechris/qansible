@@ -116,6 +116,7 @@ agreements.
     packages
   - `common-role-tasks-end`: Runs common role end tasks
   - `common-packages`: Sets up common packages needed on all hosts.
+  - `cpu-tuner`: Adjusts settings of CPUs.
   - `debug`: Allows to prints debug messages between roles in `meta`
   - `dhparams`: Handles files holding Diffie Hellman parameters for secure
     handshakes. This is needed for applications doing encryption (Websites,

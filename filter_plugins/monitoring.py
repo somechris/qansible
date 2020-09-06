@@ -79,6 +79,14 @@ def explicitize(checks):
             check.setdefault('inodes_left_warn', '20%')
             check.setdefault('inodes_left_critical', '10%')
 
+        if check['type'] == 'load':
+            check.setdefault('load1_warn', 2)
+            check.setdefault('load1_critical', 4)
+            check.setdefault('load5_warn', 1.1)
+            check.setdefault('load5_critical', 1.5)
+            check.setdefault('load15_warn', 0.8)
+            check.setdefault('load15_critical', 0.9)
+
         ret.append(check)
     return ret
 
