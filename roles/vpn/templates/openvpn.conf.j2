@@ -9,7 +9,7 @@ proto tcp{{'' if qhost_distribution == 'Gentoo' else '4'}}-{{ 'server' if (item 
 {% endif %}
 lport {{item['port']}}
 
-{% set heartbeat_rate = (item['heartbeat_rate'] | default(60)) %}
+{% set heartbeat_rate = (item['heartbeat_rate'] | default(vpn_default_heartbeat_rate)) %}
 {% set heartbeat_timeout = (item['heartbeat_timeout'] | default(3 * heartbeat_rate + ([heartbeat_rate / 2 | round(method='floor'), 10] | min | int))) %}
 keepalive {{heartbeat_rate}} {{heartbeat_timeout}}
 
