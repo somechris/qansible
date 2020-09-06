@@ -1,3 +1,5 @@
+unmanaged_host_monitor_ssh: False
+
 unmanaged_host_common_role_tasks_config:
   role: unmanaged-host
   supported_distributions: any
@@ -10,4 +12,5 @@ unmanaged_host_common_role_tasks_config:
   log_files: []
   dashboards: []
   dashboard_host_rows: []
-  monitoring_checks: []
+  monitoring_checks:
+    - {name: Accepting, type: port, port: '{{ssh_server_port}}', service: ssh, skip: '{{not unmanaged_host_monitor_ssh}}'}

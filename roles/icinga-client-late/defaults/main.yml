@@ -1,5 +1,3 @@
-icinga_client_late_monitor_ssh: True
-
 icinga_client_late_common_role_tasks_config:
   role: icinga-client-late
   supported_distributions:

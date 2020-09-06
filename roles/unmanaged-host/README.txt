@@ -27,3 +27,5 @@ No Globals that are specific only for this role.
 -------------
 
 * `unmanaged_host_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
+* `unmanaged_host_monitor_ssh`: (Default: False) If true, monitor that
+  the host allows ssh connections.

@@ -30,5 +30,3 @@ No Globals that are specific only for this role.
 -------------
 
 * `icinga_client_late_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
-* `icinga_client_late_monitor_ssh`: (Default: True) If true, monitor that the host
-  allows ssh connections.
