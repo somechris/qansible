@@ -22,4 +22,5 @@ ssh_server_common_role_tasks_config:
   log_files: []
   dashboards: []
   dashboard_host_rows: []
-  monitoring_checks: []
+  monitoring_checks:
+    - {name: Daemon, command: sshd, user: root}
