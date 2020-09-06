@@ -73,6 +73,12 @@ def explicitize(checks):
         if check['type'] == 'website':
             check.setdefault('dns', False)
 
+        if check['type'] == 'disk':
+            check.setdefault('bytes_left_warn', '20%')
+            check.setdefault('bytes_left_critical', '10%')
+            check.setdefault('inodes_left_warn', '20%')
+            check.setdefault('inodes_left_critical', '10%')
+
         ret.append(check)
     return ret
 

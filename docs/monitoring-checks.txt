@@ -20,8 +20,26 @@ dictionary
 
 A dictionary definition has the following key/values:
 * `name`: The check's name.
-* `type`: (Default: `process`) The type of the check. Has to be one of
+* `type`: (Default: `process`) The type of the check. Has to be one of `disk`,
   `process`, `file_age`, or `website`.
+
+
+## Type `disk`
+
+The type `disk` checks the free disk spaces and free inodes. The following
+additional key/values allow to specify what processes to expect:
+* `bytes_left_warn`: (Default: 20%) Raise a warning, if less than this many
+  bytes are free on a disk. If the setting ends in `%`, it is taken as
+  percentage. Otherwise as number of MBs.
+* `bytes_left_critical`: (Default: 10%) Raise a critical alert, if less than
+  this many bytes are free on a disk. If the setting ends in `%`, it is taken as
+  percentage. Otherwise as number of MBs.
+* `inodes_left_warn`: (Default: 20%) Raise a warning, if less than this many
+  inodes are free on a disk. If the setting ends in `%`, it is taken as
+  percentage. Otherwise as number of MBs.
+* `inodes_left_critical`: (Default: 10%) Raise a critical alert, if less than
+  this many inodes are free on a disk. If the setting ends in `%`, it is taken as
+  percentage. Otherwise as number of MBs.
 
 
 ## Type `file_age`

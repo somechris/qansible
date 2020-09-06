@@ -1,0 +1,20 @@
+disk_tuner_common_role_tasks_config:
+  role: disk-tuner
+  supported_distributions:
+    - 'Debian'
+  user: omit
+  paths: []
+  packages: []
+  notifications: []
+  port_configs: []
+  services: []
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks:
+    - name: 'Free Disk Space'
+      type: 'disk'
+      bytes_left_warn: 20%
+      bytes_left_critical: 10%
+      inodes_left_warn: 20%
+      inodes_left_critical: 10%

@@ -124,6 +124,7 @@ agreements.
     system/application metrics and sends them to graphite.
   - `diamond-late`: Handles collectors that should get set up past expanding
     globals.
+  - `disk-tuner`: Adjusts settings of disks.
   - `expand-globals`: Normalizes globals and fills in defaults for easier
     consumption in subsequent roles.
   - `smtp-server`: Sets up an SMTP server.

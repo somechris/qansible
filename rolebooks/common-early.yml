@@ -18,6 +18,10 @@
       tags:
         - 'common-packages'
 
+    - role: disk-tuner
+      tags:
+        - 'disk-tuner'
+
     - role: common-directories
       tags:
         - 'common-directories'

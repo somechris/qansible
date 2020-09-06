@@ -288,7 +288,14 @@ def icinga_slug(string):
 def icinga_monitoring_check_config_nrpe_formatter(config):
     ret = ''
     slug=icinga_slug(config['name'])
-    if config['type'] == 'file_age':
+    if config['type'] == 'disk':
+        arg = '-w %s'  % (str(config['bytes_left_warn']))
+        arg += ' -c %s'  % (str(config['bytes_left_critical']))
+        arg += ' -W %s'  % (str(config['inodes_left_warn']))
+        arg += ' -K %s'  % (str(config['inodes_left_critical']))
+        arg += ' -e --exclude-type=tracefs'
+        ret = icinga_nrpe_command(slug, 'disk', arg.strip())
+    elif config['type'] == 'file_age':
         arg='-w %s -c %s %s' % (str(config['warn']), str(config['critical']), str(config['path']))
         ret = icinga_nrpe_command(slug, 'file_age', arg.strip())
     elif config['type'] == 'process':
@@ -313,7 +320,9 @@ def icinga_monitoring_check_config_nrpe_formatter(config):
 def icinga_monitoring_check_config_check_formatter(config, inventory_hostname, website_configs):
     ret = ''
     slug=icinga_slug(config['name'])
-    if config['type'] == 'file_age':
+    if config['type'] == 'disk':
+        ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
+    elif config['type'] == 'file_age':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
     elif config['type'] == 'process':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
