@@ -83,8 +83,9 @@ name.):
   give the including role name.
 * `services`: List of service names provided by the including role. These
   services get enabled and started at the end of the role.
-* `supported_distributions`: List of distributions that the including role
-  supports.
+* `supported_distributions`: Either a list of distributions that the including
+  role supports, or the string `any` to mark that nothing distribution dependent
+  is happening in the role and it may run on all distributions.
 * `user`: The name of the user for the service. This will be the owner of the
   files (after the packages got installed). The user get created as system user
   automatically, if it is missing. Use the string 'omit' (not `{{omit}}`) to
