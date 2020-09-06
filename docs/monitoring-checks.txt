@@ -22,6 +22,9 @@ A dictionary definition has the following key/values:
 * `name`: The check's name.
 * `type`: (Default: `process`) The type of the check. Has to be one of `disk`,
   `load`, `port`, `process`, `file_age`, or `website`.
+* `skip`: (Default: False) If true, this monitoring check gets skipped. This
+  allows to easily turn some checks in a list of checks on/off.
+
 
 
 ## Type `disk`

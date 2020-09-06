@@ -91,7 +91,8 @@ def explicitize(checks):
             check.setdefault('load15_warn', 0.8)
             check.setdefault('load15_critical', 0.9)
 
-        ret.append(check)
+        if not check.get('skip', False):
+            ret.append(check)
     return ret
 
 
