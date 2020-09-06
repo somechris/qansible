@@ -34,5 +34,5 @@ No Globals that are specific only for this role.
 * `vpn_log_dir`: Directory vpn will write logs to.
 * `vpn_log_level`: (Default: logging_default_log_level) Verbosity of logs and
   services. See `docs/logging.txt`.
-* `vpn_default_heartbeat_rate`: (Default: 60) Default period in seconds between
+* `vpn_default_heartbeat_rate`: (Default: 10) Default period in seconds between
   sending heartbeats to the remote hosts.
