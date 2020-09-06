@@ -5,3 +5,12 @@
     - role: hp-printer
       tags:
         - hp-printer
+
+- name: "Unmanaged Hosts"
+  hosts: unmanaged
+  gather_facts: no
+  roles:
+    - role: unmanaged-host
+      tags:
+        - unmanaged-host
+        - unmanaged
