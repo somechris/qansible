@@ -28,4 +28,4 @@ No Globals that are specific only for this role.
 3. Parameters
 -------------
 
-This role does not have parameters.
+* `ldap_client_early_common_role_tasks_config`: See `docs/common-role-tasks.txt`.

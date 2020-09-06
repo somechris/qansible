@@ -1,17 +1,10 @@
 # qa:lint:no-log-level-needed
 
-- name: Drop-out for unsupported distributions
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian"]'
-
-- name: Install OpenLDAP client tools
-  apt:
-    name:
-      - ldap-utils
-      - nscd
-      - nslcd
-    state: present
-  when: 'qhost_distribution == "Debian"'
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{ldap_client_early_common_role_tasks_config}}'
 
 - name: Configure openldap client
   template:
@@ -50,3 +43,15 @@
     group: root
     mode: 0555
     force: no
+
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{ldap_client_early_common_role_tasks_config}}'
+
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{ldap_client_early_common_role_tasks_config}}'
