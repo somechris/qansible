@@ -2,10 +2,6 @@
 
 {{'Disk Space' | icinga_nrpe_check(inventory_hostname, 'disks_all')}}
 {{'Load per CPU' | icinga_nrpe_check(inventory_hostname, 'load_per_cpu')}}
-{{'Name Service/Caching Daemon' | icinga_nrpe_check(inventory_hostname,
-                                  'nscd_proc')}}
-{{'Name Service/LDAP Lookup' | icinga_nrpe_check(inventory_hostname,
-                                'nslcd_proc')}}
 {% for check in monitoring_check_config %}
 {{check | icinga_monitoring_check_config_check_formatter(inventory_hostname, monitoring_website_health_checks)}}
 {% endfor %}

@@ -14,4 +14,6 @@ ldap_client_early_common_role_tasks_config:
   log_files: []
   dashboards: []
   dashboard_host_rows: []
-  monitoring_checks: []
+  monitoring_checks:
+    - { name: 'Name Service/Caching Daemon', name_prefix: False, command: nscd, user: root}
+    - { name: 'Name Service/LDAP Lookup Daemon', name_prefix: False, command: nslcd, user: nslcd}
