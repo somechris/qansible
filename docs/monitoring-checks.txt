@@ -21,7 +21,7 @@ dictionary
 A dictionary definition has the following key/values:
 * `name`: The check's name.
 * `type`: (Default: `process`) The type of the check. Has to be one of `disk`,
-  `load`, `process`, `file_age`, or `website`.
+  `load`, `port`, `process`, `file_age`, or `website`.
 
 
 ## Type `disk`
@@ -69,6 +69,22 @@ key/values allow to specify what processes to expect:
   processor is above this value.
 * `load15_critical`: (Default: 0.9) Raise a critical alert, if the 15 minute load
   average per processor is above this value.
+
+
+## Type `port`
+
+The type `port` checks that a given port is open and accepting
+connections. The following additional key/values allow to specify what
+processes to expect:
+* `port`: The port to connect to.
+* `protocol`: (Default: `tcp`) The protocol to use for
+  connecting. Currently, only `tcp` is supported.
+* `service`: (Default: None) A hint about the protocol that's running
+  there. Monitoring systems can use this to run more specialized
+  checks. But this is optional, and monitoring systems are not
+  required to honor this setting and are not required to run more
+  specialized checks. Use the following values for services:
+  * `ssh`: SSH server
 
 
 ## Type `process`

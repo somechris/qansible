@@ -70,6 +70,10 @@ def explicitize(checks):
             check.setdefault('max-procs', 1)
             check.setdefault('user', 'root')
 
+        if check['type'] == 'port':
+            check.setdefault('protocol', 'tcp')
+            check.setdefault('service', None)
+
         if check['type'] == 'website':
             check.setdefault('dns', False)
 

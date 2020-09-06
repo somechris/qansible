@@ -58,3 +58,8 @@ define command {
 	command_name	check_nrpe_timeout
 	command_line	/usr/lib/nagios/plugins/check_nrpe -t $ARG1$ -H $HOSTADDRESS$ -p {{icinga_client_nrpe_server_port}} -c $ARG2$
 }
+
+define command {
+	command_name	check_tcp4
+	command_line	/usr/lib/nagios/plugins/check_tcp -4 -H $HOSTADDRESS$ -p $ARG1$ --mismatch=crit
+}

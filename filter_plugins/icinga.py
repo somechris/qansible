@@ -303,6 +303,8 @@ def icinga_monitoring_check_config_nrpe_formatter(config):
         arg += ' -w %s,%s,%s' % (str(config['load1_warn']), str(config['load5_warn']), str(config['load15_warn']))
         arg += ' -c %s,%s,%s' % (str(config['load1_critical']), str(config['load5_critical']), str(config['load15_critical']))
         ret = icinga_nrpe_command(slug, 'load', arg.strip())
+    elif config['type'] == 'port':
+        ret = '# No nrpe counter-part for check ' + config['name']
     elif config['type'] == 'process':
         arg=''
         if 'command' in config:
@@ -331,6 +333,15 @@ def icinga_monitoring_check_config_check_formatter(config, inventory_hostname, w
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
     elif config['type'] == 'load':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
+    elif config['type'] == 'port':
+        protocol = config['protocol']
+        if protocol not in ['tcp']:
+            raise RuntimeError('Unsupported protocol "%s" for check "%s"' % (protocol, config['name']))
+        check = protocol + '4'
+        args = [config['port']]
+        if protocol == 'tcp' and config['service'] == 'ssh':
+            check = 'ssh_port_4'
+        ret = icinga_check(config['name'], inventory_hostname, check, args)
     elif config['type'] == 'process':
         ret = icinga_nrpe_check(config['name'], inventory_hostname, slug)
     elif config['type'] == 'website':
