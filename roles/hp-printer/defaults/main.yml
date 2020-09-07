@@ -10,6 +10,6 @@ hp_printer_common_role_tasks_config:
   services: []
   log_files: []
   dashboards: []
-  dashboard_host_rows: []
+  dashboard_host_rows: "{{inventory_hostname_short | dashboard_rows_hp_printer}}"
   monitoring_checks:
     - {type: 'website', domain: 'hp-jetdirect', kind: None}
