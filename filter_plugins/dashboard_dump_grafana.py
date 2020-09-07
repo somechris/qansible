@@ -233,6 +233,7 @@ def finalize_dashboard(dashboard):
     dashboard['rows'] = [finalize_row(row, next_id) for row in dashboard['rows']]
 
     dashboard['originalTitle'] = dashboard['title']
+    dashboard['uid'] = dashboard['basename']
     del dashboard['basename']
 
     if 'templates' in dashboard:
