@@ -350,6 +350,28 @@ def icinga_monitoring_check_config_check_formatter(config, inventory_hostname, w
         raise RuntimeError('Unknown check type "%s" in icinga_monitoring_check_config_check_formatter' % (config['type']))
     return ret
 
+def icinga_format_notes_system_links(hostvars):
+    ret = '<table>'
+
+    link_keys = hostvars['qhost_system_links'].keys()
+    link_keys.sort()
+    for link_key in link_keys:
+        links = []
+        for link in hostvars['qhost_system_links'][link_key]:
+            title = link['system']
+            url = link['url'].format(hostname=hostvars['inventory_hostname'], hostname_short=hostvars['inventory_hostname_short'])
+            links.append('<a href="%s" alt="%s">%s</a>' % (url, title, title))
+
+        if len(links):
+            ret += '<tr>'
+            ret += '<th>%s</th>' % (link_key[0].upper() + link_key[1:])
+            ret += '<td>%s</td>' % (', '.join(links))
+            ret += '</tr>'
+
+    ret += '</table>'
+
+    return ret
+
 
 class FilterModule(object):
     '''Filters for icinga'''
@@ -361,6 +383,8 @@ class FilterModule(object):
             'icinga_nrpe_check': icinga_nrpe_check,
             'icinga_nrpe_command': icinga_nrpe_command,
             'icinga_nrpe_raw_command': icinga_nrpe_raw_command,
+            'icinga_format_notes_system_links':
+                icinga_format_notes_system_links,
             'icinga_http_check': icinga_http_check,
             'icinga_http_preconfigured_checks':
                 icinga_http_preconfigured_checks,

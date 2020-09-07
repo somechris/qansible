@@ -8,5 +8,5 @@ define host{
 {% endif %}
   icon_image            {{qhost_distribution | map_distribution_to_image}}
   icon_image_alt        {{qhost_distribution}}
-  notes {{qhost_description}}
+  notes {{qhost_description}} {{hostvars[inventory_hostname] | icinga_format_notes_system_links}}
 }
