@@ -17,41 +17,25 @@ from dashboard_row import new as new_row
 from dashboard_row import add_panel
 del sys.path[0]
 
-
-def panel_host_metadata(host, hostvars, width=None):
-    title = "Metadata"
+def panel_host_metadata_text(host, hostvars, width=None):
+    title = ''
     panel = new_markdown(title, width=width)
 
-    lines = []
+    content = '#### ' + hostvars['inventory_hostname'] + '\n'
+    content += hostvars['qhost_description'] + '\n'
 
-    def add_line(line):
-        lines.append(line)
+    set_content(panel, content)
 
-    def add_separator():
-        add_line('')
+    return panel
 
-    def add_kv(key, value):
-        add_line('| %s | %s |' % (key, value))
+def panel_host_metadata_links(host, hostvars, width=None):
+    title = 'Links to other Systems'
+    panel = new_markdown(title, width=width)
 
-    def add_kvk(key, value_key):
-        add_kv(key, hostvars[value_key])
+    content = ''
 
-    def format_plain_link(name, src):
-        return '[%s](%s)' % (name, src)
-
-    def add_link(name, src):
-        add_separator()
-        add_line(format_plain_link(name, src))
-
-    add_line('# %s' % (hostvars['inventory_hostname']))
-
-    add_separator()  # --------------------------
-
-    add_kv('Key', 'Value')
-    add_kv('---', '---')
-    add_kvk('Name', 'inventory_hostname')
-    add_kvk('Description', 'qhost_description')
-
+    systems = []
+    system_links = []
     link_keys = hostvars['host_links'].keys()
     link_keys.sort()
     for link_key in link_keys:
@@ -59,13 +43,17 @@ def panel_host_metadata(host, hostvars, width=None):
         for link in hostvars['host_links'][link_key]:
             title = link['system']
             url = link['url'].format(hostname=hostvars['inventory_hostname'], hostname_short=hostvars['inventory_hostname_short'])
-            links.append(format_plain_link(title, url))
+            links.append('[%s](%s)' % (title, url))
+
         if len(links):
-            add_kv(link_key[0].upper() + link_key[1:], ', '.join(links))
+            systems.append(link_key[0].upper() + link_key[1:])
+            system_links.append(', '.join(links))
+    if len(systems):
+        content = '|' + ('|'.join(systems)) + '|\n'
+        content += '|' + ('|'.join(['---'] * len(systems))) + '|\n'
+        content += '|' + ('|'.join(system_links)) + '|\n'
 
-    add_separator()  # --------------------------
-
-    set_content(panel, "\n".join(lines))
+    set_content(panel, content)
 
     return panel
 
@@ -73,9 +61,9 @@ def panel_host_metadata(host, hostvars, width=None):
 def row_host_metadata(host, hostvars):
     title = 'Metadata'
     row = new_row(title)
-    width=12
 
-    add_panel(row, panel_host_metadata(host, hostvars, width=width))
+    add_panel(row, panel_host_metadata_text(host, hostvars, width=3))
+    add_panel(row, panel_host_metadata_links(host, hostvars, width=9))
 
     return row
 
