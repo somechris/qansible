@@ -36,9 +36,12 @@ def panel_host_metadata(host, hostvars, width=None):
     def add_kvk(key, value_key):
         add_kv(key, hostvars[value_key])
 
+    def format_plain_link(name, src):
+        return '[%s](%s)' % (name, src)
+
     def add_link(name, src):
         add_separator()
-        add_line('[%s](%s)' % (name, src))
+        add_line(format_plain_link(name, src))
 
     add_line('# %s' % (hostvars['inventory_hostname']))
 
@@ -48,9 +51,18 @@ def panel_host_metadata(host, hostvars, width=None):
     add_kv('---', '---')
     add_kvk('Name', 'inventory_hostname')
 
-    add_separator()  # --------------------------
+    link_keys = hostvars['host_links'].keys()
+    link_keys.sort()
+    for link_key in link_keys:
+        links = []
+        for link in hostvars['host_links'][link_key]:
+            title = link['system']
+            url = link['url'].format(hostname=hostvars['inventory_hostname'], hostname_short=hostvars['inventory_hostname_short'])
+            links.append(format_plain_link(title, url))
+        if len(links):
+            add_kv(link_key[0].upper() + link_key[1:], ', '.join(links))
 
-    add_link('This host in Icinga', 'https://%s/cgi-bin/icinga/status.cgi?host=%s' % (hostvars['icinga_server_web_host'], hostvars['inventory_hostname']))
+    add_separator()  # --------------------------
 
     set_content(panel, "\n".join(lines))
 
