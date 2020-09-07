@@ -15,6 +15,7 @@ from dashboard_markdown import new as new_markdown
 from dashboard_markdown import set_content
 from dashboard_row import new as new_row
 from dashboard_row import add_panel
+from qhost import qhost_format_system_link_url
 del sys.path[0]
 
 def panel_host_metadata_text(host, hostvars, width=None):
@@ -42,7 +43,7 @@ def panel_host_metadata_links(host, hostvars, width=None):
         links = []
         for link in hostvars['qhost_system_links'][link_key]:
             title = link['system']
-            url = link['url'].format(hostname=hostvars['inventory_hostname'], hostname_short=hostvars['inventory_hostname_short'])
+            url = qhost_format_system_link_url(link, hostvars)
             links.append('[%s](%s)' % (title, url))
 
         if len(links):
