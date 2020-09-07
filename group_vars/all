@@ -210,3 +210,6 @@ host_links:
   monitoring:
     - system: Icinga
       url: "https://{{icinga_server_web_host}}/cgi-bin/icinga/status.cgi?host={hostname}"
+  metrics:
+    - system: Graphite
+      url: "https://{{graphite_web_host}}/?target={{graphite_host_prefix_wo_host}}.{hostname_short}"
