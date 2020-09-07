@@ -171,6 +171,7 @@ graphite_web_host: '{{graphite_collection_host}}'
 #---------------------------------------------------------------------------
 # Grafana
 #
+grafana_web_host: 'grafana.{{company_domain}}'
 grafana_var_lib_dir: '/var/lib/grafana'
 grafana_dashboard_dir: '{{grafana_var_lib_dir}}/dashboards'
 
@@ -213,3 +214,6 @@ host_links:
   metrics:
     - system: Graphite
       url: "https://{{graphite_web_host}}/?target={{graphite_host_prefix_wo_host}}.{hostname_short}"
+  dashboards:
+    - system: Grafana
+      url: "https://{{grafana_web_host}}/d/host-dashboard-{hostname_short}/{hostname_short}"

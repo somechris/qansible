@@ -25,6 +25,7 @@ it.
 ----------
 
 * `grafana_dashboard_dir`: The directory for provisioned dashboards.
+* `grafana_web_host`: Domain at which Grafana is available
 
 
 
@@ -60,7 +61,6 @@ it.
   database.
 * `grafana_var_lib_dir`: The directory underneath `/var/lib` associated to
   grafana.
-* `grafana_web_host`: Domain at which Grafana is available
 * `grafana_websites_service_user`: (Default: `service-grafana`) The user Grafana
   uses to access other services. This user has to be in the
   `website_common_users` dictionary. (See `roles/website-common/README.txt`)

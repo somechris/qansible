@@ -42,7 +42,6 @@ grafana_common_role_tasks_config:
   monitoring_checks:
     - services
 
-grafana_web_host: 'grafana.{{company_domain}}'
 grafana_port: 3000
 grafana_sqlite_db: grafana.db
 grafana_initial_admin: '{{admin_user}}'
