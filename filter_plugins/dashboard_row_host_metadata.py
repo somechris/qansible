@@ -36,11 +36,11 @@ def panel_host_metadata_links(host, hostvars, width=None):
 
     systems = []
     system_links = []
-    link_keys = hostvars['host_links'].keys()
+    link_keys = hostvars['qhost_system_links'].keys()
     link_keys.sort()
     for link_key in link_keys:
         links = []
-        for link in hostvars['host_links'][link_key]:
+        for link in hostvars['qhost_system_links'][link_key]:
             title = link['system']
             url = link['url'].format(hostname=hostvars['inventory_hostname'], hostname_short=hostvars['inventory_hostname_short'])
             links.append('[%s](%s)' % (title, url))

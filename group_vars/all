@@ -15,6 +15,16 @@ webmaster_email_address: 'webmaster@{{company_email_domain}}'
 qhost_distribution: '{{ansible_distribution | default("Unknown")}}'
 qhost_cpus: '{{ansible_processor_vcpus | default(1)}}'
 qhost_description: ''
+qhost_system_links:
+  monitoring:
+    - system: Icinga
+      url: "https://{{icinga_server_web_host}}/cgi-bin/icinga/status.cgi?host={hostname}"
+  metrics:
+    - system: Graphite
+      url: "https://{{graphite_web_host}}/?target={{graphite_host_prefix_wo_host}}.{hostname_short}"
+  dashboards:
+    - system: Grafana
+      url: "https://{{grafana_web_host}}/d/host-dashboard-{hostname_short}/{hostname_short}"
 
 admin_user: admin
 
@@ -204,17 +214,3 @@ logging_default_format_python: '%(asctime)s.%(msecs)03d %(levelname)-5s [%(threa
 logging_default_format_python_date: '%Y-%m-%dT%H:%M:%S'
 
 logging_log_files: []
-
-#---------------------------------------------------------------------------
-# Host links
-#
-host_links:
-  monitoring:
-    - system: Icinga
-      url: "https://{{icinga_server_web_host}}/cgi-bin/icinga/status.cgi?host={hostname}"
-  metrics:
-    - system: Graphite
-      url: "https://{{graphite_web_host}}/?target={{graphite_host_prefix_wo_host}}.{hostname_short}"
-  dashboards:
-    - system: Grafana
-      url: "https://{{grafana_web_host}}/d/host-dashboard-{hostname_short}/{hostname_short}"
