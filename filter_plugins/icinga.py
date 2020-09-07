@@ -373,6 +373,19 @@ def icinga_format_notes_system_links(hostvars):
     return ret
 
 
+def icinga_format_notes_urls(hostvars):
+    ret = ''
+
+    key = 'dashboards'
+    system_links = hostvars['qhost_system_links']
+    if key in system_links:
+        for link in system_links[key][:4]:
+            url = link['url'].format(hostname=hostvars['inventory_hostname'], hostname_short=hostvars['inventory_hostname_short'])
+            ret += " \'%s\'" % (url)
+
+    return ret
+
+
 class FilterModule(object):
     '''Filters for icinga'''
 
@@ -385,6 +398,8 @@ class FilterModule(object):
             'icinga_nrpe_raw_command': icinga_nrpe_raw_command,
             'icinga_format_notes_system_links':
                 icinga_format_notes_system_links,
+            'icinga_format_notes_urls':
+                icinga_format_notes_urls,
             'icinga_http_check': icinga_http_check,
             'icinga_http_preconfigured_checks':
                 icinga_http_preconfigured_checks,

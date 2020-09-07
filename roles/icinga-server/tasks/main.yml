@@ -129,6 +129,18 @@
   notify:
     reload icinga
 
+- name: Prepare notes images
+  file:
+    state: link
+    path: '{{icinga_server_htdocs_dir}}/images/{{item}}-notes.gif'
+    src: 'stats.gif'
+  with_items:
+    - 1
+    - 2
+    - 3
+    - 4
+
+
 # This and the following definition are only needed to allow Icinga
 # to expand hostgroups before the icinga-client role ran on the hosts.
 - name: Check if host definitions exist
