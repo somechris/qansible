@@ -50,6 +50,7 @@ def panel_host_metadata(host, hostvars, width=None):
     add_kv('Key', 'Value')
     add_kv('---', '---')
     add_kvk('Name', 'inventory_hostname')
+    add_kvk('Description', 'qhost_description')
 
     link_keys = hostvars['host_links'].keys()
     link_keys.sort()

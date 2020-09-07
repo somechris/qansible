@@ -14,6 +14,7 @@ webmaster_email_address: 'webmaster@{{company_email_domain}}'
 
 qhost_distribution: '{{ansible_distribution | default("Unknown")}}'
 qhost_cpus: '{{ansible_processor_vcpus | default(1)}}'
+qhost_description: ''
 
 admin_user: admin
 
