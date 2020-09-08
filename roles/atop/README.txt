@@ -29,3 +29,9 @@ No Globals that are specific only for this role.
 -------------
 
 * `atop_common_role_tasks_config`: See `docs/common-role-tasks.txt`.
+* `atop_effective_data_disk`: Directory for data disk where atop data
+  effectively gets stored in.
+* `atop_effective_data_dir`: Directory where atop data effectively gets stored
+  in.
+* `atop_effective_log_dir`: Directory where atop logs effectively get stored in.
+* `atop_log_dir`: Directory atop proccess will write logs to.

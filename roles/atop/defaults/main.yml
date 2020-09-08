@@ -1,9 +1,19 @@
+atop_log_dir: '/var/log/atop'
+
+atop_effective_data_disk: '{{common_directories_default_data_dir}}'
+atop_effective_data_dir: '{{atop_effective_data_disk}}/atop'
+atop_effective_log_dir: '{{atop_effective_data_dir}}/logs'
+
+
 atop_common_role_tasks_config:
   role: atop
   supported_distributions:
     - 'Debian'
   user: omit
-  paths: []
+  paths:
+    - '{{atop_effective_data_dir}}'
+    - '{{atop_effective_log_dir}}'
+    - {state: link, path: '{{atop_log_dir}}', source: '{{atop_effective_log_dir}}'}
   packages:
     - atop
   notifications: []
