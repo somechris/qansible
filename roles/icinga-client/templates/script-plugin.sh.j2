@@ -1,0 +1,27 @@
+#!/bin/bash
+# {{ansible_managed}}
+
+# Runs the passed command/script as Icinga plugin.
+
+set -o pipefail
+
+EXIT=3 # UNKNOWN
+
+if [[ $# == 0 ]]
+then
+    echo "No command given"
+    exit "$EXIT"
+fi
+
+# The below cat to /dev/null makes sure that we don't get a SIG_PIPE, if the
+# command still writes to stdout/stderr although `head` already quit.
+"$@" 2>&1 | (head -n 1 ; cat >/dev/null)
+
+if [[ ${PIPESTATUS[0]} == 0 ]]
+then
+    EXIT=0 # OK
+else
+    EXIT=2 # CRITICAL
+fi
+
+exit "$EXIT"

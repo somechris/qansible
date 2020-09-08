@@ -24,5 +24,5 @@ atop_common_role_tasks_config:
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks:
-    - {name: 'Accounting monitor', command: 'atopacctd'}
-    - {name: 'Daemon', command: 'atop'}
+    - {name: 'Accounting monitor', command: '/usr/sbin/atopacctd'}
+    - {name: 'Daemon', command: '/usr/bin/atop'}

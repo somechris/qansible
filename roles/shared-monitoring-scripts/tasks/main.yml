@@ -1,0 +1,27 @@
+# qa:lint:no-log-level-needed
+
+- name: Common role tasks at start
+  import_role:
+    name: common-role-tasks-start
+  vars:
+    common_role_tasks_start_config: '{{shared_monitoring_scripts_common_role_tasks_config}}'
+
+- name: Install custom scripts
+  template:
+    dest: "/usr/local/bin/qansible-monitoring-check-process"
+    src: "check-process.py.j2"
+    owner: root
+    group: root
+    mode: 0555
+
+- name: Common role tasks for installing packages
+  import_role:
+    name: common-role-tasks-package-install
+  vars:
+    common_role_tasks_package_install_config: '{{shared_monitoring_scripts_common_role_tasks_config}}'
+
+- name: Common role tasks at end
+  import_role:
+    name: common-role-tasks-end
+  vars:
+    common_role_tasks_end_config: '{{shared_monitoring_scripts_common_role_tasks_config}}'

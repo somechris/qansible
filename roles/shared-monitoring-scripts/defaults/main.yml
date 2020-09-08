@@ -1,0 +1,15 @@
+shared_monitoring_scripts_common_role_tasks_config:
+  role: shared-monitoring-scripts
+  supported_distributions:
+    - 'Debian'
+  user: omit
+  paths: []
+  packages:
+    - python-psutil
+  notifications: []
+  port_configs: []
+  services: []
+  log_files: []
+  dashboards: []
+  dashboard_host_rows: []
+  monitoring_checks: []

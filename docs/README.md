@@ -161,6 +161,8 @@ agreements.
   - `phones-hot-at`: Integrates data from hot.at phones.
   - `pop3-server`: Sets up a POP3 server.
   - `remote-apt-repository`: Configures APT to also use a remote repository.
+  - `shared-monitoring-scripts`: Monitoring scripts that can be used across
+    different monitoring backends.
   - `ssh-client-expect-authorized-key`: Configures expected authorized
     keys for ssh clients.
   - `ssh-connections`: Configures user configurations for public key access.

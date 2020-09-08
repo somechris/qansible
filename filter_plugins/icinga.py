@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from qhost import qhost_format_system_link_url
+from misc import dump_json
 del sys.path[0]
 
 import copy
@@ -322,7 +323,10 @@ def icinga_monitoring_check_config_nrpe_formatter(config):
             arg+=' --user=%s' % (config['user'])
         if 'argument' in config:
             arg+=' --argument-array=%s' % (config['argument'])
-        ret = icinga_nrpe_command(slug, 'procs', arg.strip())
+        plugin = '/usr/local/bin/qansible-monitoring-icinga-script-plugin'
+        check = '/usr/local/bin/qansible-monitoring-check-process'
+        arg = dump_json(config).replace('\n',' ')
+        ret = icinga_nrpe_raw_command(slug, '%s %s \'[%s]\'' % (plugin, check, arg))
     elif config['type'] == 'website':
         ret = '# No nrpe counter-part for check ' + config['name']
     else:

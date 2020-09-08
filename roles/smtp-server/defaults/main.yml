@@ -96,4 +96,4 @@ smtp_server_common_role_tasks_config:
   dashboards: []
   dashboard_host_rows: []
   monitoring_checks:
-    - {'name': 'Daemon', command: 'exim4', user: 'Debian-exim'}
+    - {'name': 'Daemon', command: '/usr/sbin/exim4', user: 'Debian-exim'}

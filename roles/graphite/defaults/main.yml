@@ -67,7 +67,7 @@ graphite_common_role_tasks_config:
   dashboard_host_rows:
     - '{{inventory_hostname_short | dashboard_row_graphite}}'
   monitoring_checks:
-    - services
+    - {name: 'carbon-cache', command: '/usr/bin/python3', argument_1: '/usr/bin/carbon-cache'}
 
 graphite_service_users:
   - service-grafana

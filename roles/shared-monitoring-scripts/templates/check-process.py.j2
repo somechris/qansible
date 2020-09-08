@@ -1,0 +1,156 @@
+#!/usr/bin/env python
+# {{ansible_managed}}
+{# qa:lint:ignore: fail_if_unmatched_root #}
+
+import psutil
+import sys
+import json
+
+"""
+Checks running processes against a list of expected
+processes.
+"""
+
+def get_matchers(source):
+    matchers = json.loads(source)
+    for matcher in matchers:
+        for key in [
+            'name',
+            'name_prefix',
+            'type',
+            'skip',
+            ]:
+            if key in matcher:
+                del matcher[key]
+    return matchers
+
+
+def get_procs():
+    ret = []
+    for proc in psutil.process_iter():
+        with proc.oneshot():
+            ret.append({
+                    "pid": proc.pid,
+                    "ppid": proc.ppid(),
+                    "cmdline": proc.cmdline(),
+                    "username": proc.username(),
+                    })
+    return ret
+
+
+def match_proc_matcher(proc, matcher):
+    for key, value in matcher.iteritems():
+        if key == 'command':
+            if len(proc['cmdline']) < 1 or value != proc['cmdline'][0]:
+                return False
+        elif key == 'argument':
+            if value not in proc['cmdline']:
+                return False
+        elif key.startswith('argument_'):
+            idx = int(key.split('_', 1)[1])
+            if len(proc['cmdline']) <= idx or value not in proc['cmdline'][idx]:
+                return False
+        elif key == 'user':
+            if value != proc['username']:
+                return False
+        elif key in [
+            'min-procs',
+            'max-procs',
+            ]:
+            pass
+        else:
+            bailout('Unknown check "%s"' % (key))
+
+    return True
+
+
+def match_proc_matchers(proc, matchers):
+    for matcher in matchers:
+        if match_proc_matcher(proc, matcher):
+            if matcher['min-procs'] > 0:
+                matcher['min-procs'] -= 1
+
+            matcher['max-procs'] -= 1
+            if not matcher['max-procs']:
+                matchers.remove(matcher)
+
+            return True
+
+    return False
+
+
+def match_procs(procs, matchers):
+    unmatched_procs = []
+    for proc in procs:
+        if not match_proc_matchers(proc, matchers):
+            unmatched_procs.append(proc)
+    return unmatched_procs
+
+
+def process_procs(procs):
+    global matched_procs
+    for proc in procs:
+        if process_proc(proc):
+            matched_procs.append(proc)
+    for matched_proc in matched_procs:
+        procs.remove(matched_proc)
+    return procs
+
+
+def extract_root_procs(procs):
+    return [proc for proc in procs if proc['ppid'] == 1]
+
+
+def extract_unfulfilled_matchers(matchers):
+    return [matcher for matcher in matchers if matcher['min-procs'] > 0]
+
+
+def bailout(msg):
+    print('ERROR. %s' % msg.strip())
+    sys.exit(2)
+
+
+def main():
+    fail_if_unmatched_root = False
+    args = sys.argv[1:]
+    if len(args) > 0 and args[0] == '--fail-if-unmatched-root':
+        fail_if_unmatched_root = True
+        args = args[1:]
+    if len(args) < 1:
+        bailout('No list of matchers given')
+    if len(args) > 1:
+        bailout('Expecting exactly one list of matchers, bit found %d arguments' % (len(args)))
+
+    failed = False
+    matchers = get_matchers(args[0])
+    procs = get_procs()
+    unmatched_procs = match_procs(procs, matchers)
+    unmatched_procs = extract_root_procs(unmatched_procs)
+
+    unfulfilled_matchers = extract_unfulfilled_matchers(matchers)
+
+    msg = ''
+
+    if unfulfilled_matchers:
+        msg += ' %d unfulfilled matchers.' % len(unfulfilled_matchers)
+        msg += ' First unfulfilled matcher: %s.' % (matchers[0])
+        failed = True
+    else:
+        msg += ' All matchers fulfilled.'
+
+    if fail_if_unmatched_root:
+        if unmatched_procs:
+            msg += " %d unmatched procs." % (len(unmatched_procs))
+            msg += ' First unmatched proc: %s.' % (unmatched_procs[0])
+            failed = True
+        else:
+            msg += ' All relevant procs matched.'
+
+    if failed:
+        bailout(msg)
+
+    print('OK.%s' % msg)
+
+
+if __name__ == "__main__":
+    main()

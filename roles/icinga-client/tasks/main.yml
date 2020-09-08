@@ -37,6 +37,15 @@
   notify:
     - reload icinga
 
+- name: Install custom scripts
+  template:
+    dest: "/usr/local/bin/qansible-monitoring-icinga-script-plugin"
+    src: "script-plugin.sh.j2"
+    owner: root
+    group: root
+    mode: 0555
+  when: '"unmanaged" not in group_names'
+
 - name: Common role tasks for installing packages
   import_role:
     name: common-role-tasks-package-install

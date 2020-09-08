@@ -44,4 +44,4 @@ apache_webserver_common_role_tasks_config:
   dashboard_host_rows:
     - '{{inventory_hostname_short | dashboard_row_apache(apache_websites)}}'
   monitoring_checks:
-    - {'name': 'HTTPD', command: 'apache2'}
+    - {'name': 'HTTPD', command: '/usr/sbin/apache2'}
