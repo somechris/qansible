@@ -4,7 +4,7 @@ LINT_HOST_VARS_WHITELISTED=() # host_vars files that do not need linting
 
 source "$(dirname "$0")/common.inc"
 
-MAIN_README_FILE_RELS="docs/README.txt"
+MAIN_README_FILE_RELS="docs/README.md"
 LOCAL_ROLES_FILE_RELS=".local_roles"
 TOX="$(which tox 2>/dev/null || true)"
 VERBOSITY=0
@@ -130,12 +130,12 @@ lint_role() {
         warn "No description of role '$ROLE' in $MAIN_README_FILE_RELS"
     fi
 
-    local ROLE_README_FILE_RELS="roles/$ROLE/README.txt"
+    local ROLE_README_FILE_RELS="roles/$ROLE/README.md"
     if [ -e "$ROLE_README_FILE_RELS" ]
     then
-        if [ "$(head -n 1 "roles/$ROLE/README.txt")" != "Role: $ROLE" ]
+        if [ "$(head -n 1 "$ROLE_README_FILE_RELS")" != "# Role: $ROLE" ]
         then
-            warn "roles/$ROLE/README.txt does not start in 'Role: $ROLE'"
+            warn "$ROLE_README_FILE_RELS does not start in '# Role: $ROLE'"
         fi
 
         local PATTERN
@@ -145,7 +145,7 @@ lint_role() {
             "3. Parameters" \
 
         do
-            if [ "$(grep -c "^$PATTERN" "roles/$ROLE/README.txt")" != "2" ]
+            if [ "$(grep -c '^\(## \|\)'"$PATTERN" "$ROLE_README_FILE_RELS")" != "2" ]
             then
                 warn "Could not find two lines starting in $PATTERN in '$ROLE_README_FILE_RELS'"
             fi
@@ -155,7 +155,7 @@ lint_role() {
         local VAR
         while IFS=: read FILE LINE_NO VAR REST
         do
-            if ! grep --quiet '^\* `'"$VAR"'`: ' "roles/$ROLE/README.txt"
+            if ! grep --quiet '^\* `'"$VAR"'`: ' "$ROLE_README_FILE_RELS"
             then
 
                 # We check if $VAR might belong to another
@@ -250,7 +250,7 @@ lint_role() {
             then
                 warn "$VAR (see $FILE line $LINE_NO) is unused. Please remove it."
             fi
-        done < <( grep -Hn '^\* `[a-zA-Z0-9_]*`: ' "roles/$ROLE/README.txt" \
+        done < <( grep -Hn '^\* `[a-zA-Z0-9_]*`: ' "$ROLE_README_FILE_RELS" \
             | sed -e 's/\* `//' -e 's/`//' \
             || true )
 
@@ -265,7 +265,7 @@ lint_role() {
             fi
         fi
     else
-        warn "No README.txt for role '$ROLE'"
+        warn "No '$ROLE_README_FILE_RELS' in role '$ROLE'"
     fi
 
     if [ -d "roles/$ROLE/templates" ]
