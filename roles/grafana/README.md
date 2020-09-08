@@ -5,7 +5,6 @@
 1. Description
 2. Globals
 3. Parameters
-4. Caveat
 
 
 
@@ -60,11 +59,3 @@ it.
 * `grafana_websites_service_user`: (Default: `service-grafana`) The user Grafana
   uses to access other services. This user has to be in the
   `website_common_users` dictionary. (See `roles/website-common/README.md`)
-
-
-
-## 4. Caveat
-
-Note: This role relies on the add-host-to-group role, which means that group
-setting is done in a run_once like manner. See the add-host-to-group's
-README.md for more details.

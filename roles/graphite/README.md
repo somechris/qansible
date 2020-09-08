@@ -5,7 +5,6 @@
 1. Description
 2. Globals
 3. Parameters
-4. Caveat
 
 
 
@@ -91,11 +90,3 @@ Sets up Graphite backend and web application.
   the graphite web site.
 * `graphite_whisper_dir`: Directory graphite will access whisper
   files through.
-
-
-
-## 4. Caveat
-
-Note: This role relies on the add-host-to-group role, which means that group
-setting is done in a run_once like manner. See the add-host-to-group's
-README.md for more details.

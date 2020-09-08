@@ -5,7 +5,6 @@
 1. Description
 2. Globals
 3. Parameters
-4. Caveat
 
 
 

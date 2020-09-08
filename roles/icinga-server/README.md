@@ -5,7 +5,6 @@
 1. Description
 2. Globals
 3. Parameters
-4. Caveat
 
 
 
@@ -51,11 +50,3 @@ Sets up an Icinga server along with an Icinga 1 web application.
   not icinga-debug.log`.
 * `icinga_server_service_log_dir`: Directory where logs from the Icinga service
   daemon get stored in.
-
-
-
-## 4. Caveat
-
-Note: This role relies on the add-host-to-group role, which means that group
-setting is done in a run_once like manner. See the add-host-to-group's
-README.md for more details.
