@@ -1,7 +1,7 @@
 shared_monitoring_scripts_common_role_tasks_config:
   role: shared-monitoring-scripts
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: omit
   paths: []
   packages:

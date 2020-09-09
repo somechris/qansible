@@ -16,7 +16,7 @@ pop3_server_effective_log_dir: '{{pop3_server_effective_data_dir}}/logs'
 pop3_server_common_role_tasks_config:
   role: pop3_server
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: dovecot
   paths:
     - {path: '{{pop3_server_db_directory}}', user: mail, group: mail, mode: '770'}

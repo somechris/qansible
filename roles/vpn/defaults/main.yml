@@ -11,7 +11,7 @@ vpn_default_heartbeat_rate: 10
 vpn_common_role_tasks_config:
   role: vpn
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
     - 'Gentoo'
   user: omit
   paths:

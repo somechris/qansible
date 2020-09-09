@@ -1,7 +1,7 @@
 common_packages_common_role_tasks_config:
   role: common_packages
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: omit
   paths: []
   packages:

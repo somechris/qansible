@@ -29,7 +29,7 @@ ldap_server_extra_schemas:
 ldap_server_common_role_tasks_config:
   role: ldap-server
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: openldap
   extra_groups:
     - ssl-cert

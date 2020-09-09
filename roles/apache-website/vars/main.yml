@@ -14,7 +14,7 @@ apache_website_mod_configs: {}
 apache_website_common_role_tasks_config:
   role: 'apache-website ({{apache_website_domain}})'
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: omit
   paths:
     - '{{apache_webserver_effective_data_dir}}'

@@ -23,7 +23,7 @@ def update_dict(target, source):
 def map_distribution_to_image(distribution):
     distribution = distribution.lower()
     ret = 'unknown.gif'
-    if distribution == 'debian':
+    if distribution.startswith('debian'):
         ret = 'base/debian.gif'
     elif distribution == 'gentoo':
         ret = 'vendors/gentoo.gif'

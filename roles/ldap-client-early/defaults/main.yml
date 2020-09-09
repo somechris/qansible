@@ -1,7 +1,7 @@
 ldap_client_early_common_role_tasks_config:
   role: ldap-client
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: omit
   paths: []
   packages:

@@ -7,7 +7,7 @@ diamond_effective_log_dir: '{{diamond_effective_data_dir}}/logs'
 diamond_common_role_tasks_config:
   role: diamond
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: diamond
   extra_groups:
     - adm

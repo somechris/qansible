@@ -32,7 +32,7 @@ graphite_query_net_accesses: []
 graphite_common_role_tasks_config:
   role: graphite
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: _graphite
   paths:
     - '{{graphite_effective_data_dir}}'

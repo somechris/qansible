@@ -16,7 +16,7 @@ icinga_server_effective_log_dir: '{{icinga_server_effective_data_dir}}/logs'
 icinga_server_common_role_tasks_config:
   role: icinga-server
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: nagios
   user_comment: Service user for nagios
   user_home: /var/lib/nagios

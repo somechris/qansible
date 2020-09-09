@@ -1,7 +1,7 @@
 icinga_client_late_common_role_tasks_config:
   role: icinga-client-late
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: omit
   paths: []
   packages: []

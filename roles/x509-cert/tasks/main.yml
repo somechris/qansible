@@ -2,7 +2,7 @@
 
 - name: Drop-out for unsupported distributions
   fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{role_path|basename}}' role"
-  when: 'qhost_distribution not in ["Debian", "Gentoo"]'
+  when: 'qhost_distribution not in ["Debian/buster", "Gentoo"]'
 
 - name: Install packages for x509 server certificates
   apt:

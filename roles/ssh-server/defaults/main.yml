@@ -5,7 +5,7 @@ ssh_server_log_level: '{{logging_default_log_level}}'
 ssh_server_common_role_tasks_config:
   role: ssh-server
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: omit
   paths:
     - {path: '/etc/ssh', user: root, group: root, mode: '755'}

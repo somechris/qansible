@@ -1,7 +1,7 @@
 disk_tuner_common_role_tasks_config:
   role: disk-tuner
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: omit
   paths: []
   packages: []

@@ -12,7 +12,7 @@ company_email_domain: '{{company_domain}}'
 sysadmin_email_address: 'sysadmin@{{company_email_domain}}'
 webmaster_email_address: 'webmaster@{{company_email_domain}}'
 
-qhost_distribution: '{{ansible_distribution | default("Unknown")}}'
+qhost_distribution: '{{ansible_distribution | default("Unknown")}}{{("/" + ansible_distribution_release) if (ansible_distribution_release|default("n/a")) != "n/a" else ""}}'
 qhost_cpus: '{{ansible_processor_vcpus | default(1)}}'
 qhost_description: ''
 qhost_system_links:

@@ -13,7 +13,7 @@ icinga_client_log_dir: '/var/log/icinga-client'
 icinga_client_common_role_tasks_config:
   role: icinga-client
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: nagios
   user_comment: Service user for nagios
   user_home: /var/lib/nagios

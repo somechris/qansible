@@ -56,7 +56,7 @@ smtp_server_net_accesses: '{{(smtp_server_net_accesses_defaults + smtp_server_ne
 smtp_server_common_role_tasks_config:
   role: smtp-server
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: Debian-exim
   extra_groups:
     - ssl-cert

@@ -1,14 +1,14 @@
 # qa:lint:no-log-level-needed
 
 - name: Drop-out for unsupported distributions in common-role-tasks-package-install
-  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{common_role_tasks_package_install_parent_role}}' role. Supported are ['Debian']"
-  when: "common_role_tasks_package_install_config['packages'] and qhost_distribution not in ['Debian']"
+  fail: msg="Unsupported distribution '{{qhost_distribution}}' in '{{common_role_tasks_package_install_parent_role}}' role. Supported are ['Debian/buster']"
+  when: "common_role_tasks_package_install_config['packages'] and qhost_distribution not in ['Debian/buster']"
 
 - name: '{{common_role_tasks_package_install_parent_role}}: Install packages'
   apt:
-    name: "{{common_role_tasks_package_install_config['packages']['Debian'] | default(common_role_tasks_package_install_config['packages'])}}"
+    name: "{{common_role_tasks_package_install_config['packages']['Debian/buster'] | default(common_role_tasks_package_install_config['packages'])}}"
     state: present
-  when: "common_role_tasks_package_install_config['packages'] and qhost_distribution == 'Debian'"
+  when: "common_role_tasks_package_install_config['packages'] and qhost_distribution == 'Debian/buster'"
   notify: "{{common_role_tasks_package_install_config['notifications']}}"
 
 - name: '{{common_role_tasks_package_install_parent_role}}: Install packages'

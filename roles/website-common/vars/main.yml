@@ -9,7 +9,7 @@ website_common_effective_data_dir: '{{website_common_data_disk}}/website-{{websi
 website_common_common_role_tasks_config:
   role: 'website-common ({{website_common_domain}})'
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
     - 'Gentoo'
   user: omit
   paths:

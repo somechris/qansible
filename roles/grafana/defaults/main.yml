@@ -11,7 +11,7 @@ grafana_log_level: '{{logging_default_log_level}}'
 grafana_common_role_tasks_config:
   role: grafana
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: grafana
   paths:
     - '{{grafana_effective_data_dir}}'

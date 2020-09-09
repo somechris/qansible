@@ -8,7 +8,7 @@ atop_effective_log_dir: '{{atop_effective_data_dir}}/logs'
 atop_common_role_tasks_config:
   role: atop
   supported_distributions:
-    - 'Debian'
+    - 'Debian/buster'
   user: omit
   paths:
     - '{{atop_effective_data_dir}}'
