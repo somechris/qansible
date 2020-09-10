@@ -12,6 +12,7 @@ from dashboard_row_memory import row_memory
 from dashboard_row_network import row_network
 from dashboard_row_overview import row_overview
 from dashboard_row_processes import row_processes
+from dashboard_row_sensors import row_sensors
 from dashboard_graph import new as new_graph
 from dashboard_metrics import add_metric
 from dashboard_metrics import set_decimals
@@ -37,6 +38,7 @@ def add_rows(dashboard, host, groups, hostvars, cpu_count):
         add_row(dashboard, row_overview(host, cpu_count=cpu_count, collapsed=False))
         add_row(dashboard, row_load(host, cpu_count=cpu_count))
         add_row(dashboard, row_cpu(host))
+        add_row(dashboard, row_sensors(host))
         add_row(dashboard, row_processes(host))
         add_row(dashboard, row_disk(host))
         add_row(dashboard, row_memory(host))
