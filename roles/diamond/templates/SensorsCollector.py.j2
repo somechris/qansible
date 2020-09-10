@@ -1,0 +1,132 @@
+# {{ansible_managed}}
+
+"""
+Collect hardware stats from /sys
+"""
+
+import os
+import re
+import diamond.collector
+
+class SensorsCollector(diamond.collector.Collector):
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        config = super(SensorsCollector, self).get_default_config()
+        config.update({
+            'path':     'sensors',
+        })
+        return config
+
+    def normalize_metric(self, name):
+        return re.sub(r'[^a-zA-Z0-9]+', '_', name)
+
+    def get_sys_dir(self, *args):
+        return os.path.join(os.path.sep, 'sys', *args)
+
+    def get_first_line(self, file_name):
+        with open(file_name, 'rt') as f:
+            return f.read().split('\n', 1)[0]
+
+    def get_normalized(self, file_name):
+        line = self.get_first_line(file_name)
+        return self.normalize_metric(line)
+
+    def get_scaled_float(self, file_name):
+        line = self.get_first_line(file_name)
+        return float(line)/1000
+
+    def get_int(self, file_name):
+        line = self.get_first_line(file_name)
+        return int(line)
+
+    def collect_devices(self):
+        root = self.get_sys_dir('bus')
+        for bus in os.listdir(root):
+            devices_abs = os.path.join(root, bus, 'devices')
+            if os.path.isdir(devices_abs):
+                devices = os.listdir(devices_abs)
+                name = 'bus.' + self.normalize_metric(bus)
+                self.publish(name, len(devices))
+
+    def collect_thermal_zones(self):
+        root = self.get_sys_dir('devices', 'virtual', 'thermal')
+        for zone in os.listdir(root):
+            zone_abs = os.path.join(root, zone)
+            value = None
+            try:
+                if zone.startswith('thermal_zone'):
+                    name = 'temp.' + self.normalize_metric(zone)
+                    value = self.get_scaled_float(os.path.join(zone_abs, 'temp'))
+
+                if zone.startswith('cooling_device'):
+                    name = 'cooling.' + self.normalize_metric(zone)
+                    value = self.get_int(os.path.join(zone_abs, 'cur_state'))
+
+                if value is not None:
+                    type_file_name = os.path.join(zone_abs, 'type')
+                    if os.path.isfile(type_file_name):
+                        name += '.' + self.get_normalized(type_file_name)
+                    else:
+                        name += '.' + self.normalize_metric(zone)
+                    self.publish(name, value, precision=3)
+            except:
+                pass
+
+    def collect_hwmon_file(self, hwmon_abs, file, platform, hwmon):
+        match = re.match('([a-z]+)([0-9]+)_(.*)$', file)
+        if match:
+            start = match.group(1)
+            number = match.group(2)
+            suffix = match.group(3)
+
+            name = None
+            if start == 'fan' and suffix == 'input':
+                name = 'cooling.'
+                value_getter = self.get_int
+
+            if start == 'in' and suffix == 'input':
+                name = 'voltage.'
+                value_getter = self.get_scaled_float
+
+            if start == 'temp' and suffix == 'input':
+                name = 'temp.'
+                value_getter = self.get_scaled_float
+
+            if name is not None:
+                name += self.normalize_metric('%s_%s_%s' % (platform, hwmon[5:], number))
+
+                label_file = '%s%s_label' % (start, number)
+                label_file_abs = os.path.join(hwmon_abs, label_file)
+                label = None
+                try:
+                    if os.path.isfile(label_file_abs):
+                        label = self.get_normalized(label_file_abs)
+                except:
+                    pass
+                if label is None:
+                    label = start + number
+                name += '.' + label
+
+                try:
+                    value = value_getter(os.path.join(hwmon_abs, file))
+                    self.publish(name, value, precision=3)
+                except:
+                    pass
+
+    def collect_hwmon(self):
+        root = self.get_sys_dir('devices', 'platform')
+        for platform in os.listdir(root):
+            hwmon_parent_abs = os.path.join(root, platform, 'hwmon')
+            if os.path.isdir(hwmon_parent_abs):
+                for hwmon in os.listdir(hwmon_parent_abs):
+                    hwmon_abs = os.path.join(hwmon_parent_abs, hwmon)
+                    for file in os.listdir(hwmon_abs):
+                        if os.path.isfile(os.path.join(hwmon_abs, file)):
+                            self.collect_hwmon_file(hwmon_abs, file, platform, hwmon)
+
+    def collect(self):
+        self.collect_devices()
+        self.collect_thermal_zones()
+        self.collect_hwmon()

@@ -48,6 +48,7 @@ diamond_custom_collectors:
     - ProxyLoadAverage
     - ProxyMemory
     - ProxyNetwork
+    - Sensors
 diamond_custom_collector_configs:
     - DiskUsage
 
