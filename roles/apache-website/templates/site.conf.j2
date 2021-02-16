@@ -216,6 +216,9 @@ which does not met the implicit net_accesses for / from apache_website_net_acces
     ProxyPassReverseCookiePath "{{path}}" "{{location['name']}}"
 {%           endif %}
 {%         endif %}
+{%         if (location['cacheable'] is defined and not location['cacheable']) %}
+    Header set Cache-Control no-store
+{%         endif %}
 {%         if (location["alias"] | default('')) != '' %}
     # This location has an alias (see below after the Locations)
 {# We'd like to include Aliases directly here, but when adding an alias #}

@@ -73,6 +73,9 @@ No Globals that are specific only for this role.
      `/foo` are ignored and only the requirements of `/foo/bar` are relevant.
    * `cors`: (Default: ``) (Optional) If `allow-all-simple`, white-list simple
      requests through CORS.
+   * `cacheable`: (Default: ``) (Optional) If set and false, send response
+     headers that prohibit caching. If unset or true, no dedicated cache headers
+     get sent.
    * `deny`: (Default: False) (Optional) If True, unconditionally deny
      all requests to this location.
    * `expose_server_status`: (Default: False) (Optional) If True, return the
