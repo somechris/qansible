@@ -93,6 +93,7 @@
     - status_basic.conf
     - status.load
     - socache_shmcb.load
+    - unique_id.load
   notify:
     reload apache
 
