@@ -17,6 +17,15 @@ SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:From
 # whitelist this header.
 SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:Sec-Fetch-User
 
+# Sec-CH-UA-Mobile is either `?0` or `?1`. So it contains `?` (63)
+# See
+# https://wicg.github.io/ua-client-hints/#sec-ch-ua-mobile
+# Upstream fix is 0d67efdd48184de5b054f2231d84ebc47b225031, which is
+# too lax, as it also allows Sec-CH-UA (which does not
+# contain `?` (63))
+# We whitelist the header until the upstream fix flows down to us.
+SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:Sec-CH-UA-Mobile
+
 # The auth mail header typically contains an @ which triggers 920274.
 SecRuleUpdateTargetById 920274 !REQUEST_HEADERS:{{web_site_authenticated_email_header}}
 
